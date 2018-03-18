@@ -183,7 +183,6 @@ var settings = {
 	slidesToScroll: 1
 };
 
-/* best seller collection */
 class BestSellerCollection extends React.Component {
     constructor(props) {
         super(props);
@@ -195,7 +194,7 @@ class BestSellerCollection extends React.Component {
     }
 
     componentDidMount() {
-		fetch("http://www.aid.com/ws/product-collection")
+		fetch("http://www.aid.com/ws/bestseller-collection")
             .then(res => res.json())
             .then(
                 (result) => {
@@ -252,9 +251,7 @@ class BestSellerCollection extends React.Component {
         }
     }
 }
-/* end: best seller collection */
 
-/* featured product collection */
 class FeaturedProductCollection extends React.Component {
     constructor(props) {
         super(props);
@@ -266,7 +263,7 @@ class FeaturedProductCollection extends React.Component {
     }
 
     componentDidMount() {
-		fetch("http://www.aid.com/ws/product-collection")
+		fetch("http://www.aid.com/ws/featured-collection")
             .then(res => res.json())
             .then(
                 (result) => {
@@ -323,16 +320,7 @@ class FeaturedProductCollection extends React.Component {
         }
     }
 }
-/* end: featured product collection */
 
-//render( < MyComponent /> , document.getElementById('app'));
-/* render(
-    <Router>
-		<Route path="/view/:id" component={ProductAdditionalInfo}/>
-    </Router>,
-    document.getElementById('additional_info')
-); */
-
-render( <BestSellerCollection /> , document.getElementById('best-seller-collection'));
-render( <FeaturedProductCollection /> , document.getElementById('featured-product-collection'));
+render( <BestSellerCollection /> , document.getElementById('best-seller-slider'));
+render( <FeaturedProductCollection /> , document.getElementById('featured-slider'));
 render( <MiniCartCount /> , document.getElementById('cart-items'));
