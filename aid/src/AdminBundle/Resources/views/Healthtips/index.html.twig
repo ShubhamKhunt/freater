@@ -1,0 +1,83 @@
+{% extends "AdminBundle::Layout/adminlayout.html.twig" %}
+{% block title %} Health Tips List {% endblock %}
+{% block css %}
+	
+{% endblock %}
+{% block content %}
+	  
+	<section class="content-header" style="padding: 26px 16px 0px 0px;">
+		  <small></small>
+
+		<ol class="breadcrumb">
+		  <li><a href="{{path('admin_dashboard_index',{'domain':app.session.get('domain')})}}"><i class="fa fa-dashboard"></i>Dashboard</a></li>
+		  <li class="active">Health Tips List</li>
+		</ol>
+	  </section>
+	  <section class="content">
+		<div class ="row">
+			<div class="col-md-12">
+			{% for flashMessage in app.session.flashbag.get('success_msg') %}
+			  <div class="alert alert-success alert-dismissable">
+				  <button aria-hidden="true" data-dismiss="alert" class="close" type="button">×</button>
+				  <h4><i class="icon fa fa-check"></i> Alert!</h4>{{ flashMessage }}
+			  </div>
+			  {% endfor %}
+			  {% for flashMessage in app.session.flashbag.get('error_msg') %}
+			  <div class="alert alert-danger alert-dismissable">
+				  <button aria-hidden="true" data-dismiss="alert" class="close" type="button">×</button>
+				  <h4><i class="icon fa fa-check"></i> Alert!</h4>{{ flashMessage }}
+			  </div>
+			{% endfor %}
+			</div>  
+		</div>	
+		<div class="row">
+			<div class="col-xs-12">
+                <div class="box box-solid">
+                    <div class="box-header with-border">
+                      <h3 class="box-title">Health Tips List</h3>
+                      <div class="pull-right">
+                        <a href="{{path('admin_healthtips_addhealthtip',{'domain':app.session.get('domain')})}}" class="btn btn-primary btn-flat"><i class="fa fa-plus"></i>&nbsp;&nbsp;ADD</a>
+                      </div>
+                    </div>
+                    <div class="box-body">
+                        <div class="container-fluid table-responsive">
+							<table id="example1" class="table table-bordered table-striped text-center">
+								<thead>
+									<th>Order No</th>
+									<th>Customer / Phone</th>
+                                    <th>Total Items</th>
+									<th>Bill Amount</th>
+									<th width="8%">Special Instruction</th>
+									<th>Delivery Boy</th>
+									<th>Delivery Date Time</th>								
+									<th>Status</th>
+                                    <th>Action</th>
+								</thead>
+								<tfoot>
+									<th>Order No</th>
+									<th>Customer / Phone</th>
+                                    <th>Total Items</th>
+									<th>Bill Amount</th>
+									<th  width="8%">Special Instruction</th>
+									<th>Delivery Boy</th>
+									<th>Delivery Date Time</th>	
+									<th>Status</th>
+                                    <th>Action</th>
+								</tfoot>
+							</table>
+						</div>
+
+                    </div>
+                  </div>
+            </div>
+		</div>
+	  </section>
+{% endblock %}
+
+{% block js %}
+<script>
+$(document).ready(function() {
+    $('#example1').DataTable();
+} );
+</script>
+{% endblock %}

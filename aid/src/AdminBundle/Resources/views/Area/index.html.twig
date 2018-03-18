@@ -1,0 +1,125 @@
+{% extends "AdminBundle::Layout/adminlayout.html.twig" %}
+{% block title %} Area List {% endblock %}
+{% block css %}
+    <link href="{{asset('bundles/design/')}}css/select2.min.css" rel="stylesheet" type="text/css"/>
+    <link href="{{asset('bundles/design/')}}css/bootstrap-toggle.min.css" rel="stylesheet" type="text/css"/>
+{% endblock %}
+{% block content %}
+	<section class="content-header">
+		<h1>
+          
+		  <small></small>
+		</h1>
+		<ol class="breadcrumb">
+		  <li><a href="{{path('admin_dashboard_index')}}"><i class="fa fa-dashboard"></i>Dashboard</a></li>
+		  <li class="active">Area List</li>
+		</ol>
+	  </section>
+	  <section class="content">
+		<div class="row">
+			<div class="col-xs-12">
+                <div class="box box-solid">
+                    <div class="box-header with-border">
+                    	<h3 class="box-title">Area List</h3>
+                      {#<h3 class="box-title">Progress Bars Different Sizes</h3>#}
+                      <div class="pull-right">
+                        <a href="{{path('admin_area_addarea')}}" class="btn btn-primary btn-flat"><i class="fa fa-plus"></i><b>&nbsp;&nbsp;Add Area</b></a>
+                      </div>
+                    </div>
+                    <div class="box-body">
+                        <div class="container-fluid table-responsive">
+							<table id="example1" class="table table-bordered table-striped text-center">
+								<thead>
+									<tr>
+									<th>No.</th>
+									<th>Area name</th>
+                                    <th>Area Code</th>
+									<th>Status</th>
+                                    <th>Action</th>
+                                	</tr>
+								</thead>
+								<tbody>
+								{% if area is defined and area is not empty %}
+									
+									{% for a in area %}
+										<tr>
+											<td>{{loop.index}}</td>
+											<td>{{a.area_name}}</td>
+											<td>{{a.area_code}}</td>
+											<td><input type="checkbox" data-on="Active" data-off="Inactive" data-toggle="toggle" data-onstyle="success" {% if a.status == 'active' %}checked="checked"{% endif %} data-size="mini" onchange="changestatus({{a.main_area_id}}, $(this).is(':checked'));"/></td>
+											<td>
+													 <a class="btn btn-default btn-xs btn-flat" data-toggle="tooltip" title="" onclick="return confirm('Are you sure you want to Edit?');" href="{{path('admin_area_addarea',{'main_area_id':a.main_area_id})}}" data-original-title="Edit"><span class="fa fa-edit"></span></a>
+													 <a class="btn btn-danger btn-xs btn-flat" data-toggle="tooltip" title="" onclick="return confirm('Are you sure you want to Delete?');" href="" data-original-title="Delete"><span class="fa fa-remove"></span></a>
+												</td>
+										</tr>
+									{% endfor %}
+								{% endif %}
+								</tbody>
+								<tfoot>
+									<th>No.</th>
+									<th>Area name</th>
+                                    <th>Area Code</th>
+									<th>Status</th>
+                                    <th>Action</th>
+								</tfoot>
+							</table>
+						</div>
+
+                    </div>
+                  </div>
+            </div>
+		</div>
+	  </section>
+{% endblock %}
+
+{% block js %}
+<script>
+$(document).ready(function() {
+    var table = $('#example1').DataTable( {
+        dom: 'Bfrtip',
+		
+        buttons: [
+            {
+                extend: 'copyHtml5',				
+                exportOptions: {
+                 columns: ':not(:last-child)',
+                },
+								
+            },
+			{
+				extend: 'pdfHtml5',
+				customize: function (doc) {
+    				doc.content[1].table.widths = 
+        			Array(doc.content[1].table.body[0].length + 1).join('*').split('');
+  				},
+				exportOptions: {
+				  columns: ':not(:last-child)',
+			 }
+			},
+			{
+				 extend: 'excelHtml5',
+                exportOptions: {
+                 columns: ':not(:last-child)',
+                },
+			},
+			{
+				 extend: 'csvHtml5',
+                exportOptions: {
+                 columns: ':not(:last-child)',
+                },
+			},
+			{
+                extend: 'print',				
+                exportOptions: {
+                 columns: ':not(:last-child)',
+                },
+								
+            },
+        ],
+        columnDefs: [
+  			{ targets:[4], orderable: false }
+		],
+    } );
+} );
+</script>
+{% endblock %}

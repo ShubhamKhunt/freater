@@ -1,0 +1,148 @@
+{% extends "AdminBundle::Layout/adminlayout.html.twig" %}
+{% block title %} State List {% endblock %}
+{% block css %}
+	
+{% endblock %}
+{% block content %}
+	<section class="content-header">
+		<h1>
+            Add State
+		  <small></small>
+		</h1>
+		<ol class="breadcrumb">
+		  <li><a href="{{path('admin_dashboard_index',{'domain':app.session.get('domain')})}}"><i class="fa fa-dashboard"></i>Dashboard</a></li>
+          <li><a href="{{path('admin_state_index',{'domain':app.session.get('domain')})}}"></i>State List</a></li> 
+		  <li class="active">Add State</li>
+		</ol>
+	  </section>
+	  <section class="content">
+		<div class="row">
+			<div class="col-xs-12">
+                <div class="box box-solid">
+                    
+                    {% if language is defined and language is not empty %}
+                    <div class="nav-tabs-custom">
+                        <ul class="nav nav-tabs">
+                        
+                            {% for lang in language %}
+                            <li {% if loop.index == 1 %}class="active"{% endif %}><a data-toggle="tab" href="#tab_{{lang.language_master_id}}">{{lang.language_name}}</a></li>
+                            {% endfor %}
+                         
+                        </ul>
+                        <div class="tab-content">
+                            {% for lang in language %}
+                            <div id="tab_{{lang.language_master_id}}" class="tab-pane{% if loop.index == 1 %} active{% endif %}">
+                                <form method="post" class="form-horizontal" action="{% if state_master is defined and state_master is not empty %}{{path('admin_state_savestate',{'domain':app.session.get('domain'),'language_id':lang.language_master_id,'main_state_id':main_state_id})}}{% else %}{{path('admin_state_savestate',{'domain':app.session.get('domain'),'language_id':lang.language_master_id})}}{% endif %}" enctype="multipart/form-data">
+                                  <div class="box-body">
+				
+									<div class="form-group">
+                                      <label class="col-sm-2 control-label">Country</label>
+                                      <div class="col-sm-6">
+										<select class="form-control" name="main_country_id">
+											{% if country_master is defined and country_master is not empty %}
+												{% for country in country_master %}
+													{% if country.language_id == lang.language_master_id %}
+														<option value="{{country.main_country_id}}" {% if state_master is defined and state_master is not empty  %}{% for state in state_master %}{% if state.language_id == lang.language_master_id %}{% if state.main_country_id == country.main_country_id %}selected{% endif %}{% endif %}{% endfor %}{% endif %}>{{country.country_title}}</option>
+													{% endif %}
+												{% endfor %}
+											{% endif %}
+										</select>
+                                      </div>
+                                    </div>
+									
+                                    <div class="form-group">
+                                      <label class="col-sm-2 control-label">State Name</label>
+                                      <div class="col-sm-6">
+										<input type="text" placeholder="State Name" class="form-control input-sm" name="state_name" {% if state_master is defined %}
+											{% for state in state_master %}
+												{% if state.language_id == lang.language_master_id %}
+													value="{{state.state_name}}"
+												{% endif %}
+											{% endfor %}
+										{% endif %}
+										>
+                                      </div>
+                                    </div>
+									
+									
+									<div class="form-group">
+                                      <label class="col-sm-2 control-label">State Code</label>
+                                      <div class="col-sm-6">
+										<input type="text" placeholder="State Code" class="form-control input-sm" name="state_code"
+											{% if state_master is defined %}
+												{% for state in state_master %}
+													{% if state.language_id == lang.language_master_id %}
+														value="{{state.state_code}}"
+													{% endif %}
+												{% endfor %}
+											{% endif %}
+										>
+                                      </div>
+                                    </div>
+									
+									                                    
+                                    
+                                    
+                                    <div class="form-group">
+                                        <label class="col-sm-2 control-label">Status</label>
+                                        <div class="col-sm-6">
+                                              <div class="radio">
+                                                <label>
+                                                  <input type="radio" value="active" name="status" {% if state_master is defined %}
+											{% for state in state_master %}
+												{% if state.language_id == lang.language_master_id %}
+													{% if state.status == "active" %}
+														checked
+													{% endif %}
+												{% endif %}
+											{% endfor %}
+										{% endif %}> Active
+                                                </label>
+                                              </div>
+                                              <div class="radio">
+                                                <label>
+                                                  <input type="radio" value="inactive" name="status" {% if state_master is defined %}
+											{% for state in state_master %}
+												{% if state.language_id == lang.language_master_id %}
+													{% if state.status == "inactive" %}
+														checked
+													{% endif %}
+												{% endif %}
+											{% endfor %}
+										{% endif %}> Inactive
+                                                </label>
+                                              </div>
+                                        </div>
+                                    </div>
+                                    
+                                  </div>
+                                  <div class="box-footer">
+                                    <a href="{{path('admin_state_index',{'domain':app.session.get('domain')})}}" class="btn btn-default btn-flat" type="submit">Cancel</a>
+                                    <button class="btn btn-info pull-right btn-flat" type="submit" name="save_state" value="save_state">Save</button>
+                                  </div>
+                                </form>
+
+                            </div>
+                            {% endfor %}
+                        </div>
+                      </div>
+                    {% endif %} 
+                    
+                  </div>
+            </div>
+		</div>
+	  </section>
+{% endblock %}
+
+{% block js %}
+<script>
+$(document).ready(function() {
+    $('#example1').DataTable( {
+        dom: 'Bfrtip',
+        buttons: [
+            'copy', 'csv', 'excel', 'pdf', 'print'
+        ]
+    } );
+} );
+</script>
+{% endblock %}

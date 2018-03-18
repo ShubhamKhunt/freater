@@ -1,0 +1,228 @@
+{% extends "AdminBundle::Layout/adminlayout.html.twig" %}
+{% block title %}Add - Update Issue Type Title / Contact Type Title{% endblock %}
+{% block css %}
+	 <link href="{{asset('bundles/design/')}}css/select2.min.css" rel="stylesheet" type="text/css" />
+	 <link href="{{asset('bundles/design/')}}css/dataTables.bootstrap.css" rel="stylesheet" type="text/css" />
+	  <link href="{{asset('bundles/design/')}}css/bootstrap-toggle.min.css" rel="stylesheet" type="text/css" />
+	  <link href="{{asset('bundles/design/')}}css/datepicker3.css" rel="stylesheet" type="text/css" />
+ <style type="text/css"> 
+	.save-btn, .cancel-btn {	
+    width: 85%;
+}
+</style>
+
+{% endblock %}
+{% block content %}
+<!----------- PAGE HEADER : START ----------------------------------------------------------->
+	<section class="content-header">
+	<!-------- PAGE TITLE --------------->
+		<h1>
+		  Issue Type Title / Contact Type Title
+		  <small></small>
+		</h1>
+	<!------- BREADCUMB --------------------->
+		<ol class="breadcrumb">
+		  <li><a href="{{path('admin_dashboard_index')}}"><i class="fa fa-dashboard"></i> Dashboard</a></li>
+		 
+		  <li><a href="{{path('admin_issuetitle_issuetitlelist')}}">Issue_title</a></li>
+		  <li class="active">Add - Update Issue_title</li>
+		</ol>
+	</section>
+<!----------- PAGE HEADER : END ----------------------------------------------------------->
+<!----------- Main content : START ----------------------------------------------------------->
+	<section class="content">
+		{% for flashMessage in app.session.flashbag.get('success_msg') %}
+		<div class="alert alert-success alert-dismissable">
+			<button aria-hidden="true" data-dismiss="alert" class="close" type="button">×</button>
+			<h4><i class="icon fa fa-check"></i> Alert!</h4>{{ flashMessage }}
+		</div>
+        {% endfor %}
+        {% for flashMessage in app.session.flashbag.get('error_msg') %}
+		<div class="alert alert-danger alert-dismissable">
+			<button aria-hidden="true" data-dismiss="alert" class="close" type="button">×</button>
+			<h4><i class="icon fa fa-check"></i> Alert!</h4>{{ flashMessage }}
+		</div>
+		{% endfor %}
+		<div class="row">
+		 <style>
+			img{
+			   padding-top: 10px;
+			   max-width: 70%;
+			}
+		 </style>
+            <div class="col-xs-12">
+				<div class="box box-primary">
+                <div class="box-header with-border">
+                  <h3 class="box-title">Add - Update Issue Type Title / Contact Type Title</h3>
+				   <a href="{{path('admin_issuetitle_issuetitlelist')}}" class="btn btn-primary btn-flat pull-right"><i class="glyphicon glyphicon-chevron-left"></i><b>&nbsp;&nbsp;Back</b></a>
+                </div><!-- /.box-header -->
+                
+				<div class="box-body">
+				  <div class="nav-tabs-custom">
+                    <ul class="nav nav-tabs">
+                    {% if languages is defined %}
+                        {% for lang in languages %}
+                        <li class="{% if selected is defined %}{% if selected == lang.language_master_id%}active{% endif %}{% else %}{% if loop.index == 1 %}active{% endif %}{% endif %}">
+                            <a href="#lang{{loop.index}}" data-toggle="tab">{{lang.language_name}}</a>
+                        </li>
+                        {% endfor %}
+                    {% endif %}
+                    </ul>
+                </div>
+                <div class="tab-content">
+                {% if languages is defined %}
+                    {% for lang in languages %}
+                    <div class="tab-pane {% if selected is defined %}{% if selected == lang.language_master_id%}active{% endif %}{% else %}{% if loop.index == 1 %}active{% endif %}{% endif %}" id="lang{{loop.index}}">
+                        <form method="post" enctype="multipart/form-data" action="{{path('admin_issuetitle_addissuetitledb')}}">
+                            
+                            <input type="hidden" value="{{lang.language_master_id}}" name="language_master_id"/>
+                            {% if issue_title_master_id is defined %} 
+                                <input type="hidden" name="issue_title_master_id" value="{{issue_title_master_id}}"/>
+                            {% endif %}
+
+                          
+							<div class="row form-group">
+							  <div class="col-lg-2">
+								 <label>Issue Type Title /  Contact Type Title</label>
+							  </div>
+							  <div class="col-lg-10">
+								 <input type="text" name="issue_title_title" class="form-control"
+                                        {% if issue_title is defined and issue_title is not empty %}
+										   {% for issue_title in issue_title %}
+                                            {% if issue_title.language_id == lang.language_master_id %}
+                                                value="{{issue_title.issue_title_name}}"
+											 {% endif %}
+										  {% endfor %}
+                                    {% endif %}/>
+							  </div>
+							</div>
+							
+							
+							<div class="row form-group">
+							  <div class="col-lg-2">
+								 <label>Issue Type / Contact Type</label>
+							  </div>
+							  <div class="col-lg-10">
+								<select name="issue_type" id="issue_type" class="form-control">
+									<option value="user" {% if issue_title is defined and issue_title is not empty %}
+										   {% for issue_title in issue_title %}
+											  {% if issue_title.language_id == lang.language_master_id %}
+											  {% if issue_title.issue_type == 'user' %}
+												selected
+											 {% endif %}
+											 {% endif %}
+											 {% endfor %} 
+											  {% endif %}
+										  
+											  >CONTACT US (USER)</option>
+									<option value="aidman" {% if issue_title is defined and issue_title is not empty %}
+										   {% for issue_title in issue_title %}
+											    {% if issue_title.language_id == lang.language_master_id %}
+											  {% if issue_title.issue_type == 'aidman' %}
+												selected
+											 {% endif %}
+											 {% endif %}
+											 {% endfor %}
+											  {% endif %}
+										   >REPORT ISSUE (AID MAN)</option>
+								</select>
+							  </div>
+							</div>
+							
+						
+							<div class="row form-group">
+                                <div class="col-lg-2">
+                                    <label>Status</label>
+                                </div>
+                                <div class="col-lg-10">
+                                   
+									<label class="radio-inline">
+                                        <input type="radio" name="issue_title_status" required="" value="active"
+                                        {% if issue_title is defined and issue_title is not empty %}
+                                            {% for issue_title in issue_title %}
+                                                {% if issue_title.language_id == lang.language_master_id %}
+                                                    {% if issue_title.status == 'active' %}
+                                                        checked="checked"
+                                                    {% endif %}
+                                                {% endif %}
+                                            {% endfor %}
+                                        {% endif %} /> Active
+                                    </label>
+									<label class="radio-inline">
+                                        <input type="radio" name="issue_title_status" required="" value="inactive"
+                                        {% if issue_title is defined and issue_title is not empty %}
+                                            {% for issue_title in issue_title %}
+                                                {% if issue_title.language_id == lang.language_master_id %}
+                                                    {% if issue_title.status == 'inactive' %}
+                                                        checked="checked"
+                                                    {% endif %}
+                                                {% endif %}
+                                            {% endfor %}
+                                        {% endif %} /> Inactive
+                                    </label>
+                                </div>
+                            </div>
+                            
+                            <hr />
+                            <div class="row" align="center">
+                                <div class="col-lg-10 col-lg-offset-2">
+                                    <div class="col-lg-6">
+                                        <button type="submit" class="btn btn-primary save-btn" name="add">Save</button>
+                                    </div>
+                                    <div class="col-lg-6">
+									    	<a href="{{path('admin_issuetitle_issuetitlelist')}}" class="btn btn-default cancel-btn">Cancel</a>
+                                    </div>
+                                </div>
+                            </div>
+							
+                        </form>
+					 </div>
+
+					  {% endfor %}
+                {% endif %}
+               <br/> <font color="red">** select <b>USER</b> for contact us title and select <b>AID MAN</b> for report issue title</font>
+                </div>
+            </div>
+                   
+            </div>
+				
+		  
+
+           
+          </div><!-- /.box -->
+
+			  
+	</section>
+<!----------- Main content : END ---------------------------------------------------------->
+{% endblock %}
+{% block js %}
+
+
+<script src="{{asset('bundles/design/')}}js/bootstrap-toggle.min.js" type="text/javascript"></script>	
+<script src="{{asset('bundles/design/')}}js/jquery.dataTables.min.js" type="text/javascript"></script>
+<script src="{{asset('bundles/design/')}}js/dataTables.bootstrap.min.js" type="text/javascript"></script>
+<script src="{{asset('bundles/design/')}}js/bootstrap-datepicker.js" type="text/javascript"></script>
+
+
+
+<script type="text/javascript">
+	$(function () {
+	  $("#example1").DataTable();
+	});
+</script>
+
+<script type="text/javascript">
+   $(document).ready(function(){
+    $(".datepicker").datepicker({
+        "setDate": new Date(),
+        "autoclose": true
+    });
+});
+	
+
+		
+	
+</script>
+
+
+{% endblock %}

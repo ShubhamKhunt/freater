@@ -1,0 +1,133 @@
+{# MP - 25.12.15 #}
+{% extends "AdminBundle::Layout/adminlayout.html.twig" %}
+{% block title %}Right{% endblock %}
+{% block css %}
+	
+{% endblock %}
+{% block content %}
+	<section class="content-header">
+		<h1>
+		 Add- Update Right
+		  <small></small>
+		</h1>
+		<ol class="breadcrumb">
+		  <li><a href="{{path('admin_dashboard_index',{'domain':app.session.get('domain')})}}"><i class="fa fa-dashboard"></i> Dashboard</a></li>
+		  <li><a href="{{path('admin_right_index',{'domain':app.session.get('domain')})}}"></i>Right list</a></li>
+		  <li class="active">Add- Update Right</li>
+		</ol>
+	  </section>
+	<section class="content">
+		<div class="row">
+			<div class="col-xs-12">
+					{% for flashMessage in app.session.flashbag.get('success_msg') %}
+							<div role="alert" class="alert alert-success alert-dismissible fade in">
+							  <button aria-label="Close" data-dismiss="alert" class="close" type="button"><span aria-hidden="true">×</span></button>
+							  <strong>Alert!</strong>&nbsp; {{ flashMessage }}
+						</div>
+					{% endfor %}
+					{% for flashMessage in app.session.flashbag.get('error_msg') %}
+							<div role="alert" class="alert alert-danger alert-dismissible fade in">
+							  <button aria-label="Close" data-dismiss="alert" class="close" type="button"><span aria-hidden="true">×</span></button>
+							  <strong>Alert!</strong>&nbsp; {{ flashMessage }}
+							</div>
+					{% endfor %}
+					<div class="box box-solid">
+						{#<div class="box-header">
+							<h3 class="box-title">{% if organization is defined %}Update Organization{%else%}Create Organization{%endif%}</h3>
+						</div>#}
+						<div class="box-body">
+							<form class="form-horizontal style-form" enctype="multipart/form-data" method="post" id="right" action="{% if right_master is defined and right_master is not empty %}{{path('admin_right_updateright',{right_master_id:right_master.right_master_id,'domain':app.session.get('domain')})}}{%else%}{{path('admin_right_saveright',{'domain':app.session.get('domain')})}}{%endif%}">
+								<br/>
+								<div class="row">
+									<div class="form-group">
+										<label class="col-sm-2 control-label">Display name</label>
+										<div class="col-sm-3">
+											<input type="text" name="display_name" id="display_name" class="form-control" placeholder="Display Name" title="Display Name"
+												   value="{% if right_master is defined and right_master is not empty %}{{right_master.display_name}}{% endif %}" />
+										</div>
+									</div>
+									<div class="form-group">
+										<label class="col-sm-2 control-label">Description</label>
+										<div class="col-sm-8">
+											<textarea name="description" class="form-control">{% if right_master is defined and right_master is not empty %}{{right_master.description}}{% endif %}</textarea>
+										</div>
+									</div>
+									<div class="form-group">
+										<label class="col-sm-2 control-label">Code</label>
+										<div class="col-sm-3">
+											<input type="text" readonly="readonly" name="code" id="code" class="form-control" placeholder="Code" title="Code" value="{% if right_master is defined and right_master is not empty %}{{right_master.code}}{% endif %}" />
+										</div>
+									</div>
+								</div>
+								<div class="row">
+									<div class="form-group">
+										<div class="col-xs-12">
+											<div class="col-xs-2 pull-left">
+												<a href="{{path('admin_right_index',{'domain':app.session.get('domain')})}}"  class="btn btn-danger btn-flat">Cancel</a>
+											</div>
+											<div class="col-xs-2 pull-right">
+												<button type="submit" class="btn btn-primary btn-flat" title="save" name="save" value="">{% if right_master is defined and right_master is not empty %}Update{%else%}Save{%endif%}</button>
+											</div>
+										</div>
+									</div>
+								</div>
+							</form>
+						</div>
+					</div>
+			</div>
+		</div>
+	</section>
+{% endblock %}
+
+{% block js %}
+<script src="{{asset('bundles/design/')}}js/jquery.validate.min.js" type="text/javascript"></script>
+<script>
+	$(function() {
+		$("#right").validate({
+			
+				// Specify the validation rules
+				rules: {
+					display_name: "required",
+					code:"required",
+				},
+				
+				// Specify the validation error messages
+				messages: {
+					display_name: "Please Enter Display Name",
+					code:"Please Enter the Code",
+				},
+				submitHandler: function(form) {
+					form.submit();
+				}
+			});
+	});
+</script>
+
+<script>
+	$(document).ready(function () {
+		{% if right_master is defined and right_master is empty %}
+			$("#display_name").change(function(){
+				var right_name = $(this).val();
+				console.log(right_name);
+				$.ajax({
+						type : 'POST',
+						url : '{{path('admin_right_codecheck',{'domain':app.session.get('domain')})}}',
+						data: {"flag":"right_master","data_name":right_name},
+						dataType: 'json',
+						success:function(resp){
+							console.log(resp['code']);
+							$("#code").val(resp.code);
+						}
+					});		
+				});
+		{% endif %}
+		function validate(){
+			if ($("#code").val()=="")
+				return false;
+			else{
+				return true;
+			}
+		}
+    });
+</script>
+{% endblock %}

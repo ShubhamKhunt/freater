@@ -1,0 +1,182 @@
+{% extends "AdminBundle::Layout/adminlayout.html.twig" %}
+{% block title %} Order Listing Customer wise {% endblock %}
+{% block css %}
+	<link href="{{asset('bundles/design/')}}plugins/datepicker/datepicker3.css" rel="stylesheet" type="text/css" />
+	<style>
+	  .table-dark
+	  {
+	  text-align: center;
+	  background-color:#222D32;
+	  color: white;
+	  }
+	</style>
+{% endblock %}
+{% block content %}
+	  
+	<section class="content-header" style="padding: 26px 16px 0px 0px;">
+		  <small></small>
+
+		<ol class="breadcrumb">
+		  <li><a href="{{path('admin_dashboard_index',{'domain':app.session.get('domain')})}}"><i class="fa fa-dashboard"></i>Dashboard</a></li>
+		  <li class="active">Customer wise Order Listing</li>
+		</ol>
+	  </section>
+	  <section class="content">
+		<div class ="row">
+			<div class="col-md-12">
+			{% for flashMessage in app.session.flashbag.get('success_msg') %}
+			  <div class="alert alert-success alert-dismissable">
+				  <button aria-hidden="true" data-dismiss="alert" class="close" type="button">×</button>
+				  <h4><i class="icon fa fa-check"></i> Alert!</h4>{{ flashMessage }}
+			  </div>
+			  {% endfor %}
+			  {% for flashMessage in app.session.flashbag.get('error_msg') %}
+			  <div class="alert alert-danger alert-dismissable">
+				  <button aria-hidden="true" data-dismiss="alert" class="close" type="button">×</button>
+				  <h4><i class="icon fa fa-check"></i> Alert!</h4>{{ flashMessage }}
+			  </div>
+			{% endfor %}
+			</div>  
+		</div>
+		<div class="row">
+			<div class="col-xs-12">
+				 		<div class="form-group">
+							  <label class="control-label col-xs-2">Form Date</label>
+							  <div class="col-xs-3">
+									<input type="text" name="fromdate" id="fromdate"  readonly class="form-control date" />
+							  </div>
+							  <label class="control-label col-xs-2">To Date</label>
+							  <div class="col-xs-3">
+									<input type="text" name="todate" id="todate" readonly class="form-control date" />
+							  </div>
+							  <div class="col-xs-2">
+									<input type="button" value="Search" name="search" class="btn btn-primary btn-flat" onClick="getdataAjax();"/>
+							  </div>
+						</div>
+				  
+			</div>
+		</div><br>
+		<div class="row">
+			<div class="col-xs-12">
+                <div class="box box-solid">
+                    <div class="box-header with-border">
+                      <h3 class="box-title">Order Listing Customer wise</h3>
+                     
+                    </div>
+                    <div class="box-body">
+						{%if customer_list is defined and customer_list is not empty %}
+										  {%for customer_list in customer_list %}
+												{#<tr>
+													  <td>{{customer_list.username}} / {{customer_list.user_mobile}}</td>
+													  <td></td>
+													  <td>{{customer_list.username}} / {{customer_list.user_mobile}}</td>
+												</tr>#}	
+										  {% endfor %}
+									{% endif %}
+                        <div class="container-fluid table-responsive" id="info_tbl">
+							<table id="example1" class="table table-bordered table-striped text-center">
+								<thead>									
+									<th>Customer / Mobile</th>
+									<th>Total Orders</th>
+									<th>Order Analytics</th>
+								</thead>
+								<tbody id="tbody">
+									
+								</tbody>
+								<tfoot>
+									<th>Customer / Mobile</th>
+									<th>Total Orders</th>
+									<th>Order Analytics</th>
+								</tfoot>
+							</table>
+						</div>
+
+                    </div>
+                  </div>
+            </div>
+		</div>
+	  </section>
+{% endblock %}
+
+{% block js %}
+<script src="{{asset('bundles/design/')}}plugins/datepicker/bootstrap-datepicker.js" type="text/javascript"></script>
+<script>
+$(document).ready(function() {
+    $('#example1').DataTable();
+	  var d = new Date();	 
+	  
+	  before15days = d.setDate(d.getDate() - 15);
+	  before15days = new Date(before15days);
+	
+	  var curr_date = before15days.getDate();
+	  if (curr_date < 10 ) {
+        curr_date = "0"+curr_date ;
+      }
+	  var curr_month = before15days.getMonth()+1;
+	  if (curr_month < 10 ) {
+        curr_month = "0"+curr_month ;
+      }
+	  var curr_year = before15days.getFullYear();
+	  startdate =  curr_year  + "-" + curr_month 
+	  + "-" + curr_date;
+	  
+	  after15days = d.setDate(d.getDate() + 30);
+	  after15days = new Date(after15days);
+	
+	  var curr_date = after15days.getDate();
+	   if (curr_date < 10 ) {
+        curr_date = "0"+curr_date ;
+      }
+	  var curr_month = after15days.getMonth()+1;
+	  if (curr_month < 10 ) {
+        curr_month = "0"+curr_month ;
+      }
+	  var curr_year = after15days.getFullYear();
+	  enddate =  curr_year  + "-" + curr_month 
+	  + "-" + curr_date;
+	 
+	 
+	  
+	$("#fromdate").datepicker({
+	  format: 'yyyy-mm-dd',
+	  "autoclose": true
+    }).datepicker("setDate",startdate);
+	//-----------------------------------------------
+    $("#todate").datepicker({
+		  format: 'yyyy-mm-dd',
+		  "autoclose": true
+    }).datepicker("setDate",enddate);
+} );
+</script>
+<script>
+	  function getdataAjax() {
+        startdate = $('#fromdate').val();
+        enddate = $('#todate').val();
+		passdate = "startdate="+startdate+"&enddate="+enddate ;
+		if (startdate != "" && enddate !="") {
+           
+		    $.ajax({
+				  url : "{{path('admin_report_getcustomerwise',{'domain':app.session.get('domain')})}}",
+				  data: passdate,           
+				  success: function (resp) {
+					  $('#info_tbl').html(resp);
+				     // $('#example1').DataTable();
+					  
+				  },
+				  error: function (data, status, req) {
+					  //alert('fail');
+				  }
+            });
+			//$('#example1').DataTable();
+        }
+		else{
+			alert("Please select date");
+		}
+      }
+</script>
+<script>
+$( document ).ready(function() {
+    getdataAjax();
+});	  
+</script>
+{% endblock %}

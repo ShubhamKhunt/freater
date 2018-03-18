@@ -1,0 +1,119 @@
+{% extends "AdminBundle::Layout/adminlayout.html.twig" %}
+{% block title %} Suppliers List {% endblock %}
+{% block css %}
+	<link href="{{asset('bundles/design/')}}css/bootstrap-toggle.min.css" rel="stylesheet" type="text/css" />
+{% endblock %}
+{% block content %}
+	  
+	<section class="content-header" style="padding: 26px 16px 0px 0px;">
+		  <small></small>
+
+		<ol class="breadcrumb">
+		  <li><a href="{{path('admin_dashboard_index',{'domain':app.session.get('domain')})}}"><i class="fa fa-dashboard"></i>Dashboard</a></li>
+		  <li class="active">Suppliers List</li>
+		</ol>
+	  </section>
+	  <section class="content">
+		<div class ="row">
+			<div class="col-md-12">
+			{% for flashMessage in app.session.flashbag.get('success_msg') %}
+			  <div class="alert alert-success alert-dismissable">
+				  <button aria-hidden="true" data-dismiss="alert" class="close" type="button">×</button>
+				  <h4><i class="icon fa fa-check"></i> Alert!</h4>{{ flashMessage }}
+			  </div>
+			  {% endfor %}
+			  {% for flashMessage in app.session.flashbag.get('error_msg') %}
+			  <div class="alert alert-danger alert-dismissable">
+				  <button aria-hidden="true" data-dismiss="alert" class="close" type="button">×</button>
+				  <h4><i class="icon fa fa-check"></i> Alert!</h4>{{ flashMessage }}
+			  </div>
+			{% endfor %}
+			</div>  
+		</div>	
+		<div class="row">
+			<div class="col-xs-12">
+                <div class="box box-solid">
+                    <div class="box-header with-border">
+                      <h3 class="box-title">Suppliers List</h3>
+                      <div class="pull-right">
+                        <a href="{{path('admin_suppliers_addsupplier',{'domain':app.session.get('domain')})}}" class="btn btn-primary btn-flat"><i class="fa fa-plus"></i>&nbsp;&nbsp;ADD</a>
+                      </div>
+                    </div>
+                    <div class="box-body">
+                        <div class="container-fluid table-responsive">
+							<table id="example1" class="table table-bordered table-striped text-center">
+								<thead>
+									<th hidden>Mian Supplier ID</th>
+									<th>Image</th>
+									{% if language is defined and language is not empty %}
+											{%for language in language %}
+												<th>Name : {{language.display_title}}</th>	
+										    {%endfor%}
+									{% endif %}		
+                                    <!--<th>Description</th>
+									<th>Phone Number</th>
+									<th>Mobile Number</th>-->
+									<th>Status</th>
+                                    <th>Action</th>
+								</thead>
+								<tbody>
+									{% if all_suppliers is defined and all_suppliers is not empty %}
+										  {%for suppliers in all_suppliers %}
+												<tr>
+													  <td hidden>{{suppliers.main_supplier_id}}</td>
+													  <td><img src="{{render(controller('AdminBundle:Base:getmedia', {'media_library_master_id': suppliers.supplier_logo,'live_path':live_path}))}}" style="height:30;width:30px;"></td>
+													  {% if suppliers.lang_arr_supplier_wise is defined and suppliers.lang_arr_supplier_wise is not empty %}
+															{%for lang_arr_supplier_wise in suppliers.lang_arr_supplier_wise %}
+																<td>{{lang_arr_supplier_wise.supplier_name}}</td>	
+															{%endfor%}
+													  {% endif %}	
+													  <!--<td>{% autoescape false %}{{suppliers.supplier_description}}{% endautoescape %}</td>
+													  <td>{{suppliers.phone_no}}</td>
+													  <td>{{suppliers.mobile_no}}</td>-->
+													  <td>
+															<input type="checkbox" data-on="Active" data-off="Inactive" data-toggle="toggle" data-onstyle="success" {% if suppliers.status == 'active' %}checked="checked"{% endif %} data-size="mini" onchange="changestatus({{suppliers.main_supplier_id}},$(this).is(':checked'));"/>
+													  </td>
+													  <td>
+															<a onclick="return confirm('Are you sure you want to Edit Supplier Detail?')" class="btn btn-warning btn-xs" href="{{path('admin_suppliers_addsupplier',{'domain':app.session.get('domain')})}}/{{suppliers.main_supplier_id}}" data-toggle="tooltip" data-original-title="Edit"><span class="fa fa-edit"></span></a>
+															<a onclick="return confirm('Are you sure you want to delete Supplier?')" class="btn btn-danger btn-xs" href="{{path('admin_suppliers_deletesupplier',{'domain':app.session.get('domain')})}}/{{suppliers.main_supplier_id}}" data-toggle="tooltip" data-original-title="Delete"><span class="fa fa-remove"></span></a>
+													  </td>
+												</tr>
+										  {% endfor %}
+									{% endif %}
+								</tbody>
+								<tfoot>
+									<th hidden>Mian Supplier ID</th>
+									<th>Image</th>
+									{% if language is defined and language is not empty %}
+											{%for language in language %}
+												<th>Name : {{language.display_title}}</th>	
+										    {%endfor%}
+									{% endif %}		
+                                   <!-- <th>Description</th>
+									<th>Phone Number</th>
+									<th>Mobile Number</th>-->
+									<th>Status</th>
+                                    <th>Action</th>
+								</tfoot>
+							</table>
+						</div>
+
+                    </div>
+                  </div>
+            </div>
+		</div>
+	  </section>
+{% endblock %}
+
+{% block js %}
+	  
+<script src="{{asset('bundles/design/')}}js/bootstrap-toggle.min.js" type="text/javascript"></script>   
+<script>
+	function changestatus(id,status) {
+		$.post("{{path('admin_suppliers_supplierstatus',{'domain':app.session.get('domain')})}}",{id:id,status:status});
+	}
+$(document).ready(function() {
+    $('#example1').DataTable();
+} );
+</script>
+{% endblock %}

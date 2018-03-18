@@ -1,0 +1,391 @@
+{# MP - 25.12.15 #}
+{% extends "AdminBundle::Layout/adminlayout.html.twig" %}
+{% block title %}User{% endblock %}
+{% block css %}
+	
+{% endblock %}
+{% block content %}
+	<section class="content-header">
+		<h1>User
+		  <small></small>
+		</h1>
+		<ol class="breadcrumb">
+		  <li><a href="{{path('admin_dashboard_index',{'domain':app.session.get('domain')})}}"><i class="fa fa-dashboard"></i> Dashboard</a></li>
+		  <li><a href="{{path('admin_user_index',{'domain':app.session.get('domain')})}}"></i>User list</a></li>
+		  <li class="active">Add- Update User</li>
+		</ol>
+	  </section>
+	<section class="content">
+		<div class="row">
+			<div class="col-xs-12">
+					{% for flashMessage in app.session.flashbag.get('success_msg') %}
+							<div role="alert" class="alert alert-success alert-dismissible fade in">
+							  <button aria-label="Close" data-dismiss="alert" class="close" type="button"><span aria-hidden="true">×</span></button>
+							  <strong>Alert!</strong>&nbsp; {{ flashMessage }}
+						</div>
+					{% endfor %}
+					{% for flashMessage in app.session.flashbag.get('error_msg') %}
+							<div role="alert" class="alert alert-danger alert-dismissible fade in">
+							  <button aria-label="Close" data-dismiss="alert" class="close" type="button"><span aria-hidden="true">×</span></button>
+							  <strong>Alert!</strong>&nbsp; {{ flashMessage }}
+							</div>
+					{% endfor %}
+					<div class="box box-solid">
+						<div class="box-header">
+							<h3 class="box-title">Add - Update User</h3>
+							 <a href="{{path('admin_user_index',{'domain':app.session.get('domain')})}}" class="btn btn-primary btn-flat pull-right"><i class="glyphicon glyphicon-chevron-left"></i><b>&nbsp;&nbsp;Back</b></a>
+						</div>
+						<div class="box-body">
+							<form class="form-horizontal style-form" enctype="multipart/form-data" method="post" id="timeslots" {% if user is defined and user is not empty %}action="{{path('admin_user_updateuser',{'domain':app.session.get('domain'),"user_master_id":user.user_master_id})}}{%else%}action="{{path('admin_user_saveuser',{'domain':app.session.get('domain')})}}{%endif%}">
+								<div class="row">
+									<div class="col-md-12">
+										<label class="col-md-2 control-label">User Name</label> 
+										<div class="col-md-5">
+											<input type="text" class="form-control" name="first_name" placeholder="Enter First Name" value="{% if user is defined and user is not empty %}{{user.user_firstname}}{%endif%}" />
+										</div>
+										<div class="col-md-5">
+											<input type="text" class="form-control" name="last_name" placeholder="Enter Last Name" value="{% if user is defined and user is not empty %}{{user.user_lastname}}{%endif%}" />
+										</div> 
+									</div>
+								</div>
+								<br>
+								{#<div class="row">
+									<div class="col-md-12">
+										  <label class="col-md-2 control-label">Use Role</label> 
+										  <div class="col-md-10">
+												<select name="role_id" id="role_id" class="form-control select" required>
+													<option value="">Select User Role</option>
+													{% if role is defined and role is not empty %}
+														{% for role in role %}
+															<option value="{{role.role_master_id}}" {% if user is defined and user is not empty %}{% if (user.user_role_id) == (role.role_master_id) %}selected="selected"{%endif%}{%endif%}>{{role.role_name}}</option>
+														{%endfor%}
+													{%endif%}
+												</select>
+										  </div> 
+									</div>													 
+								</div>
+								<br/>#}
+								{#<div class="row">
+									  <div class="col-md-12">
+											<label class="col-md-2 control-label">User BIO</label> 
+											<div class="col-md-10">
+												<textarea class="form-control" name="user_bio" placeholder="Enter User Bio" >{% if user is defined and user is not empty %}{{user.user_bio}}{%endif%}</textarea>
+											</div> 
+									  </div>													 
+								</div>#}
+								<br/>
+								<div class="row">
+									 <div class="col-md-12">
+									<div class="col-md-6">
+										<label class="col-md-4 control-label">Username</label> 
+										<div class="col-md-8">
+											<input type="text" class="form-control" name="username" placeholder="Enter UserName" value="{% if user is defined and user is not empty %}{{user.username}}{%endif%}" />
+										</div>
+									</div>
+								
+									<div class="col-md-6">
+										<label class="col-md-3 control-label">Password</label> 
+										<div class="col-md-8">
+											<input type="password" class="form-control" name="password" placeholder="Enter Password" value="" {% if user is defined and user is not empty %}{%else%}{%endif%}/>
+										</div> 
+									</div>
+									 </div>
+									 </div>
+								<br/>
+								
+								<div class="row">
+									<div class="col-md-12">
+									<div class="col-md-6">
+										  <label class="col-md-4 control-label">User Image</label> 
+										  <div class="col-md-8">
+												<input type="file" name="user_logo" {% if user is defined and user is not empty %}{%else%}{%endif%}/>
+										  </div> 
+									</div>
+									
+								{#	<div class="col-md-6">
+										  <label class="col-md-3 control-label">User Cover Image</label> 
+										  <div class="col-md-8">
+												<input type="file" name="user_cover_image" {% if user is defined and user is not empty %}{%else%}{%endif%}/>
+										  </div> 
+									</div>	#}
+								</div>
+								</div>
+								<br/>
+									<div class="row">
+									<div class="col-md-12">
+									<div class="col-md-6">
+										<label class="col-md-4 control-label">Email Id</label>
+										<div class="col-md-8">
+											<input type="text" class="form-control" name="email_id" placeholder="Enter Email Id" value="{% if user is defined and user is not empty %}{{user.user_emailid}}{%endif%}"/>
+										</div>
+									</div>
+									
+									{#<div class="col-md-6">
+										  <label class="col-md-3 control-label">User Tag line</label> 
+										  <div class="col-md-8">
+												<input type="text" class="form-control" name="tag_line" placeholder="Enter Tag Line" value="{% if user is defined and user is not empty %}{{user.user_emailid}}{%endif%}" />
+										  </div> 
+									</div>	#}
+								</div>
+								</div>
+								<br/>
+									
+									
+								{% if user is defined and user is not empty %}
+									<div class="row">
+									  <div class="col-sm-2"></div>
+									  <div class="col-sm-2">
+										{% if user.user_image is defined and user.user_image is not empty  and user.user_image != '0'%}
+										{% set logo = render(controller('AdminBundle:Base:getmedia', {'media_library_master_id': user.user_image,'live_path':live_path})) %}
+										{% else %}
+											{% set logo = "" %}
+										{% endif %}
+										
+										{%if user.user_image is not empty%}
+											<img src="{{logo}}" style="height:100px;">
+										  <input type="hidden" value="{{user.user_image}}" name="image_hidden">
+										{%endif%}
+									  </div>
+									</div>
+									<br/>
+								{% endif %}
+								<div class="row">
+									<div class="col-md-12">
+									{#<div class="col-md-6">
+										  <label class="col-md-4 control-label">Use Role</label> 
+										  <div class="col-md-8">
+												<select name="role_id" id="role_id" class="form-control select" required>
+													<option value="">Select User Role</option>
+													{% if role is defined and role is not empty %}
+														{% for role in role %}
+															<option value="{{role.role_master_id}}" {% if user is defined and user is not empty %}{% if (user.user_role_id) == (role.role_master_id) %}selected="selected"{%endif%}{%endif%}>{{role.role_name}}</option>
+														{%endfor%}
+													{%endif%}
+												</select>
+										  </div> 
+									</div>	
+									<div class="col-md-6">
+										  <label class="col-md-4 control-label">Use Current Language</label> 
+										  <div class="col-md-8">
+												<select name="lang_id" id="lang_id" class="form-control select" required>
+													<option value="">Select Language</option>
+													{% if language is defined and language is not empty %}
+														{% for language in language %}
+															<option value="{{language.language_master_id}}" {% if user is defined and user is not empty %}{% if (user.current_lang_id) == (language.language_master_id) %}selected="selected"{%endif%}{%endif%}>{{language.language_name}}</option>
+														{%endfor%}
+													{%endif%}
+												</select>
+										  </div> 
+									</div>
+								  </div>
+								</div>
+								<br/>#}
+								{#<div class="row">
+									<div class="col-md-12">
+									<div class="col-md-6 hide">
+										<label class="col-md-4 control-label">Domain</label>
+										<div class="col-md-8">
+											<select name="domain_id" class="form-control select" onchange="getCompany(this.value)" required>
+												<option value="">Select Domain Name</option>
+												{% if domain is defined and domain is not empty %}
+												  {% for domain in domain %}
+													<option value="{{domain.domain_code}}" {% if user is defined and user is not empty %}{% if (user.domain_id) == (domain.domain_code) %}selected="selected"{%endif%}{%endif%}>{{domain.domain_name}}</option>
+												  {%endfor%}
+												{% endif %}
+											</select>
+										</div>
+									</div>
+									  <div class="col-md-6">
+										<label class="col-md-4 control-label">Company </label>
+										<div class="col-md-8">
+											<select name="company_id" id="company_id" class="form-control select" onchange="getBranch(this.value)" >
+												<option value="">Select Company</option>
+												{% if company_master is defined and company_master is not empty %}
+													{% for company in company_master %}
+														<option value="{{company.main_company_id}}" {% if user is defined and user is not empty and user.company_id == company.main_company_id %}selected="selected"{% endif %}>{{company.company_name}}</option>
+													{% endfor %}
+												{% endif %}
+											</select>
+										</div>
+									</div>
+									</div>
+								</div>#}
+								</br>
+								<div class="row">
+									<div class="col-md-12">
+									
+									{#<div class="col-md-6">
+										<label class="col-md-4 control-label">Branch </label>
+										<div class="col-md-8">
+											<select name="branch_id" id="branch_id" class="form-control select" >
+												<option value="">Select Branch</option>
+												{% if branch_master is defined and branch_master is not empty %}
+													{% for branch in branch_master %}
+														<option value="{{branch.main_branch_id}}" {% if user is defined and user is not empty and user.branch_id == branch.main_branch_id %}selected="selected"{% endif %}>{{branch.branch_name}}</option>
+													{% endfor %}
+												{% endif %}
+											</select>
+										</div>
+									</div>
+									 <div class="col-md-6">
+										<label class="col-md-3 control-label">Country </label>
+										<div class="col-md-8">
+											<select name="country_id" id="country_id" class="form-control select" onchange="getState(this.value);">
+												<option value="0">Select Country</option>
+												{% if country_master is defined and country_master is not empty %}
+													{% for country in country_master %}
+															<option value="{{country.main_country_id}}" {% if user is defined and user is not empty and user.country_id == country.main_country_id %}selected="selected"{% endif %}>{{country.country_title}}</option>
+													{% endfor %}
+												{% endif %}
+											</select>
+										</div>
+									</div>
+									</div>
+								 </div>
+								<br/>
+									<div class="row">
+									<div class="col-md-12">
+									
+									 <div class="col-md-6">
+										<label class="col-md-4 control-label">State </label>
+										<div class="col-md-8">
+											<select name="state_id" id="state_id" class="form-control select" onchange="getCity(this.value);">
+												<option value="0">Select State</option>
+												{% if state_master is defined and state_master is not empty %}
+													{% for state in state_master %}
+															<option value="{{state.main_state_id}}" {% if user is defined and user is not empty and user.state_id == state.main_state_id %}selected="selected"{% endif %}>{{state.state_name}}</option>
+												
+													{% endfor %}
+												{% endif %}
+											</select>
+										</div>
+									</div>
+									 <div class="col-md-6">
+										<label class="col-md-3 control-label">City 1</label>
+										<div class="col-md-8">
+											<select name="city_id" id="city_id" class="form-control select">
+												<option value="0">Select City</option>
+												{% if city_list is defined and city_list is not empty %}
+													{% for city in city_list %}
+															<option value="{{city.main_city_id}}" {% if user is defined and user is not empty and user.city_id == city.main_city_id %}selected="selected"{% endif %}>{{city.city_name}}</option>
+														
+													{% endfor %}
+												{% endif %}
+											</select>
+										</div>
+									</div>
+									</div>
+								 </div>
+								<br/>
+								<div class="row">
+									<div class="col-md-12">
+										{#<div class="col-md-6">
+											<label class="col-sm-4 control-label">Gender</label>
+									<div class="col-sm-8">
+										<div class="radio-inline">
+											<label>
+												<input type="radio" name="user_gender" value="female"  {% if user is defined and user is not empty %}{% if(user.user_gender) == "female" %}checked="checked"{%endif%}{%endif%} />Female
+											</label>
+										</div>
+										<div class="radio-inline">
+											<label>
+												<input type="radio" name="user_gender" value="male"  {% if user is defined and user is not empty %}{% if(user.user_gender) == "male" %}checked="checked"{%endif%}{%endif%} />Male
+											</label>
+										</div>
+									</div>
+										</div>#}
+										<div class="col-md-6">
+											<label class="col-sm-3 control-label">Status</label>
+									<div class="col-sm-8">
+										<div class="radio-inline">
+											<label>
+												<input type="radio" name="status" value="active" required {% if user is defined and user is not empty %}{% if(user.user_status) == "active" %}checked="checked"{%endif%}{%endif%} />Active
+											</label>
+										</div>
+										<div class="radio-inline">
+											<label>
+												<input type="radio" name="status" value="inactive" required {% if user is defined and user is not empty %}{% if(user.user_status) == "inactive" %}checked="checked"{%endif%}{%endif%}/>Inactive
+											</label>
+										</div>
+									</div>
+										</div>
+									</div>
+									
+								</div>
+								<br/>
+								<div class="row">
+									
+								</div>
+								<br/>
+								<div class="row">
+									<div class="form-group">
+										<div class="col-md-12 pull-right">
+												<div class="col-md-1"></div>
+												<button type="submit" class="btn btn-primary" title="save" name="save" value="">{% if user is defined and user is not empty %}Update{%else%}Save{%endif%}</button>
+												<a href="{{path('admin_user_index',{'domain':app.session.get('domain')})}}"  class="btn btn-default">Cancel</a>
+										</div>
+									</div>
+								</div>
+							</form>
+						</div>
+					</div>
+			</div>
+		</div>
+	</section>
+{% endblock %}
+
+{% block js %}
+<script type="text/javascript">
+
+
+
+$(document).ready(function() {
+
+	
+});
+
+function getState(val) {
+	//call ajax
+		var lang_id = "";
+	if ($('#lang_id').val() != "" )
+	{
+		lang_id = $('#lang_id').val();
+    }
+		$.ajax({
+			type : "POST",
+			url : "{{path('admin_city_getstateajax',{"domain":app.session.get('domain')})}}",
+			data : "country_id="+val+"&lang_id="+lang_id,
+			success : function(resp){
+				if (resp) {
+					$("#state_"+lang_id).html(resp) ;
+				}else{
+					// alert("Price not available.") ;
+				}
+			}
+		}) ;
+}
+
+function getCity(val) {
+	//call ajax
+	var lang_id = "";
+	if ($('#lang_id').val() != "" )
+	{
+		lang_id = $('#lang_id').val();
+    }
+		$.ajax({
+			type : "POST",
+			url : "{{path('admin_area_getcityajax',{"domain":app.session.get('domain')})}}",
+			data : "state_id="+val+"&lang_id="+lang_id,
+			success : function(resp){
+				if (resp) {
+					$("#city_"+lang_id).html(resp) ;
+				}else{
+					// alert("Price not available.") ;
+				}
+			}
+		}) ;
+}
+
+
+</script>
+{% endblock %}

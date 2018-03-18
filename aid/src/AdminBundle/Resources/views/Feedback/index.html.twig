@@ -1,0 +1,96 @@
+{% extends "AdminBundle::Layout/adminlayout.html.twig" %}
+{% block title %} Feedback List {% endblock %}
+{% block css %}
+	
+{% endblock %}
+{% block content %}
+	  
+	<section class="content-header" style="padding: 26px 16px 0px 0px;">
+		  <small></small>
+
+		<ol class="breadcrumb">
+		  <li><a href="{{path('admin_dashboard_index',{'domain':app.session.get('domain')})}}"><i class="fa fa-dashboard"></i>Dashboard</a></li>
+		  <li class="active">Feedback List</li>
+		</ol>
+	  </section>
+	  <section class="content">
+		<div class ="row">
+			<div class="col-md-12">
+			{% for flashMessage in app.session.flashbag.get('success_msg') %}
+			  <div class="alert alert-success alert-dismissable">
+				  <button aria-hidden="true" data-dismiss="alert" class="close" type="button">×</button>
+				  <h4><i class="icon fa fa-check"></i> Alert!</h4>{{ flashMessage }}
+			  </div>
+			  {% endfor %}
+			  {% for flashMessage in app.session.flashbag.get('error_msg') %}
+			  <div class="alert alert-danger alert-dismissable">
+				  <button aria-hidden="true" data-dismiss="alert" class="close" type="button">×</button>
+				  <h4><i class="icon fa fa-check"></i> Alert!</h4>{{ flashMessage }}
+			  </div>
+			{% endfor %}
+			</div>  
+		</div>	
+		<div class="row">
+			<div class="col-xs-12">
+                <div class="box box-solid">
+                    <div class="box-header with-border">
+                      <h3 class="box-title">Feedback List</h3>
+                    </div>
+                    <div class="box-body">
+                        <div class="container-fluid table-responsive">
+							<table id="example1" class="table table-bordered table-striped text-center">
+								<thead>
+									<th hidden>Create Date</th>
+									<th>Order Unique No</th>
+									<th>Customer Service Name</th>
+                                    <th>Message</th>
+                                    <th>Ratings</th>
+									<th>User Name</th>
+									<th>Domain Code</th>
+                                    <th>Action</th>
+								</thead>
+								<tbody>
+									{% if feedbacklist is defined and feedbacklist is not empty %}
+										  {%for feedbacklist in feedbacklist %}
+											 <tr>
+												<td hidden>{{feedbacklist.create_date}}</td>
+												<td>{{feedbacklist.order_unique_no}}</td>
+												<td>{{feedbacklist.customer_service_name}}</td>
+												<td>{{feedbacklist.message}}</td>
+												<td>{{feedbacklist.ratings}}</td>
+												<td>{% if feedbacklist.user_name == 'User Not Found ' %}{{feedbacklist.user_name}}{% else %}{{ render(controller('AdminBundle:Dashboard:keyDecryption',{'domain':app.session.get('domain'),'string':feedbacklist.user_name})) }}{% endif %}</td>
+												<td>{{feedbacklist.domain_id}}</td>
+												<td>
+													  <a onclick="return confirm('Are you sure you want to delete Feedback?')" class="btn btn-danger btn-xs" href="{{path('admin_feedback_deletefeedback',{'domain':app.session.get('domain')})}}/{{feedbacklist.feedback_master_id}}" data-toggle="tooltip" data-original-title="Delete"><span class="fa fa-remove"></span></a>
+												</td>
+											 </tr>	
+										  {% endfor %}
+									{% endif %}
+								</tbody>
+								<tfoot>
+									<th hidden>Create Date</th>
+									<th>Order Unique No</th>
+									<th>Customer Service Name</th>
+                                    <th>Message</th>
+                                    <th>Ratings</th>
+									<th>User Name</th>
+									<th>Domain Code</th>
+                                    <th>Action</th>
+								</tfoot>
+							</table>
+						</div>
+
+                    </div>
+                  </div>
+            </div>
+		</div>
+	  </section>
+{% endblock %}
+
+{% block js %}
+<script>
+$(document).ready(function() {
+    $('#example1').DataTable();
+} );
+</script>
+{% endblock %}

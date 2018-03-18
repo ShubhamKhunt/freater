@@ -1,0 +1,110 @@
+{% extends "AdminBundle::Layout/adminlayout.html.twig" %}
+{% block title %} Organization(domain) List {% endblock %}
+{% block css %}
+	
+{% endblock %}
+{% block content %}
+	<section class="content-header" style="padding: 26px 16px 0px 0px;">
+		
+       
+		  <small></small>
+
+		<ol class="breadcrumb">
+		  <li><a href="{{path('admin_dashboard_index',{'domain':app.session.get('domain')})}}"><i class="fa fa-dashboard"></i>Dashboard</a></li>
+		  <li class="active">Organization List</li>
+		</ol>
+	  </section>
+	  <section class="content">
+	   <div class="row">
+		<div class="col-md-12">
+		{% for flashMessage in app.session.flashbag.get('success_msg') %}
+				<div role="alert" class="alert alert-success alert-dismissible fade in">
+				  <button aria-label="Close" data-dismiss="alert" class="close" type="button"><span aria-hidden="true">×</span></button>
+				  <strong>Alert!</strong>&nbsp; {{ flashMessage }}
+			</div>
+		{% endfor %}
+		{% for flashMessage in app.session.flashbag.get('error_msg') %}
+				<div role="alert" class="alert alert-danger alert-dismissible fade in">
+				  <button aria-label="Close" data-dismiss="alert" class="close" type="button"><span aria-hidden="true">×</span></button>
+				  <strong>Alert!</strong>&nbsp; {{ flashMessage }}
+				</div>
+		{% endfor %}
+		</div>
+		</div>
+	   
+		<div class="row">
+			<div class="col-xs-12">
+                <div class="box box-solid">
+                    <div class="box-header with-border">
+                      <h3 class="box-title">Organization(Domain) List</h3>
+                      <div class="pull-right">
+                        <a href="" class="btn btn-primary btn-flat"><i class="fa fa-plus"></i>&nbsp;&nbsp;ADD</a>
+                      </div>
+                    </div>
+                    <div class="box-body">
+                        <div class="container-fluid table-responsive">
+							<table id="example1" class="table table-bordered table-striped text-center">
+								<thead>
+									<th>No.</th>
+									<th>Name</th>
+									<th>Company</th>
+									<th>Branch</th>
+                                    <th>Users</th>
+									<th>Category</th>
+									<th>Course</th>
+                                    <th>Certificate</th>
+                                    <th>Gamification</th>
+                                    <th>Settings</th>
+								</thead>
+								<tbody>
+								{% if domain_list is defined and domain_list is not empty %}
+									  {% for domain_list in domain_list  %}
+											<tr>
+												<td>{{loop.index}}</td>
+												<td>{{domain_list.domain_name}}</td>
+												<td><a target="_blank" href="{{path('admin_company_index',{'domain_id':domain_list.domain_id,'domain':app.session.get('domain')})}}" data-toggle="tooltip" data-original-title="View Companies"><input type="button" name="company" value="Company" class="btn btn-xs bg-purple" /></a></td>
+												<td><a target="_blank" href="{{path('admin_branch_index',{'domain_id':domain_list.domain_id,'domain':app.session.get('domain')})}}" data-toggle="tooltip" data-original-title="View Branches"><input type="button" name="branch" value="Branch" class="btn btn-xs bg-orange" /></a></td>
+												<td><a target="_blank" href="{{path('admin_user_index',{'domain_id':domain_list.domain_id,'domain':app.session.get('domain')})}}"  data-toggle="tooltip" data-original-title="View Users"><input type="button" name="user" value="User" class="btn btn-xs bg-maroon" /></a></td>
+												<td><a target="_blank" href="{{path('admin_category_index',{'domain_id':domain_list.domain_id,'domain':app.session.get('domain')})}}" data-toggle="tooltip" data-original-title="View Categories"><input type="button" name="category" value="Category" class="btn btn-xs bg-olive" /></a></td>
+												<td></td>
+												<td></td>
+												<td></a></td>
+												<td><a  target="_blank" href="{{path('admin_setting_index',{'domain_id':domain_list.domain_id,'domain':app.session.get('domain')})}}" data-toggle="tooltip" data-original-title="View General Settings"><input  type="button" name="certificate" value="Settings" class="btn btn-xs btn-danger" /></a></td>
+											</tr>
+									  {% endfor %}
+							    {% endif %}
+								</tbody>
+								<tfoot>
+									<th>No.</th>
+									<th>Name</th>
+									<th>Company</th>
+									<th>Branch</th>
+                                    <th>Users</th>
+									<th>Category</th>
+									<th>Course</th>
+                                    <th>Certificate</th>
+                                    <th>Gamification</th>
+                                    <th>Settings</th>
+								</tfoot>
+							</table>
+						</div>
+
+                    </div>
+                  </div>
+            </div>
+		</div>
+	  </section>
+{% endblock %}
+
+{% block js %}
+<script>
+$(document).ready(function() {
+    $('#example1').DataTable( {
+        dom: 'Bfrtip',
+        buttons: [
+            'copy', 'csv', 'excel', 'pdf', 'print'
+        ]
+    } );
+} );
+</script>
+{% endblock %}

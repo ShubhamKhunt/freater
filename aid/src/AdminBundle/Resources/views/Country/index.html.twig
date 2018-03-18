@@ -1,0 +1,86 @@
+{% extends "AdminBundle::Layout/adminlayout.html.twig" %}
+{% block title %} Country List {% endblock %}
+{% block css %}
+	<link href="{{asset('bundles/design/')}}css/bootstrap-toggle.min.css" rel="stylesheet" type="text/css" />
+{% endblock %}
+{% block content %}
+	<section class="content-header">
+		<h1>
+            Country List
+		  <small></small>
+		</h1>
+		<ol class="breadcrumb">
+		  <li><a href="{{path('admin_dashboard_index',{'domain':app.session.get('domain')})}}"><i class="fa fa-dashboard"></i>Dashboard</a></li>
+		  <li class="active">Country List</li>
+		</ol>
+	  </section>
+	  <section class="content">
+		<div class="row">
+			<div class="col-xs-12">
+                <div class="box box-solid">
+                    <div class="box-header with-border">
+                      {#<h3 class="box-title">Progress Bars Different Sizes</h3>#}
+                      <div class="pull-right">
+                        <a href="{{path('admin_country_addcountry',{'domain':app.session.get('domain')})}}" class="btn btn-primary btn-flat"><i class="fa fa-plus"></i>&nbsp;&nbsp;ADD</a>
+                      </div>
+                    </div>
+                    <div class="box-body">
+                        <div class="container-fluid table-responsive">
+							<table id="example1" class="table table-bordered table-striped text-center">
+								<thead>
+									<th>No.</th>
+									<th>Country name</th>
+                                    <th>Country Code</th>
+									<th>Status</th>
+                                    <th>Action</th>
+								</thead>
+								<tbody>
+								{% if country is defined and country is not empty %}
+									
+									{% for c in country %}
+										<tr>
+											<td>{{loop.index}}</td>
+											<td>{{c.country_title}}</td>
+											<td>{{c.country_code}}</td>
+											<td><input type="checkbox" data-on="Active" data-off="Inactive" data-toggle="toggle" data-onstyle="success" {% if c.status == 'active' %}checked="checked"{% endif %} data-size="mini" onchange="changestatus({{c.main_country_id}},$(this).is(':checked'));"/></td>
+											<td>
+													 <a class="btn btn-default btn-xs btn-flat" data-toggle="tooltip" title="" onclick="return confirm('Are you sure you want to Edit?');" href="{{path('admin_country_addcountry',{'main_country_id':c.main_country_id,'domain':app.session.get('domain')})}}" data-original-title="Edit"><span class="fa fa-edit"></span></a>
+													 <a class="btn btn-danger btn-xs btn-flat" data-toggle="tooltip" title="" onclick="return confirm('Are you sure you want to Delete?');" href="#" data-original-title="Delete"><span class="fa fa-remove"></span></a>
+												</td>
+										</tr>
+									{% endfor %}
+								{% endif %}
+								</tbody>
+								<tfoot>
+									<th>No.</th>
+									<th>Country name</th>
+                                    <th>Country Code</th>
+									<th>Status</th>
+                                    <th>Action</th>
+								</tfoot>
+							</table>
+						</div>
+
+                    </div>
+                  </div>
+            </div>
+		</div>
+	  </section>
+{% endblock %}
+
+{% block js %}
+<script src="{{asset('bundles/design/')}}js/bootstrap-toggle.min.js" type="text/javascript"></script>   
+<script>
+	function changestatus(id,status) {
+		$.post("{{path('admin_country_countrystatus',{'domain':app.session.get('domain')})}}",{id:id,status:status});
+	}
+$(document).ready(function() {
+    $('#example1').DataTable( {
+        dom: 'Bfrtip',
+        buttons: [
+            'copy', 'csv', 'excel', 'pdf', 'print'
+        ]
+    } );
+} );
+</script>
+{% endblock %}

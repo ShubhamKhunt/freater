@@ -1,0 +1,143 @@
+{% extends "AdminBundle::Layout/adminlayout.html.twig" %}
+{% block title %} Contact US List {% endblock %}
+{% block css %}
+	
+{% endblock %}
+{% block content %}
+	  
+	<section class="content-header">
+		 <h1>
+           
+		  <small></small>
+		</h1>
+		<ol class="breadcrumb">
+		  <li><a href="{{path('admin_dashboard_index')}}"><i class="fa fa-dashboard"></i>Dashboard</a></li>
+		  <li class="active">Contact US List</li>
+		</ol>
+	  </section>
+	  <section class="content">
+		<div class ="row">
+			<div class="col-md-12">
+			{% for flashMessage in app.session.flashbag.get('success_msg') %}
+			  <div class="alert alert-success alert-dismissable">
+				  <button aria-hidden="true" data-dismiss="alert" class="close" type="button">×</button>
+				  <h4><i class="icon fa fa-check"></i> Alert!</h4>{{ flashMessage }}
+			  </div>
+			  {% endfor %}
+			  {% for flashMessage in app.session.flashbag.get('error_msg') %}
+			  <div class="alert alert-danger alert-dismissable">
+				  <button aria-hidden="true" data-dismiss="alert" class="close" type="button">×</button>
+				  <h4><i class="icon fa fa-check"></i> Alert!</h4>{{ flashMessage }}
+			  </div>
+			{% endfor %}
+			</div>  
+		</div>	
+		<div class="row">
+			<div class="col-xs-12">
+                <div class="box box-solid">
+                    <div class="box-header with-border">
+                     <h3 class="box-title">Contact Us List</h3>
+                    </div>
+                    <div class="box-body">
+                        <div class="container-fluid table-responsive">
+							<table id="example1" class="table table-bordered table-striped text-center">
+								<thead>
+									<th hidden>Create Date</th>
+									<th>Order Unique No</th>
+									
+									<th>User Name</th>
+                                    <th>Message</th>
+                                    
+									<th>Create Date</th>
+                                    <th>Action</th>
+								</thead>
+								<tbody>
+									{% if reportlist is defined and reportlist is not empty %}
+										  {%for reportlist in reportlist %}
+											 <tr>
+												<td hidden>{{reportlist.create_date}}</td>
+												<td>{{reportlist.order_unique_no}}</td>
+												
+												<td>{{reportlist.user_name}}</td>
+												<td>{{reportlist.message}}</td>
+												
+												<td>{{reportlist.create_date}}</td>
+												<td>
+													  <a onclick="return confirm('Are you sure you want to delete Contact Us?')" class="btn btn-danger btn-xs" href="{{path('admin_contactus_deletecontactus')}}/{{reportlist.report_problem_id}}" data-toggle="tooltip" data-original-title="Delete"><span class="fa fa-remove"></span></a>
+												</td>
+											 </tr>	
+										  {% endfor %}
+									{% endif %}
+								</tbody>
+								<tfoot>
+									<th hidden>Create Date</th>
+									<th>Order Unique No</th>
+									
+									<th>User Name</th>
+                                    <th>Message</th>
+                                    
+									<th>Create Date</th>
+                                    <th>Action</th>
+								</tfoot>
+							</table>
+						</div>
+
+                    </div>
+                  </div>
+            </div>
+		</div>
+	  </section>
+{% endblock %}
+
+{% block js %}
+<script>
+$(document).ready(function() {
+    var table = $('#example1').DataTable( {
+        dom: 'Bfrtip',
+		
+        buttons: [
+            {
+                extend: 'copyHtml5',				
+                exportOptions: {
+                 columns: [1,2,3,4],
+                },
+								
+            },
+			{
+				extend: 'pdfHtml5',
+                orientation:'landscape',
+                customize: function (doc) {
+    				doc.content[1].table.widths = 
+        			Array(doc.content[1].table.body[0].length + 1).join('*').split('');
+  				},				
+				exportOptions: {
+				  columns: [1,2,3,4],
+			 }
+			},
+			{
+				 extend: 'excelHtml5',
+                exportOptions: {
+                 columns: [1,2,3,4],
+                },
+			},
+			{
+				 extend: 'csvHtml5',
+                exportOptions: {
+                 columns: [1,2,3,4],
+                },
+			},
+			{
+                extend: 'print',				
+                exportOptions: {
+                 columns: [1,2,3,4],
+                },
+								
+            },
+        ],
+        columnDefs: [
+  			{ targets:[5], orderable: false }
+		],
+    } );
+} );
+</script>
+{% endblock %}

@@ -1,0 +1,251 @@
+{% extends "AdminBundle::Layout/adminlayout.html.twig" %}
+{% block title %} Survey Questions {% endblock %}
+{% block css %}
+	
+{% endblock %}
+{% block content %}
+	<section class="content-header">
+		<h1>
+            General Setting
+		  <small></small>
+		</h1>
+		<ol class="breadcrumb">
+		  <li><a href="{{path('admin_dashboard_index',{'domain':app.session.get('domain')})}}"><i class="fa fa-dashboard"></i>Dashboard</a></li>
+		  <li class="active">General Setting</li>
+		</ol>
+	  </section>
+	  <section class="content">
+		{% for flashMessage in app.session.flashbag.get('success_msg') %}
+			<div role="alert" class="alert alert-success alert-dismissible fade in">
+				<button aria-label="Close" data-dismiss="alert" class="close" type="button"><span aria-hidden="true">×</span></button>
+				<strong>Alert!</strong>&nbsp; {{ flashMessage }}
+			</div>
+		{% endfor %}
+		{% for flashMessage in app.session.flashbag.get('error_msg') %}
+			<div role="alert" class="alert alert-danger alert-dismissible fade in">
+				<button aria-label="Close" data-dismiss="alert" class="close" type="button"><span aria-hidden="true">×</span></button>
+				<strong>Alert!</strong>&nbsp; {{ flashMessage }}
+			</div>
+		{% endfor %}
+		<form method="post" class="form-horizontal" action="#" enctype="multipart/form-data">
+			<div class="row form-group">
+				<div class="col-md-2">
+					<label><h4>Domain Name :</h4></label>
+				</div>
+				<div class="col-md-8">
+					<label><h4>{% if domain_text is defined and domain_text is not empty %}{{domain_text}}{% endif %}</h4></label>
+				</div>
+				<div class="col-md-2">
+					&nbsp;
+				</div>
+			</div>
+			<div class="row form-group">
+			<div class="col-md-3">
+				  <div class="box box-primary box-solid">
+					<div class="box-header with-border">
+					  <h3 class="box-title">Minimum order amount</h3>
+					</div>
+					<div class="box-body">
+						<div class="input-group">
+							<span class="input-group-addon"><i class="fa fa-inr"></i></span>
+							<input type="text" class="form-control" name="min_order_amount" id="min_order_amount" placeholder="minimum order amount" value="{{amount}}">
+							<span class="input-group-btn">
+								<button class="btn btn-primary btn-flat" type="button" id="update_amount_button" onclick="update_order_amount();" data-loading-text="<i class='fa fa-circle-o-notch fa-spin'></i> Loading...">Update</button>
+							</span>
+						</div>
+						<span id="amount_msg"></span>
+					</div>
+				  </div>
+				</div>
+		</div>
+		</form>
+	{%if survey_flag is defined and survey_flag is not empty %}
+		{%if survey_form_question_list is defined and survey_form_question_list is not empty %}
+		<form  method="post" class="form-horizontal" action="{{path('admin_setting_updatesurveyques',{'domain':app.session.get('domain')})}}" enctype="multipart/form-data">
+		<div class="row form-group">
+			<div class="col-md-12">
+				<div class="box box-primary">
+			{%for que in survey_form_question_list%}			
+				<div class="box-header with-border">
+					<h3 class="box-title">Survey Question {{loop.index}}</h3>
+				</div>
+				<div class="box-body">
+					<input type="hidden" name="question_id[]" value="{{que.survey_form_question_id}}" class="form-control" />
+					<input type="text" name="question[]" value="{{que.question_name}}" class="form-control" />
+				</div>
+			{%endfor%}
+			    <div class="box-footer">
+					<input type="submit" class="btn btn-primary btn-flat" value="Update" name="update_questions"/>
+				</div>
+				</div>
+			</div>
+		</div>
+		{%endif%}
+	{%endif%}
+		{#<div class="row" id="contentbox">
+			<div class="col-md-4">
+				<div class="box bg-olive box-solid">
+				  <div class="box-header with-border">
+					<h3 class="box-title">Default Date Format</h3>
+				  </div>
+				  <div class="box-body">
+					<div class="input-group">
+						<span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+						<select name="date_format" class="form-control">
+							<option>Select Date Format</option>
+							{% if date_format is defined and date_format is not empty %}
+								{% for d in date_format%}
+									<option value="{{d.date_format_id}}" {% if generalsetting is defined and generalsetting is not empty %}{% if generalsetting.date_format == d.date_format_id %}selected{% endif %}{% endif %}>{{d.date_format_expression}}</option>
+								{% endfor %}
+							{% endif %}
+						</select>
+					  </div>
+				  </div>
+				  <div class="box-footer bg-olive">
+					<button type="submit" name="save" class="btn btn-default pull-right" value="save_order_amount_limit">Save</button>
+				  </div>
+				</div>
+			  </div>
+			<div class="col-md-4">
+				<div class="box bg-navy box-solid">
+				  <div class="box-header with-border">
+					<h3 class="box-title">Time zone</h3>
+				  </div>
+				  <div class="box-body">
+					<div class="input-group">
+						<span class="input-group-addon"><i class="fa fa-clock-o"></i></span>
+						<select name="time_zone" class="form-control">
+							<option>Select Time Zone</option>
+							{% if timezone_master is defined and timezone_master is not empty %}
+								{% for t in timezone_master%}
+									<option value="{{t.timezone_master_id}}" {% if generalsetting is defined and generalsetting is not empty %}{% if generalsetting.default_time_zone_id == t.timezone_master_id %}selected{% endif %}{% endif %}>{{t.timezone_label}}</option>
+								{% endfor %}
+							{% endif %}
+						</select>
+					  </div>
+				  </div>
+				  <div class="box-footer bg-navy">
+					<button type="submit" name="save" class="btn btn-default pull-right" value="save_session_timeout">Save</button>
+				  </div>
+				</div>
+			  </div>
+			<div class="col-md-4">
+				<div class="box bg-teal box-solid">
+				  <div class="box-header with-border">
+					<h3 class="box-title">Currency</h3>
+				  </div>
+				  <div class="box-body">
+					<div class="input-group">
+						<span class="input-group-addon"><i class="fa fa-money"></i></span>
+						<select name="currency" class="form-control">
+							<option>Select Cuurency</option>
+							{% if currency_master is defined and currency_master is not empty %}
+								{% for c in currency_master%}
+									<option value="{{c.currency_master_id}}" {% if generalsetting is defined and generalsetting is not empty %}{% if generalsetting.currency_id == c.currency_master_id %}selected{% endif %}{% endif %}>{{c.currency_name}}</option>
+								{% endfor %}
+							{% endif %}
+						</select>
+					  </div>
+				  </div>
+				  <div class="box-footer bg-teal">
+					<button type="submit" name="save" class="btn btn-default pull-right" value="save_session_timeout">Save</button>
+				  </div>
+				</div>
+			  </div>
+			<div class="col-md-4">
+				<div class="box box-solid bg-purple">
+				  <div class="box-header with-border">
+					<h3 class="box-title">Default Language</h3>
+				  </div>
+				  <div class="box-body">
+					<div class="input-group">
+						<span class="input-group-addon"><i class="fa fa-money"></i></span>
+						<select name="default_language_id" class="form-control">
+							<option>Select Language</option>
+							{% if language_master is defined and language_master is not empty %}
+								{% for l in language_master%}
+									<option value="{{l.language_master_id}}" {% if generalsetting is defined and generalsetting is not empty %}{% if generalsetting.default_language_id == l.language_master_id %}selected{% endif %}{% endif %}>{{l.language_name}}</option>
+								{% endfor %}
+							{% endif %}
+						</select>
+					  </div>
+				  </div>
+				  <div class="box-footer bg-purple">
+					<button type="submit" name="save" class="btn btn-default pull-right" value="save_session_timeout">Save</button>
+				  </div>
+				</div>
+			  </div>
+			<div class="col-md-4">
+				<div class="box bg-orange box-solid">
+				  <div class="box-header with-border">
+					<h3 class="box-title">Logo</h3>
+				  </div>
+				  <div class="box-body">
+					<div class="input-group">
+						<span class="input-group-addon"><i class="fa fa-image"></i></span>
+						<input type="file" name="logo" class="form-control"/>
+					  </div>
+				  </div>
+				  <div class="box-footer bg-orange">
+					<button type="submit" name="save" class="btn btn-default pull-right" value="save_session_timeout">Save</button>
+				  </div>
+				</div>
+			  </div>
+			<div class="col-md-4">
+				<div class="box bg-maroon box-solid">
+				  <div class="box-header with-border">
+					<h3 class="box-title">Favicon</h3>
+				  </div>
+				  <div class="box-body">
+					<div class="input-group">
+						<span class="input-group-addon"><i class="fa fa-file-image-o"></i></span>
+						<input type="file" name="favicon" class="form-control"/>
+					  </div>
+				  </div>
+				  <div class="box-footer bg-maroon">
+					<button type="submit" name="save" class="btn btn-default pull-right" value="save_session_timeout">Save</button>
+				  </div>
+				</div>
+			  </div>
+		</div>#}
+		
+		
+		
+	  </section>
+{% endblock %}
+
+{% block js %}
+<script>
+$(document).ready(function() {
+    $('#example1').DataTable( {
+        dom: 'Bfrtip',
+        buttons: [
+            'copy', 'csv', 'excel', 'pdf', 'print'
+        ]
+    });
+});
+function update_order_amount()
+{
+	$("#update_amount_button").button('loading');
+	$("#amount_msg").html("");
+	var min_order_amount = $("#min_order_amount").val();
+	$.ajax({
+		type : "POST",
+		url : "{{path('admin_setting_updatesetting',{'domain':app.session.get('domain')})}}",
+		data : {'key':'minimum_order_amount','setting_id':'1','setting_value':min_order_amount,'setting_field':'amount','flag':'update_setting'},
+		dataType: 'json',
+		success : function(resp){
+			if(resp.type == 'success')
+			{
+				$("#amount_msg").html("<span class='text-green'>"+resp.msg+"</span>");
+			}
+			else
+			{
+				$("#amount_msg").html("<span class='text-red'>"+resp.msg+"</span>");
+			}
+			$("#update_amount_button").button('reset');
+		}
+	});
+}
+</script>
+{% endblock %}

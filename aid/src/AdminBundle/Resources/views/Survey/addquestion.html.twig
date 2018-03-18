@@ -1,0 +1,67 @@
+{% extends "AdminBundle::Layout/adminlayout.html.twig" %}
+{% block title %} Add Survey Questions {% endblock %}
+{% block css %}
+	
+{% endblock %}
+{% block content %}
+
+	  <section class="content">
+		{% for flashMessage in app.session.flashbag.get('success_msg') %}
+			<div role="alert" class="alert alert-success alert-dismissible fade in">
+				<button aria-label="Close" data-dismiss="alert" class="close" type="button"><span aria-hidden="true">×</span></button>
+				<strong>Alert!</strong>&nbsp; {{ flashMessage }}
+			</div>
+		{% endfor %}
+		{% for flashMessage in app.session.flashbag.get('error_msg') %}
+			<div role="alert" class="alert alert-danger alert-dismissible fade in">
+				<button aria-label="Close" data-dismiss="alert" class="close" type="button"><span aria-hidden="true">×</span></button>
+				<strong>Alert!</strong>&nbsp; {{ flashMessage }}
+			</div>
+		{% endfor %}
+		
+	<form  method="post" class="form-horizontal" action="{%if question is defined and question is not empty%}{{path('admin_survey_updatequestion',{'domain':app.session.get('domain')})}} {%else%}{{path('admin_survey_savequestion',{'domain':app.session.get('domain')})}}{%endif%}" enctype="multipart/form-data">
+		<div class="row form-group">
+			<div class="col-md-12">
+				<div class="box box-primary">
+				
+				<div class="box-header with-border">
+					<h3 class="box-title">Survey Question</h3>
+				</div>
+				<div class="box-body">
+					
+					<textarea name="question" class="form-control" placeholder="Enter Survey Question">{%if question is defined and question is not empty%}{{question.question_name}}{%endif%}</textarea>
+					{%if question is defined and question is not empty%}
+					  <input type="hidden" name="question_id" value="{{question.survey_form_question_id}}" class="form-control" />
+					{%endif%}
+				</div>
+			
+			    <div class="box-footer">
+				  {%if question is defined and question is not empty%}
+					<input type="submit" class="btn btn-primary btn-flat" value="Update" name="update_questions"/>
+				  {%else%}
+					<input type="submit" class="btn btn-primary btn-flat" value="Save" name="save_questions"/>
+				  {%endif%}
+				</div>
+				</div>
+			</div>
+		</div>
+		
+		
+		
+		
+		
+	  </section>
+{% endblock %}
+
+{% block js %}
+<script>
+$(document).ready(function() {
+    $('#example1').DataTable( {
+        dom: 'Bfrtip',
+        buttons: [
+            'copy', 'csv', 'excel', 'pdf', 'print'
+        ]
+    });
+});
+</script>
+{% endblock %}

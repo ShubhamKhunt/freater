@@ -1,0 +1,362 @@
+{% extends "AdminBundle::Layout/adminlayout.html.twig" %}
+{% block title %} Add Coupon {% endblock %}
+{% block css %}
+<!--<link href="{{asset('bundles/design/')}}css/datepicker3.css" rel="stylesheet" type="text/css" />-->
+<link href="{{asset('bundles/design/')}}plugins/bootstrape3_datetime_picker/css/bootstrap-datetimepicker.min.css" rel="stylesheet" type="text/css" />
+<style>
+.input-group .input-group-clean{
+	background-color: #fff;
+    border: none;
+    border-radius: 0;
+}
+.input-group-clean{
+	color: #555;
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 1;
+    padding: 6px 12px;
+    text-align: center;
+	vertical-align: middle;
+    white-space: nowrap;
+    width: 1%;
+	display: table-cell;
+}
+.error {
+    color: #cc0000;
+    font-size: 13px;
+    font-weight: normal;
+}
+</style>
+{% endblock %}
+{% block content %}
+	<section class="content-header">
+		<h1>
+            Add Coupon
+		  <small></small>
+		</h1>
+		<ol class="breadcrumb">
+		  <li><a href="{{path('admin_dashboard_index',{'domain':app.session.get('domain')})}}"><i class="fa fa-dashboard"></i>Dashboard</a></li>
+          <li><a href="{{path('admin_coupon_index',{'domain':app.session.get('domain')})}}"></i>Coupon List</a></li> 
+		  <li class="active">Add Coupon</li>
+		</ol>
+	  </section>
+	  <section class="content">
+		<div class="row">
+			<div class="col-xs-12">
+                <div class="box box-solid">
+                    {% for flashMessage in app.session.flashbag.get('success_msg') %}
+							<div role="alert" class="alert alert-success alert-dismissible fade in">
+							  <button aria-label="Close" data-dismiss="alert" class="close" type="button"><span aria-hidden="true">×</span></button>
+							  <strong>Alert!</strong>&nbsp; {% autoescape false %}{{ flashMessage }}{% endautoescape %}
+						</div>
+					{% endfor %}
+					{% for flashMessage in app.session.flashbag.get('error_msg') %}
+							<div role="alert" class="alert alert-danger alert-dismissible fade in">
+							  <button aria-label="Close" data-dismiss="alert" class="close" type="button"><span aria-hidden="true">×</span></button>
+							  <strong>Alert!</strong>&nbsp; {% autoescape false %}{{ flashMessage }}{% endautoescape %}
+							</div>
+					{% endfor %}
+                    
+                                <form method="post" id="coupon_form" class="form-horizontal" action="{% if coupon_master is defined and coupon_master is not empty %}{{path('admin_coupon_savecoupon',{'domain':app.session.get('domain'),'coupon_master_id':coupon_master_id})}}{% else %}{{path('admin_coupon_savecoupon',{'domain':app.session.get('domain')})}}{% endif %}" enctype="multipart/form-data">
+                                  <div class="box-body">
+									
+                                    <div class="form-group">
+                                      <label class="col-sm-2 control-label">Coupon Name</label>
+                                      <div class="col-sm-6">
+										<input type="text" placeholder="Coupon Name" class="form-control input-sm" name="coupon_name" {% if coupon_master is defined %}
+									value="{{coupon_master.coupon_name}}"
+										{% endif %}
+										>
+                                      </div>
+                                    </div>
+									
+									
+									<div class="form-group">
+										<label class="col-sm-2 control-label">Coupon Code</label>
+										
+											<div class="col-sm-4">
+												<div class="input-group">
+												<input type="text" placeholder="Coupon Code" id="coupon_code" class="form-control input-sm" name="coupon_code"{% if coupon_master is defined %}value="{{coupon_master.coupon_code}}"{% endif %}>
+												<span class="input-group-btn">
+													<button class="btn btn-primary btn-flat btn-sm" type="button" onclick="generate_code();">Generate code</button>
+												</span>
+											</div>
+										</div>
+                                    </div>
+									
+									<div class="form-group">
+									<label class="col-md-2 control-label">Minimum order amount</label>
+									<div class="col-md-2">
+										<div class="input-group">
+											<input type="text" name="min_amount" class="form-control input-sm" placeholder="Minimum order amount" {% if coupon_master is defined %}value="{{coupon_master.min_order_amount}}"{% endif %}>
+											<div class="input-group-clean" data-toggle="tooltip" title="Leave blank or enter '0' if order amount not applicable">
+												<i class="fa fa-info-circle" ></i>
+											</div>
+										</div>
+									</div>
+									
+								</div>
+
+									
+									<div class="form-group">
+                                              <label class="col-md-2 control-label"> Discount Type</label>&nbsp;
+										<div class="col-md-3">
+											<div class="input-group">
+												<div class="radio">
+													<label>
+													  <input type="radio" name="discount_type" class="discount_type" value="percentage" {% if coupon_master is defined %}{% if coupon_master.discount_type == "percentage" %}checked{% endif %}{% endif %}>
+													  Percentage(%)
+													</label>
+													&nbsp;
+													<label>
+													  <input type="radio" name="discount_type" class="discount_type" value="amount" {% if coupon_master is defined %}{% if coupon_master.discount_type == "amount" %}checked{% endif %}{% endif %}>
+													  Amount
+													</label>
+												</div>
+										   </div>
+										</div>
+										
+										
+												  <label class="col-md-2 control-label"> Discount Value</label>
+											<div class="col-md-3">
+													<input type="text" name="discount_value" class="form-control" onkeyup="checkValue(this.value);" id="discount_value" {% if coupon_master is defined %}value="{{coupon_master.discount_value}}"{% endif %}>
+											</div>
+										
+										
+                                    </div>
+									
+									<div class="form-group">
+                                        <label class="col-md-2 control-label">&nbsp;Starting Date</label>
+                                        <div class="col-md-3">
+												<div class="input-group date" id="start_datetime">
+													<input type="text" name="starting_date" id="starting_date" class="form-control input-sm" {% if coupon_master is defined %}value="{{coupon_master.start_date|date('m/d/YYYY h:i A')}}"{% endif %}>
+													<div class="input-group-addon">
+														<span class="glyphicon glyphicon-calendar"></span>
+													</div>
+												</div>
+                                        </div>
+										<label class="col-md-2 control-label">&nbsp; Ending Date</label>
+                                        <div class="col-md-3">
+												<div class="input-group date" id="end_datetime">
+													<input type="text" name="ending_date" id="ending_date" class="form-control input-sm" {% if coupon_master is defined %}value="{{coupon_master.end_date|date('m/d/YYYY h:i A')}}"{% endif %}>
+													<div class="input-group-addon">
+														<span class="glyphicon glyphicon-calendar"></span>
+													</div>
+												</div>
+                                        </div>
+                                    </div>
+									
+									
+								<div class="form-group">
+									<label class="col-md-2 control-label">No. of user use</label>
+										<div class="col-md-3">
+											<input type="text" name="no_of_user_use" class="form-control input-sm" placeholder="No. of user use" {% if coupon_master is defined %}value="{{coupon_master.no_of_user_use}}"{% endif %}>
+										</div>
+										
+									<label class="col-md-2 control-label">How many times use by single user</label>
+									<div class="col-md-3">
+										<input type="text" name="no_of_times_use" class="form-control input-sm" placeholder="How many times use by single user" {% if coupon_master is defined %}value="{{coupon_master.no_of_times_use}}"{% endif %}>
+									</div>
+									
+								</div>
+								
+								<div class="form-group">
+                                      <label class="col-sm-2 control-label">Coupon Usage interval</label>
+                                      <div class="col-sm-2">
+										<div class="input-group">
+											<input type="text" name="coupon_usage_interval" placeholder="Coupon usage interval" class="form-control input-sm" {% if coupon_master is defined %}value="{{coupon_master.coupon_usage_interval}}"{% endif %}>
+											<div class="input-group-addon">
+												<span>Days</span>
+											</div>
+										</div>
+                                      </div>
+                                </div>
+								
+								
+								
+								<div class="form-group">
+                                        <label class="col-sm-2 control-label">Status</label>
+                                        <div class="col-sm-6">
+                                              <div class="radio">
+                                                <label>
+                                                  <input type="radio" value="active" name="status" {% if coupon_master is defined %}
+													  {% if coupon_master.status == "active" %}
+														checked
+													{% endif %}
+										{% endif %}> Active
+                                                </label>
+                                              </div>
+                                              <div class="radio">
+                                                <label>
+                                                  <input type="radio" value="inactive" name="status" {% if coupon_master is defined %}
+													{% if coupon_master.status == "inactive" %}
+														checked
+											{% endif %}
+										{% endif %}> Inactive
+                                                </label>
+                                              </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label class="col-sm-2 control-label">Coupon Visibility</label>
+                                        <div class="col-sm-6">
+                                              <div class="radio">
+                                                <label>
+                                                  <input type="checkbox" value="yes" name="visible_all" {% if coupon_master is defined %}
+													  {% if coupon_master.visible_all == "yes" %}
+														checked
+													{% endif %}
+										{% endif %}> 
+                                                </label>
+                                              </div>
+                                        </div>
+                                    </div>
+									
+                                    
+                                  </div>
+                                  <div class="box-footer">
+                                    <a href="{{path('admin_coupon_index',{'domain':app.session.get('domain')})}}" class="btn btn-default btn-flat" type="submit">Cancel</a>
+                                    <button class="btn btn-info pull-right btn-flat" type="submit" name="save_coupon" value="save_coupon">Save</button>
+                                  </div>
+                                </form>
+
+                    
+                  </div>
+            </div>
+		</div>
+	  </section>
+{% endblock %}
+
+{% block js %}
+<!--<script src="{{asset('bundles/design/')}}js/bootstrap-datepicker.js" type="text/javascript"></script>-->
+<script src="{{asset('bundles/design/')}}plugins/daterangepicker/moment.min.js" type="text/javascript"></script>
+<script src="{{asset('bundles/design/')}}plugins/bootstrape3_datetime_picker/js/bootstrap-datetimepicker.min.js" type="text/javascript"></script>
+<script src="{{asset('bundles/design/')}}js/jquery.validate.min.js" type="text/javascript"></script>
+<script>
+$(function () {
+	$(".discount_type").on("change", function (e) {
+		$("#discount_value").val("");
+	});
+	
+	$('#starting_date').datetimepicker();
+	$('#ending_date').datetimepicker({
+		useCurrent: false//Important! See issue #1075
+	});
+	$("#starting_date").on("dp.change", function (e) {
+		$('#ending_date').data("DateTimePicker").minDate(e.date);
+	});
+	$("#ending_date").on("dp.change", function (e) {
+		$('#starting_date').data("DateTimePicker").maxDate(e.date);
+	});
+});
+function generate_code()
+{
+	var string = "";
+    var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+
+    for( var i=0; i < 10; i++ )
+	{
+        string += possible.charAt(Math.floor(Math.random() * possible.length));
+	}
+	$("#coupon_code").val(string);
+}
+$(document).ready(function() {
+    $('#example1').DataTable( {
+        dom: 'Bfrtip',
+        buttons: [
+            'copy', 'csv', 'excel', 'pdf', 'print'
+        ]
+    } );
+} );
+
+
+function checkValue(discountvalue)
+{
+	if ($(".discount_type:checked").val() == 'percentage')
+	{
+		if (discountvalue > 100)
+		{
+			alert("Invalid discount value!  100 is maximum discount value if discount type is percentage");
+			$("#discount_value").val("");
+        }
+    }
+	else
+	{
+		if ($("input[name='min_amount']").val() != "" && $("input[name='min_amount']").val() != 0)
+		{
+			if (parseInt($("input[name='min_amount']").val()) <= parseInt(discountvalue))
+			{
+				alert("Invalid discount value!  discount value will not greater than order amount");
+				$("#discount_value").val("");
+			}
+		}
+	}
+}
+$(document).ready(function(){
+	$("#discount_value").keyup
+	
+});
+
+//Form Validation
+$.validator.addMethod("dateTime", function (value, element) {
+        var stamp = value.split(" ");
+        var validDate = !/Invalid|NaN/.test(new Date(stamp[0]).toString());
+        var validTime = /^(([0-1]?[0-9])|([2][0-3])):([0-5]?[0-9])(:([0-5]?[0-9]))?$/i.test(stamp[1]);
+        return this.optional(element) || (validDate && validTime);
+    }, "Please enter a valid date and time.");
+
+$( "#coupon_form" ).validate({
+ rules: {
+    coupon_name: "required",
+	coupon_code: "required",
+	discount_type: "required",
+	discount_value: {
+		required: true,
+		number: true
+		},
+	starting_date: {
+		required: true,
+		dateTime: true
+		},
+	ending_date: {
+		required: true,
+		dateTime: true
+		},
+	no_of_user_use: {
+		required: true,
+		number: true
+		},
+	no_of_times_use: {
+		required: true,
+		number: true
+		},
+	status: "required"
+  },
+  messages: {
+    coupon_name: "Coupon name is required",
+	coupon_code: "Coupon Code is required",
+	discount_type: "Please choose atleast one discount type",
+	discount_value: {
+		required: "Discount value is required",
+		number: "Only numbers are allowed, discount value is in numbers"
+		},
+	starting_date: {
+		required: "Coupon start date is required",
+		},
+	ending_date: {
+		required: "Coupon end date is required",
+		},
+	no_of_user_use: {
+		required: "Number of time user use coupon is required",
+		number: true
+		},
+	no_of_times_use: {
+		required: "Number of time use by single user is required",
+		number: true
+		},
+	status: "Status is required"
+  }
+});
+</script>
+{% endblock %}

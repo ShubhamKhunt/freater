@@ -1,0 +1,140 @@
+{% extends "AdminBundle::Layout/adminlayout.html.twig" %}
+{% block title %} Add Offer  {% endblock %}
+{% block css %}
+	
+{% endblock %}
+{% block content %}
+	<section class="content-header">
+		<h1>
+            Add Offer
+		  <small></small>
+		</h1>
+		<ol class="breadcrumb">
+		  <li><a href="{{path('admin_dashboard_index',{'domain':app.session.get('domain')})}}"><i class="fa fa-dashboard"></i>Dashboard</a></li>
+          <li><a href="{{path('admin_offers_index',{'domain':app.session.get('domain')})}}"></i>Offers List</a></li> 
+		  <li class="active">Add Offer</li>
+		</ol>
+		
+	  </section>
+	
+		<section class="content">
+		{% for flashMessage in app.session.flashbag.get('success_msg') %}
+			<div role="alert" class="alert alert-success alert-dismissible fade in">
+				<button aria-label="Close" data-dismiss="alert" class="close" type="button"><span aria-hidden="true">×</span></button>
+				<strong>Alert!</strong>&nbsp; {{ flashMessage }}
+			</div>
+		{% endfor %}
+		{% for flashMessage in app.session.flashbag.get('error_msg') %}
+			<div role="alert" class="alert alert-danger alert-dismissible fade in">
+				<button aria-label="Close" data-dismiss="alert" class="close" type="button"><span aria-hidden="true">×</span></button>
+				<strong>Alert!</strong>&nbsp; {{ flashMessage }}
+			</div>
+		{% endfor %}
+		<div class="row">
+			<div class="col-xs-12">
+				
+				
+				{% if language is defined and language is not empty %}
+                    <div class="nav-tabs-custom">
+                        <ul class="nav nav-tabs">
+                        
+                            {% for lang in language %}
+                            <li {% if loop.index == 1 %}class="active"{% endif %}><a data-toggle="tab" href="#tab_{{lang.language_master_id}}">{{lang.language_name}}</a></li>
+                            {% endfor %}
+                         
+                        </ul>
+						<div class="tab-content">
+						{% for lang in language %}
+							<div id="tab_{{lang.language_master_id}}" class="tab-pane{% if loop.index == 1 %} active{% endif %}">
+
+								<form class="form" method="POST" enctype="multipart/form-data"  {% if offer_info is defined and offer_info is not empty %} action="{{path('admin_offers_updateoffer',{'domain':app.session.get('domain'),'language_id':lang.language_master_id,'main_offers_master_id':offer_info[0].main_offers_master_id})}}" {%else%} action="{{path('admin_offers_saveoffer',{'domain':app.session.get('domain'),'language_id':lang.language_master_id})}}" {%endif%} >
+									<div class="box-body">
+									<div class="row">
+									  <label class="col-sm-2 control-label">Title</label>
+									  <div class="col-sm-6">
+										<input type="text" name="title" class="form-control input-sm" placeholder="Title" value="{% if offer_info is defined and offer_info is not empty %}{% for offer in offer_info %}{% if offer.language_id == lang.language_master_id %}{{offer.title}}{% endif %}{% endfor %}{% endif %}">
+									  </div>
+									</div><br>
+									<div class="row">
+									  <label class="col-sm-2 control-label">Description</label>
+									  <div class="col-sm-6">
+										<textarea name="description" placeholder="Description" class="form-control">{% if offer_info is defined and offer_info is not empty %}{% for offer in offer_info %}{% if offer.language_id == lang.language_master_id %}{{offer.description}}{% endif %}{% endfor %}{% endif %}</textarea>
+									  </div>
+									</div><br>
+									<div class="row">
+									  <label class="col-sm-2 control-label">Media Type</label>
+									  <div class="col-sm-4">
+										<div class="radio-inline">
+											<input type="radio" name="media_type" value="1" required {%if offer_info[0].media_type_id == '1' %} checked {%endif%}/> Image
+										</div>
+										<div class="radio-inline">
+											<input type="radio" name="media_type" value="2" required {%if offer_info[0].media_type_id == '2' %} checked {%endif%} /> Video
+										</div>
+									  </div>
+									 
+									</div><br>
+									<div class="row">
+									  <label class="col-sm-2 control-label">Media</label>
+									  <div class="col-sm-4">
+										<input type="file" class="" name="image">
+									  </div>
+									  {% if offer_info is defined and offer_info is not empty and  offer_info[0].media_type_id == '1' %}
+										<div class="col-sm-2">
+											{% set logo = render(controller('AdminBundle:Base:getmedia', {'media_library_master_id': offer_info[0].image_id,'live_path':live_path})) %}
+											<img src="{{logo}}" style="height:100px">
+											<input type="hidden" name="image_hidden" value="{{offer_info[0].image_id}}">
+										</div>
+									  {% endif %}
+									</div><br>
+									<div class="row">
+									  <label class="col-sm-2 control-label">Url</label>
+									  <div class="col-sm-6">
+										<input type="text" name="url" class="form-control input-sm" placeholder="Url" value="{% if offer_info is defined and offer_info is not empty %}{{offer_info[0].url}}{% endif %}">
+									  </div>
+									</div><br>
+									<div class="row">
+									  <label class="col-sm-2 control-label">Contact No.</label>
+									  <div class="col-sm-4">
+										<input type="text" name="contact" class="form-control input-sm" placeholder="Contact No" value="{% if offer_info is defined and offer_info is not empty %}{% for offer in offer_info %}{% if offer.language_id == lang.language_master_id %}{{offer.contact}}{% endif %}{% endfor %}{% endif %}">
+									  </div>
+									</div><br>
+									<div class="row">
+                                        <label class="col-sm-2 control-label">Status</label>
+                                        <div class="col-sm-6">
+                                              <div class="radio">
+                                                <label>
+                                                  <input type="radio" name="status" value="active" {% if offer_info is defined and offer_info is not empty %}{% if offer_info[0].status == 'active' %}checked{% endif %}{% endif %}> Active
+                                                </label>
+                                              </div>
+                                              <div class="radio">
+                                                <label>
+                                                  <input type="radio" name="status" value="inactive" {% if offer_info is defined and offer_info is not empty %}{% if offer_info[0].status == 'inactive' %}checked{% endif %}{% endif %}> Inactive
+                                                </label>
+                                              </div>
+                                        </div>
+                                    </div><br>
+								  </div>
+								  <div class="box-footer">
+									<a href="{{path('admin_offers_index',{'domain':app.session.get('domain')})}}" class="btn btn-default btn-flat">Cancel</a>
+									{% if offer_info is defined and offer_info is not empty %}
+										<button type="submit" class="btn btn-info pull-right btn-flat"  name="update_offer" value="update_offer">Save</button>
+									{% else %}
+										<button type="submit" class="btn btn-info pull-right btn-flat"  name="save_offer" value="save_offer">Save</button>
+									{% endif %}
+								  </div>
+								</form>
+
+							</div>
+						{% endfor %}
+						</div>
+					</div>
+				{% endif %}
+            </div>
+		</div>
+	  </section>
+{% endblock %}
+
+{% block js %}
+<script>
+</script>
+{% endblock %}

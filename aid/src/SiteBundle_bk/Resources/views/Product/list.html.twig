@@ -1,0 +1,131 @@
+{% extends "SiteBundle::Layout/index.html.twig" %}
+{% block style %}
+<style>
+.logo{ max-height: 35px !important;}
+a.call-to-action-1.bg-dark.white-text { height: 165px; }
+</style>
+{% endblock %}
+{% block content %}
+	
+	<div class="main container">
+		<div class="row">
+			<div class="col-md-12">
+				<div class="category-products pt-40">
+					<ul class="products-grid flex-grid columns4">
+					{% if product_list is defined and product_list is not empty %}
+						{% for product in product_list %}
+							<li class="col-sm-3 col-md-3 col-xs-12 item">
+								<div class="item-area text-center">
+									<a href="{{ path('site_product_view') }}" class="product-image">
+										<img src="{{ product.media_url }}" width="300" alt="{{ product.product_title }}">
+									</a>
+								</div>
+								<div class="item-info">
+									<!-- rating -->
+									<div class="ratings">
+										<div class="rating-box">
+											<div class="rating" style="width:100%"></div>
+										</div>
+										<span class="amount"><a href="#"><span class="number">4</span>Review(s)</a></span>
+									</div>
+									
+									<!-- product name -->
+									<h2 class="product-name text-center">
+										<a href="javascript:void(0);">{{ product.product_title }}</a>
+									</h2>
+									
+									<!-- price -->
+									<div class="price-box text-center">
+										{% if product.original_price > product.market_price %}
+											<span class="original-price">{{ product.original_price }}</span>
+										{% endif %}
+										<span class="special-price">{{ product.market_price }}</span>
+									</div>
+									<div class="actions text-center">
+										<a href="#" class="btn wishlist" title="Add to Wishlist">
+											<i class="fa fa-heart"></i>
+										</a>
+                                        <a href="javascript:void(0)" class="btn addtocart" title="Add to Cart">
+											<i class="fa fa-shopping-cart"></i><span>&nbsp;Add to Cart</span>
+										</a>
+                                        <div class="clearer"></div>
+									</div>
+								</div>
+							</li>
+						{% endfor %}
+					{% endif %}
+					</ul>
+				</div>
+			</div>
+		</div>
+	</div>
+	
+{% endblock %}
+
+{% block javascript %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/owl-carousel/1.3.3/owl.carousel.min.js"></script>
+<script>
+	$("#category-list").owlCarousel({
+		loop: true,
+		margin: 0,
+		items: 6,
+		nav: true,
+		slideSpeed: 200,
+		mouseDrag: true,
+		touchDrag: true,
+		pagination: false,
+		stopOnHover: false,
+		paginationSpeed: 500,
+		navigation: true,
+		navigationText:["<i class='fa fa-angle-left nav-icon'></i>","<i class='fa fa-angle-right nav-icon'></i>"]
+	});
+	
+	$("#product-list1").owlCarousel({
+		loop: true,
+		margin: 0,
+		items: 5,
+		nav: true,
+		autoplay: true,
+		slideSpeed: 800,
+		mouseDrag: true,
+		touchDrag: true,
+		pagination: false,
+		stopOnHover: false,
+		paginationSpeed: 1000,
+		navigation: true,
+		navigationText:["<i class='fa fa-angle-left nav-icon'></i>","<i class='fa fa-angle-right nav-icon'></i>"]
+	});
+	
+	$("#product-list2").owlCarousel({
+		loop: true,
+		margin: 0,
+		items: 5,
+		nav: true,
+		autoplay: true,
+		slideSpeed: 200,
+		mouseDrag: true,
+		touchDrag: true,
+		pagination: false,
+		stopOnHover: false,
+		paginationSpeed: 500,
+		navigation: true,
+		navigationText:["<i class='fa fa-angle-left nav-icon'></i>","<i class='fa fa-angle-right nav-icon'></i>"]
+	});
+	
+	$("#brand-slider").owlCarousel({
+		loop: true,
+		margin: 0,
+		items: 6,
+		nav: true,
+		autoplay: true,
+		slideSpeed: 100,
+		mouseDrag: true,
+		touchDrag: true,
+		pagination: false,
+		stopOnHover: false,
+		paginationSpeed: 250,
+		navigation: true,
+		navigationText:["<i class='fa fa-angle-left nav-icon'></i>","<i class='fa fa-angle-right nav-icon'></i>"]
+	});
+</script>
+{% endblock %}

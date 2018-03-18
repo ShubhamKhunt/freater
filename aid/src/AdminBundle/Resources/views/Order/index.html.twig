@@ -1,0 +1,747 @@
+{% extends "AdminBundle::Layout/adminlayout.html.twig" %}
+{% block title %} Order List {% endblock %}
+{% block css %}
+	<style type="text/css">
+
+.typeahead, .tt-query, .tt-hint {
+	  /* border: 2px solid #CCCCCC; */
+    border-radius: 8px;
+    font-size: 14px;
+    /* height: 30px; */
+    line-height: 30px;
+    outline: medium none;
+    padding: 8px 12px;
+    width: 230px;
+}
+
+
+.tt-query {
+	box-shadow: 0 1px 1px rgba(0, 0, 0, 0.075) inset;
+}
+.tt-hint {
+	color: #999999;
+}
+.tt-menu {
+	background-color: #FFFFFF;
+	border: 1px solid rgba(0, 0, 0, 0.2);
+	border-radius: 8px;
+	box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+	margin-top: 2px;
+	padding: 4px 0;
+	/*width: 222px;*/
+	min-width: 230px;
+}
+.tt-suggestion {
+	font-size: 12px;
+    padding: 1px 10px;
+}
+.tt-suggestion:hover {
+	cursor: pointer;
+	background-color: #0097CF;
+	color: #FFFFFF;
+}
+.tt-suggestion p {
+	margin: 0;
+}
+	</style>
+{% endblock %}
+{% block content %}
+
+	<section class="content-header">
+		 <h1>
+
+		  <small></small>
+		</h1>
+		<ol class="breadcrumb">
+		  <li><a href="{{path('admin_dashboard_index',{'domain':app.session.get('domain')})}}"><i class="fa fa-dashboard"></i>Dashboard</a></li>
+		  <li class="active">Order List</li>
+		</ol>
+	  </section>
+	  <section class="content">
+		<div class ="row">
+			<div class="col-md-12">
+			{% for flashMessage in app.session.flashbag.get('success_msg') %}
+			  <div class="alert alert-success alert-dismissable">
+				  <button aria-hidden="true" data-dismiss="alert" class="close" type="button">×</button>
+				  <h4><i class="icon fa fa-check"></i> Alert!</h4>{{ flashMessage }}
+			  </div>
+			  {% endfor %}
+			  {% for flashMessage in app.session.flashbag.get('error_msg') %}
+			  <div class="alert alert-danger alert-dismissable">
+				  <button aria-hidden="true" data-dismiss="alert" class="close" type="button">×</button>
+				  <h4><i class="icon fa fa-check"></i> Alert!</h4>{{ flashMessage }}
+			  </div>
+			{% endfor %}
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-xs-12">
+                <div class="box box-solid">
+                    <div class="box-header with-border">
+                      <h3 class="box-title">Order List</h3>
+                      <!--<div class="pull-right">
+                        <a href="{{path('admin_company_addcompany',{'domain':app.session.get('domain')})}}" class="btn btn-primary btn-flat"><i class="fa fa-plus"></i>&nbsp;&nbsp;ADD</a>
+                      </div>-->
+                    </div>
+
+					{% if app.session.get('domain') != "fortune" and app.session.get('role_id') != 6 %}
+				{#  <div class="box-header with-border">
+
+						<div class="pull-right">
+							  <button type="button" class="btn bg-navy btn-sm" id="assign_multiple_order" data-loading-text="<i class='fa fa-circle-o-notch fa-spin'></i> Loading..."><b>Assign multiple orders</b></button>
+						</div>
+				  </div>#}
+			{% endif %}
+ <div class="box-header with-border">
+		{#	<label class="col-sm-2 control-label">City</label>
+                              <div class="col-sm-3">
+
+                                <select class="form-control" name="city_id" onchange="getusercity(this.value);" >
+											<option value="0">Select City</option>
+											{% if city_list is defined and city_list is not empty %}
+												{% for city in city_list %}
+														<option value="{{city.main_city_id}}"
+														{% if city_id is defined and city_id is not empty %}
+
+															{% if city_id == city.main_city_id %}selected
+															  {% endif %}
+														{% endif %}
+														>{{city.city_name}}</option>
+												{% endfor %}
+											{% endif %}
+								</select>
+                              </div>
+ </div>#}
+				  <!-- Assign model : START -->
+				  <div id="assign_orderModal" class="modal fade" role="dialog">
+					<div class="modal-dialog modal-lg">
+						<div class="modal-content" id="order_modal">
+						    <!----- Body Contents : Delivery boy list -------------->
+						</div>
+
+					</div>
+				  </div>
+				  <!-- Assign model : END -->
+
+	{#			  <div class="box-header with-border">
+						<div class="panel-group">
+    <div class="panel panel-default">
+      <div class="panel-heading" data-toggle="collapse" href="#collapse1">
+        <h4 class="panel-title">
+          <span data-toggle="collapse" href="#collapse1">Advanced Search</span><a class="pull-right" data-toggle="collapse" href="#collapse1"><i class="fa fa-minus-square"></i></a>
+        </h4>
+      </div>
+	  <form action="#" method="POST" name="form1">
+      <div id="collapse1" class="panel-collapse collapse">
+        {#<div class="panel-body">Panel Body</div>
+        <div class="panel-footer">Panel Footer</div>#}
+		{#	<div class="row">
+				<div class="col-md-12">
+				<div class="box box-solid">
+				  <div class="box-body">
+					  <div class="col-md-3 bootstrap-datepicker">
+							<div class="form-group">
+								  <label>Select Customer / Phone</label>
+								  <input type="text" name="adv_name_phone" value="{% if adv_request[0] is defined and adv_request[0] is not empty %}{{adv_request[0]}} - {{adv_request[1]}}{% endif %}" class="checkvali form-control typeahead" />
+							</div>
+					  </div>
+					  <div class="col-md-3 bootstrap-timepicker">
+							<div class="form-group">
+								  <label>Order Date From</label>
+								 <input type="text" name="adv_date_from" id="adv_date_from" value="{% if adv_request[2] is defined and adv_request[2] is not empty %}{{adv_request[2]}}{% endif %}" class="checkvali form-control" />
+							</div>
+					  </div>
+					  <div class="col-md-3 bootstrap-timepicker">
+							<div class="form-group">
+								  <label>Order Date To</label>
+								 <input type="text" name="adv_date_to" id="adv_date_to" value="{% if adv_request[3] is defined and adv_request[3] is not empty %}{{adv_request[3]}}{% endif %}" class="checkvali form-control" />
+								  </select>
+							</div>
+					  </div>
+					  <div class="col-md-3 bootstrap-timepicker">
+							<div class="form-group">
+								  <label>Status</label>
+								  <select name="adv_status" class="checkvali form-control">
+									<option value="0">Any</option>
+									{% if status is defined and status is not empty %}
+										  {% for status in status%}
+												{% if status.status_id not in [4,5] %}
+												{% set chk = ''%}
+												{% if adv_request[4] is defined and adv_request[4] is not empty %}
+													  {% if adv_request[4] ==  status.status_id %}
+															{% set chk = 'selected' %}
+													  {% endif %}
+												{% endif %}
+												<option value="{{status.status_id}}" {{chk}}>{{status.status_name}}</option>
+												{% endif %}
+										  {% endfor %}
+									{% endif %}
+								  </select>
+								  <br>
+
+							</div>
+					  </div>
+				  </div>
+				<div class="box-body">
+					  <div class="col-md-12 bootstrap-datepicker">
+							<div class="form-group pull-right">
+								 <button type="submit" value="adv_search" class="btn btn-default btn-flat" data-dismiss="modal"><i class="fa fa-search"></i> Search</button>
+
+							</div>
+					  </div>
+				  </div>
+				</div>
+				</div>
+		  </div>
+      </div>
+	  </form>
+    </div>
+  </div>
+</div>
+			#}
+				  </div>
+                    <div class="box-body">
+                        <div class="container-fluid table-responsive">
+							<table id="example1" class="table table-bordered table-striped text-center display">
+								<thead>
+									{#<th><input type="checkbox" id="check_all"></th>#}
+
+									<th>Order No</th>
+									<th>Order Type</th>
+									<th>Customer / Phone</th>
+
+                                    <th style="width: 10px !important;">Total Items</th>
+									<th>Amount( Bill + Delivery)</th>
+									<th>Total Amount</th>
+									<th>Instruction</th>
+									<th>AID MAN</th>
+									<th>Delivery Date Time</th>
+									<th>Order Placed</th>
+									<th>Payment Method</th>
+									<th>Transaction</th>
+									<th>Status</th>
+
+                                    <th>Action</th>
+								</thead>
+								<tbody>
+
+									{% if orders is defined and orders is not empty %}
+										  {% for orders in orders %}
+												<tr>
+												{#<td>{% if orders.order_status_id == 10 %}<input type="checkbox" value="{{orders.order_master_id}}" class="assign_check" name="multi_assign[]">{% endif %}</td>#}
+												<td>{{orders.unique_no}}</td>
+												<td>
+
+									{%	set order_type= orders.order_type %}
+									{%	if order_type==1 or order_type==0 %}
+										{%	set order_type_text="Without Prescription" %}
+									{% elseif order_type==2 %}
+										{%	set order_type_text="With Prescription" %}
+									{% elseif order_type==3 %}
+										{%	set order_type_text="Medical Examination" %}
+									{% endif %}
+										{{order_type_text}}
+												</td>
+
+												<td>{%if orders.username is not empty %} {{ orders.username}} <br>  {%endif%} {% if orders.user_mobile is not empty %} {{orders.user_mobile }} {%else%} --- {%endif%} </td>
+
+												<td>{{orders.total_no_of_items}}</td>
+												<td>
+
+													{%if orders.delivery_time_type == 2 and orders.order_master_id in pharmacy_order_ids %}
+															{{orders.order_bill_amount |number_format(2, '.', ',')  }} + {{general_setting_value |number_format(2, '.', ',')  }}
+													{%else%}
+														 {%if orders.delivery_charge == 0 %}
+														   {{ orders.order_bill_amount|number_format(2, '.', ',') }}
+												      {%else%}
+															 {{orders.order_bill_amount |number_format(2, '.', ',')  }} + {{orders.delivery_charge |number_format(2, '.', ',')  }}
+													  {%endif%}
+
+													{%endif%}
+
+												</td>
+												{%	set order_delivery_time_type= orders.delivery_time_type %}
+									{%	if orders.delivery_time_type==1 %}
+										{%	set order_delivery_time_type_text = orders.delivery_date|date('d-m-Y') ~ ' ' ~ orders.delivery_time|date('h:i A') %}
+									{% elseif orders.delivery_time_type==2 %}
+										{%	set order_delivery_time_type_text="As soon as poosible" %}
+									{% elseif orders.delivery_time_type==3 %}
+										{%	set order_delivery_time_type_text="With in 48 Hour" %}
+									{% endif %}
+
+												<td>
+													{%if orders.delivery_time_type == 2 and orders.order_master_id in pharmacy_order_ids %}
+														{%set amt_temp = orders.order_bill_amount + general_setting_value %}{{amt_temp  |number_format(2, '.', ',')  }}
+													{%else%}
+														{%set amt_temp = orders.order_bill_amount + orders.delivery_charge %}{{amt_temp  |number_format(2, '.', ',')  }}
+													{%endif%}
+
+												</td>
+												<td  width="8%">{% if orders.special_instruction == "" or orders.special_instruction is empty %}-{% else %}{{ orders.special_instruction|length > 40 ? orders.special_instruction|slice(0, 40) ~ '...' : orders.special_instruction  }}{% endif %}</td>
+
+													  <td>
+													  {% if orders.delivery_boy_id == '0' %} Order Not Assign {% else %}
+															{% if all_delivery_boy is defined and all_delivery_boy is not empty %}
+																  {% for all_delivery_boy in all_delivery_boy %}
+																		{% if all_delivery_boy.user_master_id == orders.delivery_boy_id %}
+																			  {{all_delivery_boy.user_firstname}} {{all_delivery_boy.user_lastname}}
+
+																		{% endif %}
+																  {% endfor %}
+															{% endif %}
+													  {% endif %}
+													  </td>
+
+												<td>{{order_delivery_time_type_text}}</td>
+												<td>{{orders.order_dateadded|date('d-m-Y')}} &nbsp;{{orders.order_dateadded|date('h:i A')}}</td>
+												<td>-</td>
+												<td>-</td>
+												<td>
+													  {#
+													  {% if status is defined and status is not empty %}
+															{% for status in status %}
+																  {% if status.status_id == orders.order_status_id %}
+																		<span class="label color_field" style="background-color:#{{status.status_class}};">{{status.status_name}}</span>
+
+																  {% endif %}
+															{% endfor %}
+													  {% endif %}
+													  #}
+
+													  <select class="form-control" id="orderstatus_{{orders.order_master_id}}" {% if orders.order_status_id == '10' %}onchange='window.location="{{path('admin_order_assignorder',{'domain':app.session.get('domain'),'order_id':orders.order_master_id})}}"'{% else %}onchange="changeSTS({{orders.order_master_id}},this.value,{{orders.order_status_id}});"{%endif%} {% if orders is defined and orders is not empty and orders.order_status_id == 5 %}disabled{% endif %}>
+															{% if status is defined and status is not empty %}
+															  {% for status in status %}
+																<option date-id="{{orders.order_master_id}}" value="{{status.status_id}}" {% if orders is defined and orders is not empty and orders.order_status_id == status.status_id %}selected="selected"{% endif %}>{{status.status_name}}</option>
+															  {% endfor %}
+															{% endif %}
+														</select>
+												</td>
+												<td>
+													  {% if app.session.get('domain') != "fortune" and app.session.get('role_id') != 6 %}{% if orders.order_status_id == '10' %}<a href="{{path('admin_order_assignorder',{'domain':app.session.get('domain'),'order_id':orders.order_master_id})}}" class="btn btn-primary btn-xs">Assign</a>{% endif %}{% endif %}
+													  <a href="{{path('admin_order_vieworder',{'domain':app.session.get('domain'),'order_id':orders.order_master_id})}}"  class="btn btn-warning btn-xs">View</a>
+													  {% if app.session.get('role_id') == 2 %}
+														<button type="button" class="btn btn-danger btn-xs removeitem" value="{{orders.order_master_id}}" onclick="removemodalopen(this);"><i class="fa fa-remove"></i></button>
+													  {% endif %}
+												</td>
+												</tr>
+										  {% endfor %}
+									{%endif %}
+
+							    </tbody>
+								<tfoot>
+									{#<th><input type="checkbox" id="check_all"></th>#}
+									<th>Order No</th>
+									<th>Order Type</th>
+									<th>Customer / Phone</th>
+
+                                    <th>Total Items</th>
+									<th>Amount( Bill + Delivery)</th>
+									<th>Total Amount</th>
+									<th>Instruction</th>
+									<th>AID MAN</th>
+									<th>Delivery Date Time</th>
+									<th>Order Placed</th>
+									<th>Payment Method</th>
+									<th>Transaction</th>
+									<th>Status</th>
+                                    <th>Action</th>
+								</tfoot>
+							</table>
+						</div>
+
+                    </div>
+					<!--<font color="red">*** order_type = 1(Without Prescription) , 2 (With Prescription) ,3 (Medical Examination)</font>-->
+                  </div>
+            </div>
+		</div>
+	  </section>
+<div class="modal fade" id="status_model" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="model_title"></h4>
+      </div>
+    </div>
+  </div>
+</div>
+{% if app.session.get('role_id') == 2 %}
+<div id="confirm_modal" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+
+    <!-- Modal content-->
+    <div class="modal-content">
+		<div class="modal-header">
+			<h4 class="modal-title">Are you sure you want to delete?</h4>
+		</div>
+		<div class="modal-footer">
+			<div class="box-body" id="modal_body">
+				<div class="form-group">
+				    <input type="password" class="form-control" id="login_pass" placeholder="Enter password">
+				    <p class="text-red pull-left" id="del_msg"></p>
+				</div>
+			</div>
+			<button type="button" class="btn btn-primary btn-flat" id="delete_confirm_btn" onclick="removeitem(this.value)" data-loading-text="<i class='fa fa-circle-o-notch fa-spin'></i> Loading...">Delete</button>
+			<button type="button" class="btn btn-default btn-flat" data-dismiss="modal">Cancel</button>
+		</div>
+    </div>
+
+  </div>
+</div>
+
+<script src="{{asset('bundles/design/')}}plugins/datepicker/bootstrap-datepicker.js" type="text/javascript"></script>
+<script src="{{asset('bundles/design/')}}plugins/timepicker/bootstrap-timepicker.min.js" type="text/javascript"></script>
+<script src="{{asset('bundles/design/')}}plugins/twitter-typeahead/typeahead.bundle.js" type="text/javascript"></script>
+<script>
+function getusercity(city_id)
+{
+	window.location.href='{{path('admin_order_index',{'domain':app.session.get('domain')})}}/'+city_id;
+}
+function removemodalopen(obj) {
+	  $this = $(obj);
+	  $("#del_msg").html("");
+	  $("#delete_confirm_btn").button('reset');
+	  $("#delete_confirm_btn").val($this.val());
+	  $("#confirm_modal").modal("show");
+}
+$(document).ready(function(){
+	$(".removeitem").click(function(){
+		$this = $(this);
+		$("#del_msg").html("");
+		$("#delete_confirm_btn").button('reset');
+		$("#delete_confirm_btn").val($this.val());
+		$("#confirm_modal").modal("show");
+	});
+});
+
+$(document).ready(function(){
+	  //Datepicker
+
+	  $("#adv_date_from").datepicker({
+			format: 'yyyy-mm-dd',
+			showMeridian: true,
+			//startDate: new Date(),
+			setDate:new Date()
+	  });
+	  $("#adv_date_to").datepicker({
+			format: 'yyyy-mm-dd',
+			showMeridian: true,
+			//startDate: new Date(),
+			setDate:new Date()
+	  });
+	  //Timepicker
+	  $("#time").timepicker({
+			showInputs: false,
+			showMeridian: true,
+			 'minTime': '2:00pm',
+			'maxTime': '11:30pm',
+	  });
+
+});
+function removeitem(id)
+{
+	var module = "order";
+	var login_pass = $("#login_pass").val();
+	if(login_pass != "")
+	{
+		$("#del_msg").html("");
+		$("#delete_confirm_btn").button('loading');
+		$.ajax({
+		type: 'POST',
+		url : "{{path('admin_order_removeitem',{'domain':app.session.get('domain')})}}",
+		data: {'login_pass':login_pass,'id':id,'module':module,'flag':'remove_item'},
+		dataType: 'json',
+		success: function(res)
+		{
+			if(res.code == 'pass_error')
+			{
+				$("#del_msg").html(res.msg);
+			}
+			if(res.code == 'success')
+			{
+				$("#modal_body").html('<h4 class="text-green pull-left">'+res.msg+'</h4>');
+				$("#delete_confirm_btn").hide();
+				window.location.reload();
+			}
+			else
+			{
+				$("#del_msg").html(res.msg);
+			}
+			$("#login_pass").val("");
+			$("#delete_confirm_btn").button('reset');
+		}
+		});
+	}
+	else
+	{
+		$("#del_msg").html("Please! Enter your login password");
+	}
+}
+</script>
+{% endif %}
+{% endblock %}
+
+{% block js %}
+<script>
+
+$("#assign_multiple_order").click(function(){
+	   //Datepicker
+
+	  var order_id_array = [];
+	 if(!$(".assign_check").is(':checked'))
+	  {
+			alert("Please choose at least one order");
+	  }
+	  else
+	  {
+			 $('.assign_check:checked').each(function(i){
+					order_id_array.push($(this).val());
+			});
+			 order_id_array = order_id_array.join();
+
+			 console.log({'order_id_array':order_id_array,'flag':'getmultiple_orders'});
+			$("#assign_multiple_order").button('loading');
+			if(order_id_array.length > 0)
+			{
+				  $.ajax({
+				  type: 'POST',
+				  url : "{{path('admin_order_multipleorder',{'domain':app.session.get('domain')})}}",
+				  data: {'order_id_array':order_id_array,'flag':'getmultiple_orders'},
+				  success: function(response){
+					 $("#order_modal").html(response);
+					 $("#assign_orderModal").modal('show');
+					 $("#assign_multiple_order").button('reset');
+					  $("#date").datepicker({
+							  format: 'yyyy-mm-dd',
+							  showMeridian: true,
+							  startDate: new Date(),
+							  setDate:new Date()
+						});
+						//Timepicker
+						$('#time').timepicker({
+							 format: 'h:mm:ss p'
+						  });
+						$('#timepicker1').timepicker({
+							 format: 'h:mm:ss p'
+});
+				  }
+				  });
+            }
+	  }
+});
+
+//$(document).ready(function() {
+//    $('#example1').DataTable({
+//		dom: 'Bfrtip',
+//        buttons: [
+//            'copy', 'csv', 'excel', 'pdf', 'print'
+//        ],
+//		"aaSorting": [],
+//		'columnDefs': [         // see https://datatables.net/reference/option/columns.searchable
+//                {
+//                    'sortable'    : false,
+//                    'targets'       : [0]
+//                },
+//            ]
+//    });
+//});
+
+$(document).ready(function() {
+	  var adv_name_phone = '';
+	  var adv_date_from = '';
+	  var adv_date_to = '';
+	  var adv_status = '';
+	  {% if adv_request[0] is defined and adv_request[0] is not empty %}
+			adv_name_phone = '{{adv_request[0]}} - {{adv_request[1]}}';
+	  {% endif %}
+	  {% if adv_request[2] is defined and adv_request[2] is not empty %}
+			adv_date_from = '{{adv_request[2]}}';
+			adv_date_to = '{{adv_request[3]}}';
+	  {% endif %}
+	  {% if adv_request[4] is defined and adv_request[4] is not empty %}
+			adv_status = '{{adv_request[4]}}';
+	  {% endif %}
+
+  var table = $('#example1').DataTable( {
+        dom: 'Bfrtip',
+
+        buttons: [
+            {
+                extend: 'copyHtml5',
+                exportOptions: {
+                 columns: ':not(:last-child)',
+				 format: {
+					  body: function(data, col, row) {
+						  if (col == 10) {
+							  return table
+									  .cell( {row: row, column: col} )
+									  .nodes()
+									  .to$()
+									  .find(':selected')
+									  .text()
+						  } else {
+							  return data;
+						  }
+					  }
+				  },
+                },
+
+            },
+			{
+				extend: 'pdfHtml5',
+                orientation:'landscape',
+				exportOptions: {
+				  columns: ':not(:last-child)',
+				   format: {
+					  body: function(data, col, row) {
+						  if (col == 10) {
+							  return table
+									  .cell( {row: row, column: col} )
+									  .nodes()
+									  .to$()
+									  .find(':selected')
+									  .text()
+						  } else {
+							  return data;
+						  }
+					  }
+				  },
+			 }
+			},
+			{
+				 extend: 'excelHtml5',
+                exportOptions: {
+                 columns: ':not(:last-child)',
+				 format: {
+					  body: function(data, col, row) {
+						  if (col == 10) {
+							  return table
+									  .cell( {row: row, column: col} )
+									  .nodes()
+									  .to$()
+									  .find(':selected')
+									  .text()
+						  } else {
+							  return data;
+						  }
+					  }
+				  },
+                },
+			},
+			{
+				 extend: 'csvHtml5',
+                exportOptions: {
+                 columns: ':not(:last-child)',
+				 format: {
+					  body: function(data, col, row) {
+						  if (col == 10) {
+							  return table
+									  .cell( {row: row, column: col} )
+									  .nodes()
+									  .to$()
+									  .find(':selected')
+									  .text()
+						  } else {
+							  return data;
+						  }
+					  }
+				  },
+                },
+			},
+			{
+                extend: 'print',
+                exportOptions: {
+                 columns: ':not(:last-child)',
+				 format: {
+					  body: function(data, col, row) {
+						  if (col == 10) {
+							  return table
+									  .cell( {row: row, column: col} )
+									  .nodes()
+									  .to$()
+									  .find(':selected')
+									  .text()
+						  } else {
+							  return data;
+						  }
+					  }
+				  },
+                },
+
+            },
+        ],
+        columnDefs: [
+  			{ targets:[11], orderable: false }
+		],
+    } );
+    $('#loader').hide();
+
+
+})
+$('#check_all').click(function (e) {
+	  $('.assign_check').prop('checked', this.checked);
+});
+</script>
+<script type="text/javascript">
+$(document).ready(function(){
+
+    // Defining the local dataset
+	{% if autoahead is defined and autoahead is not empty %}
+		  {% autoescape false %}
+		  var cars = [{{autoahead}}];
+		  {% endautoescape %}
+	  {% else %}
+			var cars = [];
+	  {% endif %}
+    //var cars = ['Audi', 'BMW', 'Bugatti', 'Ferrari', 'Ford', 'Lamborghini', 'Mercedes Benz', 'Porsche', 'Rolls-Royce', 'Volkswagen','Naman Joshi'];
+
+    // Constructing the suggestion engine
+    var cars = new Bloodhound({
+        datumTokenizer: Bloodhound.tokenizers.whitespace,
+        queryTokenizer: Bloodhound.tokenizers.whitespace,
+        local: cars
+    });
+
+    // Initializing the typeahead
+    $('.typeahead').typeahead({
+        hint: true,
+        highlight: true, /* Enable substring highlighting */
+        minLength: 1 /* Specify minimum characters required for showing result */
+    },
+    {
+        name: 'cars',
+        source: cars
+    });
+});
+</script>
+<script>
+	  function changeSTS(order_id,status_id)
+	  {
+			if(confirm("Are you Sure, Want to change status of Order?"))
+			{
+
+					$.ajax({
+						type: 'POST',
+						url : "{{path('admin_order_changeorderstatus',{'domain':app.session.get('domain')})}}",
+						data: {"order_id":order_id,"status_id":status_id,"flag":'changests'},
+						async: false,
+						dataType: 'json',
+						success: function(response)
+						{
+							$("#model_title").html(response.msg);
+							$("#model_title").removeClass();
+							$("#model_title").addClass("modal-title "+response.cls);
+							$("#status_model").modal('show');
+
+							if (status_id == 4)
+							{
+								$("#orderstatus_"+order_id).attr("disabled","disabled");
+							}
+						}
+					});
+
+			}
+	  }
+
+</script>
+{% endblock %}

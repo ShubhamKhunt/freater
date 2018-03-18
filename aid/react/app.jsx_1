@@ -1,0 +1,213 @@
+import React from 'react';
+import {render} from 'react-dom';
+import { BrowserRouter as Router, Route } from 'react-router-dom';
+import Slider from 'react-slick';
+
+class MyComponent extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            error: null,
+            isLoaded: false,
+            data: []
+        };
+    }
+
+    componentDidMount() {
+        fetch("http://www.aid.com/site-api/sampledata")
+            .then(res => res.json())
+            .then(
+                (result) => {
+                    this.setState({
+                        isLoaded: true,
+                        data: result
+                    });
+                },
+                // Note: it's important to handle errors here
+                // instead of a catch() block so that we don't swallow
+                // exceptions from actual bugs in components.
+                (error) => {
+                    this.setState({
+                        isLoaded: true,
+                        error
+                    });
+                }
+            )
+    }
+
+    render() {
+        const {
+            error,
+            isLoaded,
+            data
+        } = this.state;
+        if (error) {
+            return <div > Error: {
+                error.message
+            } < /div>;
+        } else if (!isLoaded) {
+            return <div > Loading... < /div>;
+        } else {
+            return ( <
+                ul > {
+                    data.map(obj => ( <
+                        li key = {
+                            obj.name
+                        } > {
+                            obj.name
+                        } {
+                            obj.price
+                        } <
+                        /li>
+                    ))
+                } <
+                /ul>
+            );
+        }
+    }
+}
+
+var settings = {
+	dots: true,
+	autoplay:false,
+	infinite: true,
+	speed: 500,
+	lazyLoad: true,
+	centerPadding: '10px',
+	slidesToShow: 3,
+	slidesToScroll: 3
+};
+
+class ProductSlider extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            error: null,
+            isLoaded: false,
+            data: []
+        };
+    }
+
+    componentDidMount() {
+		alert('bkfn');
+        fetch("http://www.aid.com/ws/product-collection")
+            .then(res => res.json())
+            .then(
+                (result) => {
+					console.log(result);
+                    this.setState({
+                        isLoaded: true,
+                        data: result
+                    });
+                },
+                (error) => {
+                    this.setState({
+                        isLoaded: true,
+                        error
+                    });
+                }
+            )
+    }
+
+    render() {
+        const {
+            error,
+            isLoaded,
+            data
+        } = this.state;
+        if (error) {
+            return <div > Error: {
+                error.message
+            } < /div>;
+        } else if (!isLoaded) {
+            return (
+				<div className="text-center">
+					<img className="loader" src="http://img.humo.be/q100/w696/h/img_145/1457322.gif" />
+				</div>
+			);
+        } else {
+            return (
+				<Slider {...settings}>
+				{
+					data.map(item =>
+						<div className="col-md-4 text-center" key={item.id}>
+							<a href={item.image}>
+								<img src={item.image} className="img-responsive slider-img" alt=""/>
+							</a>
+							<h4 className="text-center">{item.name}</h4>
+						</div>
+					)
+				}
+				</Slider>
+            );
+        }
+    }
+}
+
+class ProductAdditionalInfo extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            error: null,
+            isLoaded: false,
+            data: []
+        };
+    }
+
+    componentDidMount() {
+        fetch("http://www.aid.com/site-api/sampledata")
+            .then(res => res.json())
+            .then(
+                (result) => {
+                    this.setState({
+                        isLoaded: true,
+                        data: result
+                    });
+                },
+                (error) => {
+                    this.setState({
+                        isLoaded: true,
+                        error
+                    });
+                }
+            )
+    }
+
+    render() {
+        const {
+            error,
+            isLoaded,
+            data
+        } = this.state;
+        if (error) {
+            return <div > Error: {
+                error.message
+            } < /div>;
+        } else if (!isLoaded) {
+            return <div > Loading... < /div>;
+        } else {
+            return ( 
+				<ul> {
+                    data.map(obj => ( 
+						<li key = {
+                            obj.name
+                        } > {
+                            obj.name
+                        } {
+                            obj.price
+                        } </li>
+                    ))
+                } </ul>
+            );
+        }
+    }
+}
+
+render( < MyComponent /> , document.getElementById('app'));
+/* render(
+    <Router>
+		<Route path="/view/:id" component={ProductAdditionalInfo}/>
+    </Router>,
+    document.getElementById('additional_info')
+); */
+render( <ProductSlider /> , document.getElementById('product-list'));

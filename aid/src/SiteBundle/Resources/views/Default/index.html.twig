@@ -1,0 +1,901 @@
+{% extends "SiteBundle::Layout/index.html.twig" %}
+{% block style %}
+<style>
+.logo{ max-height: 35px !important;}
+a.call-to-action-1.bg-dark.white-text { height: 165px; }
+</style>
+{% endblock %}
+{% block content %}
+	<div class="main-wrapper oh">
+		<!-- Revolution Slider -->
+		<section> 
+		  <div class="rev_slider_wrapper">
+			<div class="rev_slider" id="slider4" data-version="5.0">
+			  <ul>
+				<!-- SLIDE 1 -->
+				<li data-fstransition="fade"
+				  data-transition="scaledownfrombottom"
+				  data-easein="default" 
+				  data-easeout="default"
+				  data-slotamount="1"
+				  data-masterspeed="1200"
+				  data-delay="8000"
+				  data-title="The Art of Design"
+				  >
+				  <!-- MAIN IMAGE -->
+				  <img src="{{asset('bundles/design/')}}images/revolution/mp_slide_1.jpg"
+					alt=""
+					data-bgrepeat="no-repeat"
+					data-bgfit="cover"
+					data-bgparallax="7"
+					class="rev-slidebg"
+					>
+
+				  <!-- LINE -->
+				  <div class="tp-caption tp-shape tp-shapewrapper hero-line rs-parallaxlevel-8"
+					data-x="center"
+					data-y="center"
+					data-voffset="-161"
+					data-width="870"
+					data-height="4"
+					data-frames='[{
+					  "delay":1400,
+					  "speed":1200,
+					  "frame":"0",
+					  "from":"sX:0;opacity:0;",
+					  "ease":"Power3.easeOut",
+					  "to":"o:1;"
+					  },{
+					  "delay":"wait",
+					  "speed":1000,
+					  "frame":"999",
+					  "to":"opacity:0;","ease":"Power3.easeOut"
+					}]'
+
+					style="background-color:rgba(255, 255, 255, 0.5);">
+				  </div>
+
+				  <!-- LAYER NR. 1 -->
+				  <div class="tp-caption hero-text nocaps rs-parallaxlevel-8"
+					data-x="center"
+					data-y="center"
+					data-voffset="[-30,-30,-30,-20]"
+					data-fontsize="[95,85,75,45]"
+					data-textAlign="center"
+					data-frames='[{
+					  "delay":1000,
+					  "speed":900,
+					  "frame":"0",
+					  "from":"y:150px;opacity:0;",
+					  "ease":"Power3.easeOut",
+					  "to":"o:1;"
+					  },{
+					  "delay":"wait",
+					  "speed":1000,
+					  "frame":"999",
+					  "to":"opacity:0;","ease":"Power3.easeOut"
+					}]'
+					
+					data-splitout="none">Amazing Theme
+				  </div>
+
+				  <!-- LAYER NR. 2 -->
+				  <div class="tp-caption medium-text rs-parallaxlevel-8"
+					data-x="center"
+					data-y="center"
+					data-voffset="[60,60,60,50]"
+					data-width="[none, none, none, 300]"
+					data-textAlign="center"
+					data-whitespace="[nowrap, nowrap, nowrap, normal]"
+					data-frames='[{
+					  "delay":1200,
+					  "speed":900,
+					  "frame":"0",
+					  "from":"y:150px;opacity:0;",
+					  "ease":"Power3.easeOut",
+					  "to":"o:1;"
+					  },{
+					  "delay":"wait",
+					  "speed":1000,
+					  "frame":"999",
+					  "to":"opacity:0;","ease":"Power3.easeOut"
+					}]'
+					>Flexible and Creative. Meet the New Style
+				  </div>
+
+				  <!-- LINE -->
+				  <div class="tp-caption tp-shape tp-shapewrapper hero-line rs-parallaxlevel-8"
+					data-x="center"
+					data-y="center"
+					data-voffset="159"
+					data-width="870"
+					data-height="4"
+					data-frames='[{
+					  "delay":1400,
+					  "speed":1200,
+					  "frame":"0",
+					  "from":"sX:0;opacity:0;",
+					  "ease":"Power3.easeOut",
+					  "to":"o:1;"
+					  },{
+					  "delay":"wait",
+					  "speed":1000,
+					  "frame":"999",
+					  "to":"opacity:0;","ease":"Power3.easeOut"
+					}]'
+					style="background-color:rgba(255, 255, 255, 0.5);">
+				  </div>
+			
+				</li> <!-- end slide 1 -->
+
+				<!-- SLIDE 2 -->
+				<li data-transition="scaledownfrombottom"
+				  data-easein="default" 
+				  data-easeout="default"
+				  data-slotamount="1"
+				  data-masterspeed="1200"
+				  data-delay="8000"
+				  data-title="Creative &amp; Emotional"
+				  >
+				  <!-- MAIN IMAGE -->
+				  <img src="{{asset('bundles/design/')}}images/revolution/mp_slide_2.jpg"
+					alt=""
+					data-bgrepeat="no-repeat"
+					data-bgfit="cover"
+					data-bgparallax="7"
+					class="rev-slidebg"
+					>
+
+				  <!-- LAYER NR. 1 -->
+				  <div class="tp-caption hero-text nocaps"
+					data-x="center"
+					data-y="center"
+					data-voffset="-40"
+					data-fontsize="[95,85,75,45]"
+					data-frames='[{
+					  "delay":1000,
+					  "speed":900,
+					  "frame":"0",
+					  "from":"y:150px;opacity:0;",
+					  "ease":"Power3.easeOut",
+					  "to":"o:1;"
+					  },{
+					  "delay":"wait",
+					  "speed":1000,
+					  "frame":"999",
+					  "to":"opacity:0;","ease":"Power3.easeOut"
+					}]'
+					data-splitout="none">Simple &amp; Clean
+				  </div>
+
+				  <!-- LAYER NR. 2 -->
+				  <div class="tp-caption small-text"
+					data-x="center"
+					data-y="center"
+					data-hoffset="0"
+					data-voffset="40"
+					data-textAlign="center"
+					data-width="[none, none, none, 300]"
+					data-whitespace="[nowrap, nowrap, nowrap, normal]"
+					data-frames='[{
+					  "delay":1200,
+					  "speed":900,
+					  "frame":"0",
+					  "from":"y:150px;opacity:0;",
+					  "ease":"Power3.easeOut",
+					  "to":"o:1;"
+					  },{
+					  "delay":"wait",
+					  "speed":1000,
+					  "frame":"999",
+					  "to":"opacity:0;","ease":"Power3.easeOut"
+					}]'
+					>With a Bunch of features. Based on Bootstrap Framework.
+				  </div>
+
+				  <!-- LAYER NR. 3 -->
+				  <div class="tp-caption tp-resizeme"
+					data-x="center"
+					data-y="center"
+					data-voffset="110"
+					data-hoffset="-73"
+					data-frames='[{
+					  "delay":1400,
+					  "speed":900,
+					  "frame":"0",
+					  "from":"y:150px;opacity:0;",
+					  "ease":"Power3.easeOut",
+					  "to":"o:1;"
+					  },{
+					  "delay":"wait",
+					  "speed":1000,
+					  "frame":"999",
+					  "to":"opacity:0;","ease":"Power3.easeOut"
+					}]'
+					style="min-width: 140px;"><a href='#' class='btn btn-md btn-white'>Buy it Now</a>
+				  </div>
+
+				  <!-- LAYER NR. 4 -->
+				  <div class="tp-caption tp-resizeme"
+					data-x="center"
+					data-y="center"
+					data-voffset="110"
+					data-hoffset="80"
+					data-frames='[{
+					  "delay":1400,
+					  "speed":900,
+					  "frame":"0",
+					  "from":"y:150px;opacity:0;",
+					  "ease":"Power3.easeOut",
+					  "to":"o:1;"
+					  },{
+					  "delay":"wait",
+					  "speed":1000,
+					  "frame":"999",
+					  "to":"opacity:0;","ease":"Power3.easeOut"
+					}]'
+					style="z-index: 13; max-width: auto; max-height: auto; white-space: nowrap;"><a href='#' class='btn btn-md btn-transparent'>Learn More</a>
+				  </div>
+			
+				</li> <!-- end slide 2 -->
+
+				<!-- SLIDE 3 -->
+				<li data-transition="scaledownfrombottom"
+				  data-easein="default" 
+				  data-easeout="default"
+				  data-slotamount="1"
+				  data-masterspeed="1200"
+				  data-delay="8000"
+				  data-title="Amazing Agency"
+				  >
+				  <!-- MAIN IMAGE -->
+				  <img src="{{asset('bundles/design/')}}images/revolution/mp_slide_3.jpg"
+					alt=""
+					data-bgrepeat="no-repeat"
+					data-bgfit="cover"
+					data-bgparallax="7"
+					class="rev-slidebg"
+					>
+
+				  <!-- LAYER NR. 1 -->
+				  <div class="tp-caption medium-text nocaps alt-font"
+					data-x="center"
+					data-y="center"
+					data-voffset="-85"
+					data-textAlign="center"
+					data-fontsize="[24,24,22,20]"
+					data-width="[none, none, none, 300]"
+					data-whitespace="[nowrap, nowrap, nowrap, normal]"
+					data-frames='[{
+					  "delay":1000,
+					  "speed":900,
+					  "frame":"0",
+					  "from":"y:150px;opacity:0;",
+					  "ease":"Power3.easeOut",
+					  "to":"o:1;"
+					  },{
+					  "delay":"wait",
+					  "speed":1000,
+					  "frame":"999",
+					  "to":"opacity:0;","ease":"Power3.easeOut"
+					}]'
+					>Flexible and Creative. <i>Meet the New Style</i>
+				  </div>
+
+				  <!-- LAYER NR. 1 -->
+				  <div class="tp-caption hero-text"
+					data-x="center"
+					data-y="center"
+					data-voffset="0"
+					data-fontsize="[95,85,75,45]"
+					data-textAlign="center"
+					data-width="[none, none, none, 300]"
+					data-whitespace="[nowrap, nowrap, nowrap, normal]"
+					data-frames='[{
+					  "delay":1200,
+					  "speed":900,
+					  "frame":"0",
+					  "from":"y:150px;opacity:0;",
+					  "ease":"Power3.easeOut",
+					  "to":"o:1;"
+					  },{
+					  "delay":"wait",
+					  "speed":1000,
+					  "frame":"999",
+					  "to":"opacity:0;","ease":"Power3.easeOut"
+					}]'
+					>100% Responsive
+				  </div>
+
+				  <!-- LAYER NR. 4 -->
+				  <div class="tp-caption tp-resizeme"
+					data-x="center"
+					data-y="center"
+					data-voffset="100"
+					data-hoffset="0"
+					data-frames='[{
+					  "delay":1400,
+					  "speed":900,
+					  "frame":"0",
+					  "from":"y:150px;opacity:0;",
+					  "ease":"Power3.easeOut",
+					  "to":"o:1;"
+					  },{
+					  "delay":"wait",
+					  "speed":1000,
+					  "frame":"999",
+					  "to":"opacity:0;","ease":"Power3.easeOut"
+					}]'
+					style="z-index: 12; max-width: auto; max-height: auto; white-space: nowrap;"><a href='#' class='btn btn-lg btn-color'>Buy it Now</a>
+				  </div>
+				
+				</li> <!-- end slide 3 -->
+
+			  </ul>
+
+			</div>
+		  </div>
+		</section>
+		
+		<!-- category slider -->
+		<section class="section-wrap section-wrap--sm pb-60">
+			<div class="container">
+				<div class="container-fluid">
+					<div class="row">
+						<!-- <div class="">
+							<h2 class="filter-title">
+								<span class="content">
+									<strong>Category</strong>
+								</span>
+							</h2>
+						</div> -->
+						<div id="category-list" class="owl-carousel">
+							{% if category_list is defined and category_list is not empty %}
+								{% for category in category_list %}
+									<div class="cat-item">
+										<a href="{{ path('site_product_list', {'category_id': category.category_master_id}) }}">
+											<img src="{{ category.media_url }}" alt="{{ category.category_name }}">
+										</a>
+									</div>
+								{% endfor %}
+							{% endif %}
+						</div>
+					</div>
+				</div>
+			</div>
+		</section>
+		<!-- end category slider -->
+		
+		<!-- product slider -->
+		<section class="pb-60">
+			<div class="container">
+				<div class="container-fluid">
+					<div class="row">
+						<div class="">
+							<h2 class="filter-title">
+								<span class="content">
+									<strong>Best Seller Product</strong>
+								</span>
+							</h2>
+						</div>
+						
+						<!-- best seller collection  -->
+						<div id="best-seller-collection"></div>
+						<!-- end: best seller collection  -->
+					</div>
+				</div>
+			</div>
+		</section>
+		<!-- end product slider -->
+		
+		<!-- product slider -->
+		<section class="pb-10">
+			<div class="container">
+				<div class="container-fluid">
+					<div class="row">
+						<div class="">
+							<h2 class="filter-title">
+								<span class="content">
+									<strong>Feachered Product</strong>
+								</span>
+							</h2>
+						</div>
+						
+						<!-- featured product collection -->
+						<div id="featured-product-collection"></div>
+						<!-- end: featured product collection -->
+						
+						<!-- {#
+							{% if product_list is defined and product_list is not empty %}
+								{% for product in product_list %}
+									<div class="product-item">
+										<a href="{{ path('site_product_view', {'product_id': product.product_master_id}) }}" class="">
+											<img src="{{ product.media_url }}" alt="{{ product.product_title }}">
+										</a>
+									</div>
+								{% endfor %}
+							{% endif %}
+						#} -->
+						
+					</div>
+				</div>
+			</div>
+		</section>
+		<!-- end product slider -->
+		
+	
+	<!-- Video Section -->
+   <!--  <section class="section-wrap section-wrap--lg white-text" style="background-image:url({{asset('bundles/design/')}}images/sections/video_bg.jpg); background-attachment: scroll">
+      <div class="container relative text-center">          
+        <a href="https://www.youtube.com/watch?v=Scxs7L0vhZ4?autoplay=1" class="single-video-lightbox play-btn"></a>
+        <h6 class="mt-20">Watch Video</h6>
+      </div>
+    </section> -->
+
+	<!-- Food / Fitness / Health -->
+    <section class="section-wrap bg-light pb-90">
+      <div class="container">
+        <div class="row">
+          <div class="col-md-4 mb-30 wow fadeInUp" data-wow-duration="1s" data-wow-delay="0.1s">
+            <div class="box-shadow">
+              <img src="{{asset('bundles/design/')}}images/food.jpg" class="img-fullwidth" alt="">
+              <div class="card">               
+                <h4>Food</h4>
+                <p>We possess within us two minds. So far I have written only of the conscious mind. Your subconscious mind contains.</p>
+                <a href="#">Read More</a>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-4 mb-30 wow fadeInUp" data-wow-duration="1s" data-wow-delay="0.2s">
+            <div class="box-shadow">
+              <img src="{{asset('bundles/design/')}}images/fitness.jpg" class="img-fullwidth" alt="">
+              <div class="card">               
+                <h4>Fitness</h4>
+                <p>We possess within us two minds. So far I have written only of the conscious mind. Your subconscious mind contains.</p>
+                <a href="#">Read More</a>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-4 wow fadeInUp" data-wow-duration="1s" data-wow-delay="0.3s">
+            <div class="box-shadow">
+              <img src="{{asset('bundles/design/')}}images/health.jpg" class="img-fullwidth" alt="">
+              <div class="card">               
+                <h4>Health</h4>
+                <p>We possess within us two minds. So far I have written only of the conscious mind. Your subconscious mind contains.</p>
+                <a href="#">Read More</a>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section> <!-- end mission/vision/results -->
+	
+	<!-- Selected Works -->
+	<section class="section-wrap bg-dark pt-90">
+      <div class="container-fluid no-padding">
+
+        <div class="heading-row mb-80 text-center">
+          <div class="container">
+            <h2 class="heading white">Selected Works</h2>
+          </div>          
+        </div>
+
+
+        <div id="project-grid" class="project-grid grid-4-col no-gutter">
+
+          <div class="project project--hover-2 web-design mockups">
+            <div class="project__img-holder">
+              <img src="{{asset('bundles/design/')}}images/portfolio/1.jpg" alt="" class="project__img">
+              <div class="project__overlay">
+                <div class="project__icons">
+                  <a href="http://vimeo.com/139208268" class="lightbox-video"><i class="fa fa-search"></i></a>
+                  <a href="portfolio-single.html"><i class="fa fa-link"></i></a>
+                </div>
+              </div>
+              <div class="project__description">
+                <h3 class="project__title"><a href="portfolio-single.html">Video Lightbox</a></h3>
+                <span class="project__category"><a href="portfolio-single.html">Web Design</a></span>
+              </div>    
+            </div>
+          </div> <!-- end project -->
+
+          <div class="project project--hover-2 print mockups">
+            <div class="project__img-holder">
+              <img src="{{asset('bundles/design/')}}images/portfolio/2.jpg" alt="" class="project__img">
+              <div class="project__overlay">
+                <div class="project__icons">
+                  <a href="{{asset('bundles/design/')}}images/portfolio/2_big.jpg" class="lightbox-img"><i class="fa fa-search"></i></a>
+                  <a href="portfolio-single.html"><i class="fa fa-link"></i></a>
+                </div>
+              </div>
+              <div class="project__description">
+                <h3 class="project__title"><a href="portfolio-single.html">Branding Mockup</a></h3>
+                <span class="project__category"><a href="portfolio-single.html">Mockups</a></span>
+              </div>
+            </div>            
+          </div> <!-- end project -->
+
+          <div class="project project--hover-2 web-design graphics print">
+            <div class="project__img-holder">
+              <img src="{{asset('bundles/design/')}}images/portfolio/3.jpg" alt="" class="project__img">
+              <div class="project__overlay">
+                <div class="project__icons">
+                  <a href="{{asset('bundles/design/')}}images/portfolio/3_big.jpg" class="lightbox-img"><i class="fa fa-search"></i></a>
+                  <a href="portfolio-single.html"><i class="fa fa-link"></i></a>
+                </div>
+              </div>
+              <div class="project__description">
+                <h3 class="project__title"><a href="portfolio-single.html">Chat App</a></h3>
+                <span class="project__category"><a href="portfolio-single.html">Web Design</a></span>
+              </div>
+            </div>            
+          </div> <!-- end project -->
+
+          <div class="project project--hover-2 web-design graphics print">
+            <div class="project__img-holder">
+              <img src="{{asset('bundles/design/')}}images/portfolio/4.jpg" alt="" class="project__img">
+              <div class="project__overlay">
+                <div class="project__icons">
+                  <a href="{{asset('bundles/design/')}}images/portfolio/4_big.jpg" class="lightbox-img"><i class="fa fa-search"></i></a>
+                  <a href="portfolio-single.html"><i class="fa fa-link"></i></a>
+                </div>
+              </div>
+              <div class="project__description">
+                <h3 class="project__title"><a href="portfolio-single.html">Money App</a></h3>
+                <span class="project__category"><a href="portfolio-single.html">Web Design</a></span>
+              </div>
+            </div>            
+          </div> <!-- end project -->
+
+          <div class="project project--hover-2 web-design">
+            <div class="project__img-holder">
+              <img src="{{asset('bundles/design/')}}images/portfolio/5.jpg" alt="" class="project__img">
+              <div class="project__overlay">
+                <div class="project__icons">
+                  <a href="{{asset('bundles/design/')}}images/portfolio/5_big.jpg" class="lightbox-img"><i class="fa fa-search"></i></a>
+                  <a href="portfolio-single.html"><i class="fa fa-link"></i></a>
+                </div>
+              </div>
+              <div class="project__description">
+                <h3 class="project__title"><a href="portfolio-single.html">Video Chat App</a></h3>
+                <span class="project__category"><a href="portfolio-single.html">Web Design</a></span>
+              </div>
+            </div>            
+          </div> <!-- end project -->
+
+          <div class="project project--hover-2 web-design">
+            <div class="project__img-holder">
+              <img src="{{asset('bundles/design/')}}images/portfolio/6.jpg" alt="" class="project__img">
+              <div class="project__overlay">
+                <div class="project__icons">
+                  <a href="{{asset('bundles/design/')}}images/portfolio/6_big.jpg" class="lightbox-img"><i class="fa fa-search"></i></a>
+                  <a href="portfolio-single.html"><i class="fa fa-link"></i></a>
+                </div>
+              </div>
+              <div class="project__description">
+                <h3 class="project__title"><a href="portfolio-single.html">Promo Website</a></h3>
+                <span class="project__category"><a href="portfolio-single.html">Web Design</a></span>
+              </div>
+            </div>            
+          </div> <!-- end project -->
+
+          <div class="project project--hover-2 web-design">
+            <div class="project__img-holder">
+              <img src="{{asset('bundles/design/')}}images/portfolio/7.jpg" alt="" class="project__img">
+              <div class="project__overlay">
+                <div class="project__icons">
+                  <a href="{{asset('bundles/design/')}}images/portfolio/7_big.jpg" class="lightbox-img"><i class="fa fa-search"></i></a>
+                  <a href="portfolio-single.html"><i class="fa fa-link"></i></a>
+                </div>
+              </div>
+              <div class="project__description">
+                <h3 class="project__title"><a href="portfolio-single.html">Landing Page</a></h3>
+                <span class="project__category"><a href="portfolio-single.html">Web Design</a></span>
+              </div>
+            </div>            
+          </div> <!-- end project -->
+
+
+          <div class="project project--hover-2 print">
+            <div class="project__img-holder">
+              <img src="{{asset('bundles/design/')}}images/portfolio/8.jpg" alt="" class="project__img">
+              <div class="project__overlay">
+                <div class="project__icons">
+                  <a href="{{asset('bundles/design/')}}images/portfolio/8_big.jpg" class="lightbox-img"><i class="fa fa-search"></i></a>
+                  <a href="portfolio-single.html"><i class="fa fa-link"></i></a>
+                </div>
+              </div>
+              <div class="project__description">
+                <h3 class="project__title"><a href="portfolio-single.html">TV Show Website</a></h3>
+                <span class="project__category"><a href="portfolio-single.html">Web Design</a></span>
+              </div>
+            </div>            
+          </div> <!-- end project -->
+
+
+        </div>  <!-- end portfolio grid -->
+
+        
+        <div class="row mt-60">
+          <div class="col-md-12 text-center">
+            <a href="portfolio-4-col.html" class="btn btn-lg btn-color btn-icon">
+              <span>Load More</span>
+              <i class="fa fa-angle-right"></i>
+            </a>            
+          </div>
+        </div>
+
+      </div> <!-- end container -->
+    </section> <!-- end selected works-->
+	
+	<!-- Brand Slider -->
+	{% if brand_list is defined and brand_list is not empty %}
+    <section class="section-wrap pb-50">
+		<div class="container">
+
+			<div class="heading-row mb-30 text-center">
+			  <h2 class="heading">Associated Brands</h2>
+			</div>
+
+			<div class="row">
+			  <div class="tabs feature-tabs text-center">
+				<div id="brand-slider" class="tabs__list owl-carousel">
+					{% for brand in brand_list %}
+						<div class="brand">
+							<img src="{{ brand.media_url }}" alt="{{ brand.brand_name }}">
+							<span>{{ brand.brand_name }}</span>
+						</div>
+					{% endfor %}
+				</div>
+			  </div>
+			</div>
+		</div>
+    </section>
+	{% endif %}
+	<!-- end brand slider -->
+	
+	<!-- Results -->
+    <section class="section-wrap white-text pt-sm-50" style="background-image: url({{asset('bundles/design/')}}images/sections/results_bg.jpg)">
+      <div class="container text-center">
+        <div class="row">
+
+          <div class="col-sm-3 mb-sm-40 wow fadeInUp" data-wow-duration="1s" data-wow-delay="0.1s">
+            <div class="counter">
+              <span class="counter__timer" data-from="0" data-to="1200">&nbps;</span>
+              <span class="counter__text">Projects Done</span>         
+            </div>
+          </div> <!-- end first result box -->
+
+          <div class="col-sm-3 mb-sm-40 wow fadeInUp" data-wow-duration="1s" data-wow-delay="0.2s">
+            <div class="counter">
+              <span class="counter__timer" data-from="0" data-to="578">&nbps;</span>
+              <span class="counter__text">Awards Won</span>            
+            </div>
+          </div> <!-- end second result box -->
+
+          <div class="col-sm-3 mb-sm-40 wow fadeInUp" data-wow-duration="1s" data-wow-delay="0.3s">
+            <div class="counter">
+              <span class="counter__timer" data-from="0" data-to="2489">&nbps;</span>
+              <span class="counter__text">Happy Clients</span>             
+            </div>
+          </div> <!-- end third result box -->
+
+          <div class="col-sm-3 mb-sm-40 wow fadeInUp" data-wow-duration="1s" data-wow-delay="0.4s">
+            <div class="counter">
+              <span class="counter__timer" data-from="0" data-to="1329">&nbps;</span>
+              <span class="counter__text">Lines of Code</span>             
+            </div>
+          </div> <!-- end fourth result box -->
+
+        </div>
+      </div>
+    </section> <!-- end results-->
+
+
+    <!-- From Blog -->
+    <section class="section-wrap from-blog pb-90 bg-light">
+      <div class="container">
+
+        <div class="heading-row text-center">
+          <span class="subheading">From Blog</span>
+          <h2 class="heading">Our Updated News</h2>
+        </div>
+
+        <div class="row">
+
+          <div class="col-md-4 col-sm-6 wow fadeInUp" data-wow-duration="1s" data-wow-delay="0.1s">
+            <article class="entry from-blog__entry box-shadow">
+              <a href="blog-single.html" class="entry__img-holder">
+                <img src="{{asset('bundles/design/')}}images/blog/5.jpg" alt="" class="entry__img">
+              </a>
+              <div class="card">
+                <h4 class="from-blog__entry__title entry__title">
+                  <a href="blog-single.html">10 Essential Tips for Designing Mobile eCommerce Apps</a>
+                </h4>
+                <ul class="entry__meta">                 
+                  <li>July 12, 2017</li>  
+                  <li><a href="blog-single.html">10 Comments</a></li>
+                </ul>
+                <div class="entry__content">
+                  <p class="entry__excerpt">We possess within us two minds. So far I have written only of the conscious mind. Our subconscious mind contains such power.</p>
+                  <a href="blog-single.html" class="btn btn-sm btn-dark">Read More</a>
+                </div>
+              </div>
+            </article>
+          </div> <!-- end post -->
+
+
+          <div class="col-md-4 col-sm-6 wow fadeInUp" data-wow-duration="1s" data-wow-delay="0.1s">
+            <article class="entry from-blog__entry box-shadow">
+              <a href="blog-single.html" class="entry__img-holder">
+                <img src="{{asset('bundles/design/')}}images/blog/6.jpg" alt="" class="entry__img">
+              </a>
+              <div class="card">
+                <h4 class="from-blog__entry__title entry__title">
+                  <a href="blog-single.html">How to Tool Your Ecommerce Business for Growth</a>
+                </h4>
+                <ul class="entry__meta">                 
+                  <li>July 12, 2017</li>  
+                  <li><a href="blog-single.html">10 Comments</a></li>
+                </ul>
+                <div class="entry__content">
+                  <p class="entry__excerpt">We possess within us two minds. So far I have written only of the conscious mind. Our subconscious mind contains such power.</p>
+                  <a href="blog-single.html" class="btn btn-sm btn-dark">Read More</a>
+                </div>
+              </div>
+            </article>
+          </div> <!-- end post -->
+
+
+          <div class="col-md-4 col-sm-6 wow fadeInUp" data-wow-duration="1s" data-wow-delay="0.1s">
+            <article class="entry from-blog__entry box-shadow">
+              <a href="blog-single.html" class="entry__img-holder">
+                <img src="{{asset('bundles/design/')}}images/blog/7.jpg" alt="" class="entry__img">
+              </a>
+              <div class="card">
+                <h4 class="from-blog__entry__title entry__title">
+                  <a href="blog-single.html">Using WordPress Admin Filters to Easily Find Custom Content</a>
+                </h4>
+                <ul class="entry__meta">                 
+                  <li>July 12, 2017</li>  
+                  <li><a href="blog-single.html">10 Comments</a></li>
+                </ul>
+                <div class="entry__content">
+                  <p class="entry__excerpt">We possess within us two minds. So far I have written only of the conscious mind. Our subconscious mind contains such power.</p>
+                  <a href="blog-single.html" class="btn btn-sm btn-dark">Read More</a>
+                </div>
+              </div>
+            </article>
+          </div> <!-- end post -->
+
+        </div>
+      </div>
+    </section> <!-- end from blog -->
+
+    <!-- Call to Action 1 -->
+    <a href="#" class="call-to-action-1 bg-dark white-text">
+      <div class="container">
+        <div class="row">
+          <div class="col-md-12 text-center">   
+            <h2 class="call-to-action-1__title mt-0">What are you waiting for? purchase canna now</h2>
+            <i class="call-to-action-1__icon fa fa-chevron-right"></i>
+          </div>            
+        </div>
+      </div>
+    </a> <!-- end call to action 1 -->
+	
+	</div>
+{% endblock %}
+
+{% block javascript %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/owl-carousel/1.3.3/owl.carousel.min.js"></script>
+<script src={{ asset('app.bundle.js') }} type="text/javascript"></script>
+<script type="text/babel">
+  /*class MyComponent extends React.Component {
+	constructor(props) {
+	super(props);
+	this.state = {
+		data: []
+	};
+  }
+
+  componentDidMount() {
+	fetch("http://www.aid.com/getBestsellerCollection")
+	  .then(res => res.json())
+	  .then(
+		(result) => {
+			console.log(result);
+		  this.setState({
+			data: result
+		  });
+		}
+	  )
+  }
+
+  render() {
+	const { data } = this.state;
+	return (
+		<div id="bestseller" >
+		  {data.map(item => (
+			<div key={item.product_master_id} className="product-item">
+				<a href="">
+					<img src={item.media_url}  />
+				</a>
+			</div>
+		  ))}
+		</div>
+	);
+  }
+}
+
+	ReactDOM.render(
+	  <MyComponent />,
+	  document.getElementById('product-list1')
+	);*/
+</script>
+<script>
+	$("#category-list").owlCarousel({
+		loop: true,
+		margin: 0,
+		items: 6,
+		nav: true,
+		slideSpeed: 200,
+		mouseDrag: true,
+		touchDrag: true,
+		pagination: false,
+		stopOnHover: false,
+		paginationSpeed: 500,
+		navigation: true,
+		navigationText:["<i class='fa fa-angle-left nav-icon'></i>","<i class='fa fa-angle-right nav-icon'></i>"]
+	});
+	
+	$("#product-list1").owlCarousel({
+		loop: true,
+		margin: 0,
+		items: 5,
+		nav: true,
+		autoplay: true,
+		slideSpeed: 800,
+		mouseDrag: true,
+		touchDrag: true,
+		pagination: false,
+		stopOnHover: false,
+		paginationSpeed: 1000,
+		navigation: true,
+		navigationText:["<i class='fa fa-angle-left nav-icon'></i>","<i class='fa fa-angle-right nav-icon'></i>"]
+	});
+	
+	$("#product-list2").owlCarousel({
+		loop: true,
+		margin: 0,
+		items: 5,
+		nav: true,
+		autoplay: true,
+		slideSpeed: 200,
+		mouseDrag: true,
+		touchDrag: true,
+		pagination: false,
+		stopOnHover: false,
+		paginationSpeed: 500,
+		navigation: true,
+		navigationText:["<i class='fa fa-angle-left nav-icon'></i>","<i class='fa fa-angle-right nav-icon'></i>"]
+	});
+	
+	$("#brand-slider").owlCarousel({
+		loop: true,
+		margin: 0,
+		items: 6,
+		nav: true,
+		autoplay: true,
+		slideSpeed: 100,
+		mouseDrag: true,
+		touchDrag: true,
+		pagination: false,
+		stopOnHover: false,
+		paginationSpeed: 250,
+		navigation: true,
+		navigationText:["<i class='fa fa-angle-left nav-icon'></i>","<i class='fa fa-angle-right nav-icon'></i>"]
+	});
+</script>
+{% endblock %}

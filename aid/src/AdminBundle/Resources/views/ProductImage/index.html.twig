@@ -1,0 +1,56 @@
+{% extends "AdminBundle::Layout/adminlayout.html.twig" %}
+{% block title %} Product Image Update {% endblock %}
+{% block css %}{% endblock %}
+{% block content %}
+<section class="content-header">
+		<h1>
+            Product Import
+		  <small></small>
+		</h1>
+		<ol class="breadcrumb">
+		  <li><a href="{{path('admin_dashboard_index',{'domain':app.session.get('domain')})}}"><i class="fa fa-dashboard"></i>Dashboard</a></li>
+		  <li class="active">Product Import</li>
+		</ol>
+	  </section>
+	  <section class="content">
+		
+		{% for flashMessage in app.session.flashbag.get('success_msg') %}
+            <div class="alert alert-success alert-dismissable">
+                <button aria-hidden="true" data-dismiss="alert" class="close" type="button">×</button>
+                <h4><i class="icon fa fa-check"></i> Alert!</h4>{{ flashMessage }}
+            </div>
+        {% endfor %}
+        {% for flashMessage in app.session.flashbag.get('error_msg') %}
+            <div class="alert alert-danger alert-dismissable">
+                <button aria-hidden="true" data-dismiss="alert" class="close" type="button">×</button>
+                <h4><i class="icon fa fa-check"></i> Alert!</h4>{{ flashMessage }}
+            </div>
+        {% endfor %}
+	  
+		<div class="row">
+			<div class="col-xs-12">
+                <div class="box box-solid">
+                    <div class="box-body">
+						<form action="productImage/save" method="post" enctype="multipart/form-data">
+							<div class="col-md-12">
+								<div class="col-md-6">
+									<input type="file" name="product_csv">
+								</div>
+								<div class="col-md-6">
+									<input type="submit" name="submit">
+								</div>
+							</div>
+						</form>
+                    </div>
+                  </div>
+            </div>
+		</div>
+	</section>
+{% endblock %}
+{% block js %}
+<script>
+$(document).ready(function() {
+    $('#example1').DataTable();
+} );
+</script>
+{% endblock %}

@@ -1,0 +1,217 @@
+{% extends "AdminBundle::Layout/adminlayout.html.twig" %}
+{% block title %} User List {% endblock %}
+{% block css %}
+	
+{% endblock %}
+{% block content %}
+	  
+	<section class="content-header">
+		  <h1>
+            
+		  <small></small>
+		</h1>
+		<ol class="breadcrumb">
+		  <li><a href="{{path('admin_dashboard_index')}}"><i class="fa fa-dashboard"></i>Dashboard</a></li>
+		  <li class="active">User List</li>
+		</ol>
+	  </section>
+	  <section class="content">
+		<div class ="row">
+			<div class="col-md-12">
+			{% for flashMessage in app.session.flashbag.get('success_msg') %}
+			  <div class="alert alert-success alert-dismissable">
+				  <button aria-hidden="true" data-dismiss="alert" class="close" type="button">×</button>
+				  <h4><i class="icon fa fa-check"></i> Alert!</h4>{{ flashMessage }}
+			  </div>
+			  {% endfor %}
+			  {% for flashMessage in app.session.flashbag.get('error_msg') %}
+			  <div class="alert alert-danger alert-dismissable">
+				  <button aria-hidden="true" data-dismiss="alert" class="close" type="button">×</button>
+				  <h4><i class="icon fa fa-check"></i> Alert!</h4>{{ flashMessage }}
+			  </div>
+			{% endfor %}
+			</div>  
+		</div>	
+		<div class="row">
+			<div class="col-xs-12">
+                <div class="box box-solid">
+                    <div class="box-header with-border">
+                      <h3 class="box-title">User List</h3>
+                      {#<div class="pull-right">
+                        <a href="{{path('admin_user_adduser')}}" class="btn btn-primary btn-flat"><i class="fa fa-plus"></i>&nbsp;&nbsp;ADD</a>
+                      </div>#}
+                    </div>
+                    <div class="box-body">
+                        <div class="container-fluid table-responsive">
+							<table id="example1" class="table table-bordered table-striped text-center">
+								<thead>
+									<th>Contact No</th>
+                                    <th>First Name</th>
+                                    <th>Last Name</th>
+                                    <th>Email</th>
+									<th>Status</th>
+                                    <th>Action</th>
+								</thead>
+								<tbody>
+									{% if user is defined and user is not empty %}
+										  {% for user in user %}
+												{% if user.user_mobile is not empty %}
+												<tr>
+													<td>{{user.user_mobile}}</td>
+													<td>{{user.user_firstname}} </td>
+													<td> {{user.user_lastname}}</td>
+													<td> {{user.user_emailid}}</td>
+													<td>{{user.user_status}}</td>
+													<td>
+														{#<a href="#"  class="btn bg-olive btn-xs" data-toggle="tooltip" data-original-title="View User Dashboard"><span class="fa fa-eye"></span></a>#}
+														
+														<a href="{{path('admin_user_adduser',{"user_master_id":user.user_master_id})}}" onclick="return confirm('Are yout sure, you want to Edit ?')" class="btn btn-warning btn-xs" data-toggle="tooltip" data-original-title="Edit"><span class="fa fa-edit"></span></a>
+														
+														<a href="{{path('admin_user_deleteuser',{"user_master_id":user.user_master_id})}}" onclick="return confirm('Are you sure, you want to delete ?')" class="btn btn-danger btn-xs"  data-toggle="tooltip" data-original-title="Delete"><span class="fa fa-remove"></span></a>	
+													</td>
+												</tr>
+												{% endif %}
+										  {%endfor%}
+									{% endif%}
+								</tbody>
+								<tfoot>
+									<th>Contact No</th>
+                                    <th>First Name</th>
+                                    <th>Last Name</th>
+                                     <th>Email</th>
+									<th>Status</th>
+                                    <th>Action</th>
+								</tfoot>
+							</table>
+						</div>
+
+                    </div>
+                  </div>
+            </div>
+		</div>
+	  </section>
+{% endblock %}
+
+{% block js %}
+<script>
+$(document).ready(function() {
+
+  var table = $('#example1').DataTable( {
+        dom: 'Bfrtip',
+		
+        buttons: [
+            {
+                extend: 'copyHtml5',				
+                exportOptions: {
+                 columns: ':not(:last-child)',
+				 format: {
+					  body: function(data, col, row) {						
+						  if (col == 10) {
+							  return table
+									  .cell( {row: row, column: col} )
+									  .nodes()
+									  .to$()
+									  .find(':selected')
+									  .text()
+						  } else {
+							  return data;
+						  }
+					  }
+				  },
+                },
+								
+            },
+			{
+				extend: 'pdfHtml5',
+                 orientation:'landscape',
+       			 customize: function (doc) {
+    				doc.content[1].table.widths = 
+        			Array(doc.content[1].table.body[0].length + 1).join('*').split('');
+  				},
+				exportOptions: {
+				  columns: ':not(:last-child)',
+				   format: {
+					  body: function(data, col, row) {						
+						  if (col == 10) {
+							  return table
+									  .cell( {row: row, column: col} )
+									  .nodes()
+									  .to$()
+									  .find(':selected')
+									  .text()
+						  } else {
+							  return data;
+						  }
+					  }
+				  },
+			 }
+			},
+			{
+				 extend: 'excelHtml5',
+                exportOptions: {
+                 columns: ':not(:last-child)',
+				 format: {
+					  body: function(data, col, row) {						
+						  if (col == 10) {
+							  return table
+									  .cell( {row: row, column: col} )
+									  .nodes()
+									  .to$()
+									  .find(':selected')
+									  .text()
+						  } else {
+							  return data;
+						  }
+					  }
+				  },
+                },
+			},
+			{
+				 extend: 'csvHtml5',
+                exportOptions: {
+                 columns: ':not(:last-child)',
+				 format: {
+					  body: function(data, col, row) {						
+						  if (col == 10) {
+							  return table
+									  .cell( {row: row, column: col} )
+									  .nodes()
+									  .to$()
+									  .find(':selected')
+									  .text()
+						  } else {
+							  return data;
+						  }
+					  }
+				  },
+                },
+			},
+			{
+                extend: 'print',				
+                exportOptions: {
+                 columns: ':not(:last-child)',
+				 format: {
+					  body: function(data, col, row) {						
+						  if (col == 10) {
+							  return table
+									  .cell( {row: row, column: col} )
+									  .nodes()
+									  .to$()
+									  .find(':selected')
+									  .text()
+						  } else {
+							  return data;
+						  }
+					  }
+				  },
+                },
+								
+            },
+        ],
+        columnDefs: [
+  			{ targets:[5], orderable: false }
+		],
+    } );
+} );
+</script>
+{% endblock %}

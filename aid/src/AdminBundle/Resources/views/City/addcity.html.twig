@@ -1,0 +1,183 @@
+{% extends "AdminBundle::Layout/adminlayout.html.twig" %}
+{% block title %} City List {% endblock %}
+{% block css %}
+	
+{% endblock %}
+{% block content %}
+	<section class="content-header">
+		<h1>
+            Add City
+		  <small></small>
+		</h1>
+		<ol class="breadcrumb">
+		  <li><a href="{{path('admin_dashboard_index',{'domain':app.session.get('domain')})}}"><i class="fa fa-dashboard"></i>Dashboard</a></li>
+          <li><a href="{{path('admin_city_index',{'domain':app.session.get('domain')})}}"></i>City List</a></li> 
+		  <li class="active">Add City</li>
+		</ol>
+	  </section>
+	  <section class="content">
+		<div class="row">
+			<div class="col-xs-12">
+                <div class="box box-solid">
+                    
+                    {% if language is defined and language is not empty %}
+                    <div class="nav-tabs-custom">
+                        <ul class="nav nav-tabs">
+                        
+                            {% for lang in language %}
+                            <li {% if loop.index == 1 %}class="active"{% endif %}><a data-toggle="tab" href="#tab_{{lang.language_master_id}}">{{lang.language_name}}</a></li>
+                            {% endfor %}
+                         
+                        </ul>
+                        <div class="tab-content">
+                            {% for lang in language %}
+                            <div id="tab_{{lang.language_master_id}}" class="tab-pane{% if loop.index == 1 %} active{% endif %}">
+                                <form method="post" class="form-horizontal" action="{% if city_master is defined and city_master is not empty %}{{path('admin_city_savecity',{'domain':app.session.get('domain'),'language_id':lang.language_master_id,'main_city_id':main_city_id})}}{% else %}{{path('admin_city_savecity',{'domain':app.session.get('domain'),'language_id':lang.language_master_id})}}{% endif %}" enctype="multipart/form-data">
+                                  <div class="box-body">
+									
+									<div class="form-group">
+                                      <label class="col-sm-2 control-label">Country</label>
+                                      <div class="col-sm-6">
+										<select class="form-control" name="main_country_id" onchange="getState(this.value,{{lang.language_master_id}});">
+											<option>Select Country</option>
+											{% if country_master is defined and country_master is not empty %}
+												{% for country in country_master %}
+													{% if country.language_id == lang.language_master_id %}
+														<option value="{{country.main_country_id}}" {% if main_country_id is defined and main_country_id is not empty  %}{% if main_country_id == country.main_country_id %}selected{% endif %}{% endif %}>{{country.country_title}}</option>
+													{% endif %}
+												{% endfor %}
+											{% endif %}
+										</select>
+                                      </div>
+                                    </div>
+									
+									<div class="form-group">
+                                      <label class="col-sm-2 control-label">State</label>
+                                      <div class="col-sm-6">
+										<select class="form-control" name="main_state_id" id="state_{{lang.language_master_id}}">
+											<option>Select State</option>
+											{% if state_master is defined and state_master is not empty %}
+												{% for state in state_master %}
+													{% if state.language_id == lang.language_master_id %}
+														<option value="{{state.main_state_id}}" {% if main_state_id is defined and main_state_id is not empty  %}{% if main_state_id == state.main_state_id %}selected{% endif %}{% endif %}>{{state.state_name}}</option>
+													{% endif %}
+												{% endfor %}
+											{% endif %}
+										</select>
+                                      </div>
+                                    </div>
+									
+                                    <div class="form-group">
+                                      <label class="col-sm-2 control-label">City Name</label>
+                                      <div class="col-sm-6">
+										<input type="text" placeholder="City Name" class="form-control input-sm" name="city_name" {% if city_master is defined %}
+											{% for city in city_master %}
+												{% if city.language_id == lang.language_master_id %}
+													value="{{city.city_name}}"
+												{% endif %}
+											{% endfor %}
+										{% endif %}
+										>
+                                      </div>
+                                    </div>
+									
+									
+									<div class="form-group">
+                                      <label class="col-sm-2 control-label">City Code</label>
+                                      <div class="col-sm-6">
+										<input type="text" placeholder="City Code" class="form-control input-sm" name="city_code"
+											{% if city_master is defined %}
+												{% for city in city_master %}
+													{% if city.language_id == lang.language_master_id %}
+														value="{{city.city_code}}"
+													{% endif %}
+												{% endfor %}
+											{% endif %}
+										>
+                                      </div>
+                                    </div>
+									
+									                                    
+                                    
+                                    
+                                    
+                                    <div class="form-group">
+                                        <label class="col-sm-2 control-label">Status</label>
+                                        <div class="col-sm-6">
+                                              <div class="radio">
+                                                <label>
+                                                  <input type="radio" value="active" name="status" {% if city_master is defined %}
+											{% for city in city_master %}
+												{% if city.language_id == lang.language_master_id %}
+													{% if city.status == "active" %}
+														checked
+													{% endif %}
+												{% endif %}
+											{% endfor %}
+										{% endif %}> Active
+                                                </label>
+                                              </div>
+                                              <div class="radio">
+                                                <label>
+                                                  <input type="radio" value="inactive" name="status" {% if state_master is defined %}
+											{% for city in city_master %}
+												{% if city.language_id == lang.language_master_id %}
+													{% if city.status == "inactive" %}
+														checked
+													{% endif %}
+												{% endif %}
+											{% endfor %}
+										{% endif %}> Inactive
+                                                </label>
+                                              </div>
+                                        </div>
+                                    </div>
+                                    
+                                  </div>
+                                  <div class="box-footer">
+                                    <a href="{{path('admin_city_index',{'domain':app.session.get('domain')})}}" class="btn btn-default btn-flat" type="submit">Cancel</a>
+                                    <button class="btn btn-info pull-right btn-flat" type="submit" name="save_city" value="save_city">Save</button>
+                                  </div>
+                                </form>
+
+                            </div>
+                            {% endfor %}
+                        </div>
+                      </div>
+                    {% endif %} 
+                    
+                  </div>
+            </div>
+		</div>
+	  </section>
+{% endblock %}
+
+{% block js %}
+<script>
+
+function getState(val,lang_id) {
+	//call ajax
+		$.ajax({
+			type : "POST",
+			url : "{{path('admin_city_getstateajax',{'domain':app.session.get('domain')})}}",
+			data : "country_id="+val+"&lang_id="+lang_id,
+			success : function(resp){
+				if (resp) {
+					$("#state_"+lang_id).html(resp) ;
+				}else{
+					// alert("Price not available.") ;
+				}
+			}
+		}) ;
+}
+
+$(document).ready(function() {
+    $('#example1').DataTable( {
+        dom: 'Bfrtip',
+        buttons: [
+            'copy', 'csv', 'excel', 'pdf', 'print'
+        ]
+    } );
+} );
+</script>
+{% endblock %}

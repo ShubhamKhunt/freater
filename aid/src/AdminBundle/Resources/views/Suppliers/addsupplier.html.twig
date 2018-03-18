@@ -1,0 +1,300 @@
+{% extends "AdminBundle::Layout/adminlayout.html.twig" %}
+{% block title %} Supplier Details {% endblock %}
+{% block css %}
+  <link href="{{asset('bundles/design/')}}css/datepicker3.css" rel="stylesheet" type="text/css" />
+  <link href="{{asset('bundles/design/')}}validation/datepicker3.css" rel="stylesheet" type="text/css" />
+  <link href="{{asset('bundles/design/')}}css/select2.min.css" rel="stylesheet" type="text/css" />
+{% endblock %}
+{% block content %}
+	  
+	<section class="content-header" >
+		
+      <h1>
+            Add Supplier
+		</h1>
+		  <small></small>
+
+		<ol class="breadcrumb">
+		  <li><a href="{{path('admin_dashboard_index',{'domain':app.session.get('domain')})}}"><i class="fa fa-dashboard"></i>Dashboard</a></li>
+		  <li class="active">Supplier List</li>
+		</ol>
+	  </section>
+		<section class="content">
+		{% for flashMessage in app.session.flashbag.get('success_msg') %}
+		<div class="alert alert-success alert-dismissable">
+			<button aria-hidden="true" data-dismiss="alert" class="close" type="button">×</button>
+			<h4><i class="icon fa fa-check"></i> Alert!</h4>{{ flashMessage }}
+		</div>
+		{% endfor %}
+		{% for flashMessage in app.session.flashbag.get('error_msg') %}
+		<div class="alert alert-danger alert-dismissable">
+			<button aria-hidden="true" data-dismiss="alert" class="close" type="button">×</button>
+			<h4><i class="icon fa fa-check"></i> Alert!</h4>{{ flashMessage }}
+		</div>
+		{% endfor %}
+		<div class="row">
+			<div class="col-xs-12">
+				<div class="box box-primary">					
+					<div class="box-body">
+						<div class="nav-tab-custom">
+							<ul class="nav nav-tabs">
+								{% if  language is defined %}
+									{% for lang in language %}
+										<li {% if loop.index == 1 %}class="active"{% endif %}>
+											<a href="#tab_{{lang.language_master_id}}" data-toggle="tab">{{lang.language_name}}</a>
+										</li>
+									{% endfor %}
+								{% endif %}
+							</ul>
+						</div>
+						<div class="tab-content">
+						  
+						  {% set main_supplier_id = 0 %}
+						  {% set main_supplier_address_id = 0 %}
+						  {% if selected_supplier is defined and selected_supplier is not empty %}
+							  {% for selected_supplier in selected_supplier %}
+								{% set main_supplier_id = selected_supplier.main_supplier_id %}
+								{% set main_supplier_address_id = selected_supplier.address_id %}
+							  {%endfor%}
+						  {%endif%}
+						  {% set flag1 = 'false' %}
+						  {% set flag = 'false' %}
+								{% if language is defined %}
+									{% for lang in language %}
+										 <div class="tab-pane fade{% if loop.index == 1 %}in active{% endif %}" id="tab_{{lang.language_master_id}}">
+										  
+										  <form id="manage_supplier_{{lang.language_master_id}}" class="form" method="POST" enctype="multipart/form-data" {% if selected_supplier is defined and selected_supplier is not empty %}{% set flag1 = 'false' %}{% for selected_supplier in selected_supplier %}{% if (selected_supplier.language_id) == (lang.language_master_id) %}{% set flag1 = 'true' %}action="{{path('admin_suppliers_updatesupplier',{'domain':app.session.get('domain')})}}/{{selected_supplier.supplier_master_id}}" {%endif%}{%endfor%}{%else%}action="{{path('admin_suppliers_savesupplier',{'domain':app.session.get('domain')})}}"{%endif%} {%if flag1 == 'false' %}  action="{{path('admin_suppliers_savesupplier',{'domain':app.session.get('domain')})}}" {%endif%}>
+												<input type="hidden" name="language_id" value="{{lang.language_master_id}}" />
+												<input type="hidden" name="main_supplier_id" value="{{main_supplier_id}}" />
+												<input type="hidden" name="main_supplier_address_id" value="{{main_supplier_address_id}}" />
+												<br>
+												<div class="row">
+													  <div class="col-md-12">
+															<div class="col-md-2"><b>Name</b></div> 
+															<div class="col-md-10"><input type="text" class="form-control" name="supplier_name" placeholder="Enter Supplier Name " value="{% if selected_supplier is defined and selected_supplier is not empty %}{% for selected_supplier in selected_supplier %}{% if (selected_supplier.language_id) == (lang.language_master_id) %}{{selected_supplier.supplier_name}}{%endif%}{%endfor%}{%endif%}" required/></div> 
+													  </div>													 
+												 </div>
+												<br>
+												<div class="row">
+													  <div class="col-md-12">
+															<div class="col-md-2"><b>Description</b></div> 
+															<div class="col-md-10">
+															  <textarea name="supplier_description" class="textarea" placeholder="Enter Supplier Description" style="width: 100%; height: 100px; font-size: 14px; line-height: 18px; border: 1px solid #dddddd; padding: 10px;">{% if selected_supplier is defined and selected_supplier is not empty %}{% for selected_supplier in selected_supplier %}{% if (selected_supplier.language_id) == (lang.language_master_id) %}{{selected_supplier.supplier_description}}{%endif%}{%endfor%}{%endif%}</textarea>
+															</div> 
+													  </div>													 
+												 </div>
+												<br>
+												<div class="row">
+													  <div class="col-md-12">
+															<div class="col-md-2"><b>Address</b></div> 
+															<div class="col-md-10">
+															  <textarea name="supplier_address" class="textarea" placeholder="Enter Supplier Address" style="width: 100%; height: 100px; font-size: 14px; line-height: 18px; border: 1px solid #dddddd; padding: 10px;">{% if selected_supplier is defined and selected_supplier is not empty %}{% for selected_supplier in selected_supplier %}{% if (selected_supplier.language_id) == (lang.language_master_id) %}{{selected_supplier.address_name}}{%endif%}{%endfor%}{%endif%}</textarea>
+															</div> 
+													  </div>													 
+												 </div>
+												<br>
+												<div class="row">
+													  <div class="col-md-12">
+															<div class="col-md-2"><b>Latitude</b></div> 
+															<div class="col-md-4">
+															  <input type="text" class="form-control" name="lat" placeholder="Enter Latitude" value="{% if selected_supplier is defined and selected_supplier is not empty %}{% for selected_supplier in selected_supplier %}{% if (selected_supplier.language_id) == (lang.language_master_id) %}{{selected_supplier.lat}}{%endif%}{%endfor%}{%endif%}" required/>
+															</div>
+															<div class="col-md-2"><b>Longitude</b></div> 
+															<div class="col-md-4">
+															  <input type="text" class="form-control" name="long" placeholder="Enter Longitude" value="{% if selected_supplier is defined and selected_supplier is not empty %}{% for selected_supplier in selected_supplier %}{% if (selected_supplier.language_id) == (lang.language_master_id) %}{{selected_supplier.lng}}{%endif%}{%endfor%}{%endif%}" required/>
+															</div> 
+													  </div>													 
+												 </div>
+												 <br>
+												<div class="row">
+													  <div class="col-md-12">
+															<div class="col-md-2"><b>Phone Number</b></div> 
+															<div class="col-md-4">
+															  <input type="text" class="form-control" name="phone_number" placeholder="Enter Supplier Phone Number " value="{% if selected_supplier is defined and selected_supplier is not empty %}{% for selected_supplier in selected_supplier %}{% if (selected_supplier.language_id) == (lang.language_master_id) %}{{selected_supplier.phone_no}}{%endif%}{%endfor%}{%endif%}" required/>
+															</div>
+															<div class="col-md-2"><b>Mobile Number</b></div> 
+															<div class="col-md-4">
+															  <input type="text" class="form-control" name="mobile_number" placeholder="Enter Supplier Mobile Number " value="{% if selected_supplier is defined and selected_supplier is not empty %}{% for selected_supplier in selected_supplier %}{% if (selected_supplier.language_id) == (lang.language_master_id) %}{{selected_supplier.mobile_no}}{%endif%}{%endfor%}{%endif%}" required/>
+															</div> 
+													  </div>													 
+												 </div>
+												 <br>
+												 <div class="row">
+													  <div class="col-md-12">
+															<div class="col-md-2"><b>Logo</b></div> 
+															<div class="col-md-4">
+															   <input type="file" name="supplier_logo" id="supplier_logo" {% if selected_supplier is defined and selected_supplier is not empty %}{%else%}required{%endif%}/>
+															</div> 
+													  </div>													 
+												 </div>
+												 <br>
+												 {% if selected_supplier is defined and selected_supplier is not empty %}
+												  <div class="row">
+													<div class="col-sm-2"></div>
+													<div class="col-sm-2">
+													  {% set logo = render(controller('AdminBundle:Base:getmedia', {'media_library_master_id': selected_supplier[0].supplier_logo,'live_path':live_path})) %}
+														  <img src="{{logo}}" style="height:100px;">
+														<input type="hidden" value="{{selected_supplier[0].supplier_logo}}" name="image_hidden">
+														
+													</div>
+												  </div>
+												  <br/>
+												{% endif %}
+												<br/>
+												<div class="row">
+												   <div class="col-md-12">
+													<div class="col-md-2"><b>Domain/Organization</b></div> 
+															<div class="col-md-4">
+																  <select class="form-control select" name="domain_id" required>
+																	{% set  selected_dom = '' %}
+																	{% if domain_list is defined and domain_list  is not empty %}
+																			  {% for domain_list in domain_list %}
+																				
+																				{% if selected_supplier is defined and selected_supplier is not empty %}
+																				    {% for selected_supplier in selected_supplier %}
+																					  {% if domain_list.domain_code == selected_supplier.domain_id %}
+																						{% set selected_dom = 'selected'%}
+																					   {% else %}
+																						 {% set selected_dom = '' %}
+																						{%endif%}
+																				    {%endfor%}
+																				{%endif%}
+																				
+																				<option {{selected_dom}} value="{{domain_list.domain_code}}">{{domain_list.domain_name}}</option>
+																			  {% endfor %}
+																	{% endif %}
+
+																  </select>
+															</div>
+												  <div class="col-sm-2">
+													<b>Status</b>
+												  </div>
+												  <div class="col-sm-4">
+													  <label class="radio-inline"><input type="radio" value="active" name="status" {% if selected_supplier is defined %}
+											{% for selected_supplier in selected_supplier %}
+												{% if selected_supplier.language_id == lang.language_master_id %}
+													{% if selected_supplier.status == "active" %}
+														checked
+													{% endif %}
+												{% endif %}
+											{% endfor %}
+										{% endif %} />Active</label>
+													  <label class="radio-inline"><input type="radio" value="inactive" name="status"  {% if selected_supplier is defined %}
+											{% for selected_supplier in selected_supplier %}
+												{% if selected_supplier.language_id == lang.language_master_id %}
+													{% if selected_supplier.status == "inactive" %}
+														checked
+													{% endif %}
+												{% endif %}
+											{% endfor %}
+										{% endif %}/>Inactive</label>
+												  </div>
+												  </div>
+												</div><br>
+												
+												 <div class="form-group">
+													  <div class="col-sm-10 pull-left">
+														{% if selected_supplier is defined and selected_supplier is not empty %}
+																{% set flag = 'false' %}
+																{% for selected_supplier in selected_supplier %}
+																  {% if (selected_supplier.language_id) == (lang.language_master_id) %}
+																	{% set flag = 'true' %}
+																	<button name="save" type="submit"  class="btn btn-primary" value="">Update</button>
+																  {%endif%}
+																{%endfor%}
+															
+															  {% endif %}
+															  {%if flag == 'false' %}
+																   <button name="save" type="submit" class="btn btn-primary" value="save_supplier">Save</button>
+															  {% endif %}
+																  <a href="{{path('admin_suppliers_index',{'domain':app.session.get('domain')})}}"  class="btn btn-default form-btn">Cancel</a>
+													  </div>
+												</div>
+											</form>
+										 </div>
+									{% endfor %}
+								{% endif %}
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</section>
+
+{% endblock %}
+
+{% block js %}
+<script src="{{asset('bundles/design/')}}js/bootstrapValidator.min.js" type="text/javascript"></script>
+<script src="{{asset('bundles/design/')}}plugins/select2/select2.full.min.js" type="text/javascript"></script>
+<script language="Javascript" src="{{asset('bundles/design/')}}tinymce/tinymce.min.js" type="text/javascript"></script>
+  
+<script language="Javascript" type="text/javascript">
+tinymce.init({
+    selector: "textarea",
+	max_chars : 1000,
+	width:      '100%',
+	height:     '50%',
+    plugins: [
+        "advlist autolink lists link charmap print preview anchor",
+        "searchreplace visualblocks code",
+        "insertdatetime table contextmenu paste moxiemanager",
+		"textcolor"
+    ],
+    statusbar:  true,
+	menubar:    true,
+    toolbar: "sizeselect | fontselect |  fontsizeselect | forecolor backcolor | undo redo | bold underline italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link",
+
+	rel_list:   [ { title: 'Lightbox', value: 'lightbox' } ]
+});
+function validate(){
+
+	var textarea = tinymce.get('description').getContent();
+	if ( (textarea=="") || (textarea==null) ) {
+        tinymce.get('description').focus();
+		return false; 
+	}
+	return true;
+}
+
+</script>
+
+<script>
+{% for lang in language %}
+	$('#manage_supplier_{{lang.language_master_id}}').validate({
+	  rules: {
+		  supplier_name: "required",
+		  supplier_address: "required",
+		  lat: "required",
+		  long: "required",
+		  phone_number: {
+			  required: true,
+			  number: true
+		  },
+		  mobile_number: {
+			  required: true,
+			  number: true
+		  },
+		  domain_id:"required",
+		  status:"required"
+	  },
+	  messages: {
+		  supplier_name: "Please enter supplier Name",
+		  supplier_address: "Please enter supplier address",
+		  lat: "Please enter latitude",
+		  long: "Please enter longitude",
+		  phone_number: {
+			  required: "Please enter phone number",
+			  number: "Only numbers allowed"
+		  },
+		  mobile_number: {
+			  required: "Please enter Mobile number",
+			  number: "Only numbers allowed"
+		  },
+		  domain_id: "Please select Domain",
+		  status: "This field is required."
+	  }
+  });  
+{% endfor %}
+
+</script>
+{% endblock %}

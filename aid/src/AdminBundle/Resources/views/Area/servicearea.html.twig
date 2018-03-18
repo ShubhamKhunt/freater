@@ -1,0 +1,135 @@
+{% extends "AdminBundle::Layout/adminlayout.html.twig" %}
+{% block title %} Delivery Boy Service Area  {% endblock %}
+{% block css %}
+<style>
+    .cart_table th {
+    background-color: #3fd5af;
+    border-color:#3fd5af;
+    color: white;
+    }
+</style>
+{% endblock %}
+{% block content %}
+	<section class="content-header">
+		<h1>
+            Delivery Boy Service Area
+		  <small></small>
+		</h1>
+		<ol class="breadcrumb">
+		  <li><a href="{{path('admin_dashboard_index',{'domain':app.session.get('domain')})}}"><i class="fa fa-dashboard"></i>Dashboard</a></li>
+          <li><a href="{{path('admin_deliveryboy_index',{'domain':app.session.get('domain')})}}"></i>Delivery Boy List</a></li> 
+		  <li class="active">Delivery Boy Service Area</li>
+		</ol>
+		
+	  </section>
+	
+		<section class="content">
+		{% for flashMessage in app.session.flashbag.get('success_msg') %}
+			<div role="alert" class="alert alert-success alert-dismissible fade in">
+				<button aria-label="Close" data-dismiss="alert" class="close" type="button"><span aria-hidden="true">×</span></button>
+				<strong>Alert!</strong>&nbsp; {{ flashMessage }}
+			</div>
+		{% endfor %}
+		{% for flashMessage in app.session.flashbag.get('error_msg') %}
+			<div role="alert" class="alert alert-danger alert-dismissible fade in">
+				<button aria-label="Close" data-dismiss="alert" class="close" type="button"><span aria-hidden="true">×</span></button>
+				<strong>Alert!</strong>&nbsp; {{ flashMessage }}
+			</div>
+		{% endfor %}
+		<div class="row">
+			<div class="col-xs-12">
+                <div class="box box-solid">
+                {#<div class="box-header with-border">
+                  <h3 class="box-title">Bordered Table</h3>
+                </div><!-- /.box-header -->#}
+                <div class="box-body form-horizontal">
+                    <div class="col-md-8 col-md-offset-1">
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">Country</label>
+							<div class="col-sm-4">
+								<select class="form-control" onchange="getstate(this.value);">
+									<option value="">-- Select Country --</option>
+									{% if country_list is defined and country_list is not empty %}
+										{% for country in country_list %}
+											<option value="{{country.main_country_id}}">{{country.country_title}}</option>
+										{% endfor %}
+									{% endif %}
+								</select>
+							</div>
+                            <input type="hidden" value="{{user_id}}" name="user_id" id="user_id">
+                        </div>
+                        
+                        <div class="form-group" id="state_block">
+                            
+                        </div>
+                        <div class="form-group" id="city_block">
+                            
+                        </div>
+                        
+                        <div id="area_block">
+							{% if area_list is defined and area_list is not empty %}
+										{% for area in area_list %}
+											{{area.area_name}}<br>
+										{% endfor %}
+									{% endif %}
+                        </div>
+                        
+                        
+                    </div>
+                </div>
+              </div>
+            </div>
+		</div>
+	  </section>
+{% endblock %}
+
+{% block js %}
+<script>
+function getstate(id)
+{
+     $.ajax({
+		type: 'POST',
+		url : '{{path('admin_area_getstatelist',{"domain":app.session.get('domain')})}}',
+		data: {'id':id,'flag':'get_state_by_country'},
+        dataType: 'json',
+		success: function(response){
+            $("#state_block").html(response.html);
+        }
+     });
+}
+function getcity(id)
+{
+     $.ajax({
+		type: 'POST',
+		url : '{{path('admin_area_getcitylist',{"domain":app.session.get('domain')})}}',
+		data: {'id':id,'flag':'get_city_by_state'},
+        dataType: 'json',
+		success: function(response){
+            $("#city_block").html(response.html);
+        }
+     });
+}
+function getarea(id)
+{
+    var user_id = $("#user_id").val();
+     $.ajax({
+		type: 'POST',
+		url : '{{path('admin_area_getarealist',{"domain":app.session.get('domain')})}}',
+		data: {'id':id,'user_id':user_id,'flag':'get_area_by_city'},
+        dataType: 'json',
+		success: function(response){
+            $("#area_block").html(response.html);
+        }
+     });
+}
+    
+$(document).ready(function() {
+    $('#example1').DataTable( {
+        dom: 'Bfrtip',
+        buttons: [
+            'copy', 'csv', 'excel', 'pdf', 'print'
+        ]
+    } );
+} );
+</script>
+{% endblock %}

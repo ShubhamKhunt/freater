@@ -1,0 +1,359 @@
+{% extends "SiteBundle::Layout/index.html.twig" %}
+{% block style %}
+<style>
+.logo{ max-height: 35px !important;}
+a.call-to-action-1.bg-dark.white-text { height: 165px; }
+</style>
+{% endblock %}
+{% block content %}
+
+	<div class="main container">
+		<div class="row">
+			<div class="col-md-12">
+
+				<!-- product view -->
+				<div class="col-main col-sm-9">
+					<div class="product-view">
+						<div class="row">
+                            <!-- image box -->
+							<div class="col-md-6 image-box">
+								<div class="origianl-image">
+									<img id="elevate-zoom" class="original-img" src="{{ product.base_image }}">
+								</div>
+								<div id="image-gallery">
+									{% if product.gallery is defined and product.gallery is not empty %}
+										{% for gallery in product.gallery %}
+											<img class="product-gallery" width="80" src="{{ gallery }}">
+										{% endfor %}
+									{% endif %}
+								</div>
+                            </div>
+							<!-- end: image box -->
+							<div class="col-md-6 product-info fillPadd">
+								<div class="product-name padd-top-5">
+									<h4>{{ product.product_title }}</h4>
+								</div>
+								<div class="short-description">
+									<div class="std">
+										{{ product.short_description }}<br>
+									</div>
+								</div>
+
+								<div class="price-box padd-around">
+									<span class="regular-price" id="product-price-3990">
+										{% if product.market_price == product.original_price %}
+											<span class="price">₹{{ product.market_price }}</span>
+										{% else %}
+											<span class="special-price" data-value="{{ product.market_price }}">₹{{ product.market_price }}</span>&nbsp;
+											<span class="original-price" data-value="{{ product.original_price }}">₹{{ product.original_price }}</span>
+										{% endif %}
+									</span>
+									<!-- <p class="product-left pull-right"><span><b>Only 10 left</b></span></p> -->
+								</div>
+								<!-- <div class="availability-info">
+									<p class="availability in-stock">Availability: <span>In stock</span></p>
+								</div> -->
+
+								<div class="pincode_checker">
+									<label for="zipcode">Check Availability at :</label>
+									<input type="text" class="input-text" data-toggle="tooltip" title="ZipCode" name="zipcode" id="check-zipcode">
+									<button onclick="#" class="button" type="button">
+										<span>
+											<span>Check</span>
+										</span>
+									</button>
+								</div>
+
+								<div class="add-to-cart actions">
+									<div class="qty-holder">
+										<input type="text" name="qty" id="quantity" maxlength="12" value="1" data-toggle="tooltip" title="Qty" class="input-text qty">
+										<div class="qty-changer">
+											<a href="javascript:void(0)" data-toggle="tooltip" title="Increase Quantity" class="qty_inc">
+												<i class="fa fa-caret-up"></i>
+											</a>
+											<a href="javascript:void(0)" data-toggle="tooltip" title="Decrease Quantity" class="qty_dec">
+												<i class="fa fa-caret-down"></i>
+											</a>
+										</div>
+									</div>
+									<button href="#" class="btn wishlist">
+										<i class="fa fa-heart"></i>
+									</button>
+									<button onclick="addtocart({{ product.product_master_id }})" class="btn addtocart">
+										<i class="fa fa-shopping-cart shop-cart"></i>
+										<span>&nbsp;Add to Cart</span>
+									</button>
+									<div class="clearer"></div>
+								</div>
+
+							</div>
+						</div>
+					</div>
+
+					<!-- product information -->
+					<div class="product-additional-info">
+						<div class="tab">
+							<button class="tablinks" onclick="openInfo(event, 'description')" data-toggle="tooltip" title="Description">Description</button>
+							<button class="tablinks" onclick="openInfo(event, 'specification')" data-toggle="tooltip" title="Specification">Specification</button>
+							<button class="tablinks" onclick="openInfo(event, 'reviews')" data-toggle="tooltip" title="Reviews">Reviews</button>
+						</div>
+
+						<div id="description" class="tabcontent">
+							<h3>Description</h3>
+							<p>{{ product.description }}</p>
+						</div>
+
+						<div id="specification" class="tabcontent">
+							<table id="product-attribute-specs-table" border=1>
+								<tbody>
+									<tr class="first odd">
+										<th class="col-md-3">Weight</th>
+										<td class="data last">450.0000</td>
+									</tr>
+									<tr class="even">
+										<th>Brand</th>
+										<td class="data last">No</td>
+									</tr>
+									<tr class="last odd">
+										<th>Weight Bucket</th>
+										<td class="data last">No</td>
+									</tr>
+								</tbody>
+							</table>
+						</div>
+
+						<div id="reviews" class="tabcontent">
+							<table>
+								<tr class="col-md-12 fillPadd">
+									<td class="col-md-1 fillPadd">
+										<img src="http://www.nutracart.com/skin/frontend/smartwave/porto/images/avatar.jpg" width="65" height="65" alt="">
+									</td>
+									<td class="col-md-11">
+										<span class="review-title"><strong>Fabulous Product</strong></span>&nbsp;
+										<span class="review-by"> review by <b>Bhumit </b> on 2/23/2018</span><br>
+										<div class="review">
+											<span>Quality</span>
+											<span class="stars">4</span>&nbsp;&nbsp;&nbsp;&nbsp;
+											<span>Value</span>
+											<span class="stars">4.5</span>&nbsp;&nbsp;&nbsp;&nbsp;
+											<span>Price</span>
+											<span class="stars">4.2</span>
+										</div>
+										<p>I want to increase muscle parts of my body so i started it. I am very satisfied with this whey protein powder.</p>
+									</td>
+								</tr>
+							</table>
+
+							<!-- Add-review form -->
+							<h5>Add your review</h5>
+							<div class="add-review-form">
+								<form>
+									<div>
+										<label class="d-inline-flex">Quality<label class="rateyo"></label></label>
+									</div>
+									<div>
+										<label class="d-inline-flex">Value&nbsp;&nbsp;&nbsp;&nbsp;<label class="rateyo"></label></label>
+									</div>
+									<div>
+										<label class="d-inline-flex">Price&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<label class="rateyo"></label></label>
+									</div>
+									<div>
+										<label for="nickname">Nickname</label>
+										<input id="nickname" type="text" name="nickname">
+									</div>
+									<div>
+										<label for="review-summary">Summary of Your Review</label>
+										<input id="review-summary" type="text" name="review-summary">
+									</div>
+									<div>
+										<label for="review">Review</label>
+										<textarea id="review" name="review"></textarea>
+									</div>
+									<div>
+										<input type="submit" class="btn btn-primary col-md-3" name="submit" value="Submit Review">
+									</div>
+								</form>
+							</div>
+						</div>
+					</div>
+					<!-- end: product information -->
+
+				</div>
+				<!-- end: product view -->
+
+				<!-- right bar -->
+				<div class="col-right sidebar col-sm-3">
+					<div class="custom-block custom-block-1">
+						<div class="row paddBottom-14">
+							<div class="col-md-3">
+								<div class="row">
+									<i class="fa fa-thumbs-o-up"></i>
+								</div>
+							</div>
+							<div class="col-md-9">
+								<div class="row">
+									<h3>PRODUCT GUARANTEED</h3>
+									<p>Guarantee on all products</p>
+								</div>
+							</div>
+						</div>
+						<div class="row paddBottom-14">
+							<div class="col-md-3">
+								<div class="row">
+									<i class="fa fa-shield"></i>
+								</div>
+							</div>
+							<div class="col-md-9">
+								<div class="row">
+									<h3>ASSURED QUALITY</h3>
+									<p>All products are original and branded</p>
+								</div>
+							</div>
+						</div>
+						<div class="row paddBottom-14">
+							<div class="col-md-3">
+								<div class="row">
+									<i class="fa fa-money"></i>
+								</div>
+							</div>
+							<div class="col-md-9">
+								<div class="row">
+									<h3>SECURED PAYMENTS</h3>
+									<p>100% secured online payments</p>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<!-- end: right bar -->
+			</div>
+		</div>
+	</div>
+
+{% endblock %}
+
+{% block javascript %}
+
+<link rel="stylesheet" href="{{ asset('bundles/design/') }}css/jquery.rateyo.min.css"/>
+<script type="text/javascript" src="{{ asset('bundles/design/') }}js/jquery.rateyo.js"></script>
+
+<script src="{{ asset('bundles/design/') }}js/custom.js"></script>
+<script src="{{ asset('bundles/design/') }}plugins/elevatezoom/jquery.elevatezoom.js"></script>
+<script src="{{ asset('bundles/design/') }}plugins/elevatezoom/jquery.elevateZoom-3.0.8.min.js"></script>
+<script src="{{ asset('bundles/design/') }}js/owl.carousel.min.js"></script>
+
+<script>
+function addtocart(product_id){
+	if(product_id != ''){
+		
+		var url = "{{live_path}}checkout/cart/addtocart";
+		
+		var qty = $('#quantity').val();
+		var price = $('.original-price').data('value');
+		var special_price = $('.special-price').data('value');
+		
+		$.ajax({
+			url: url,
+			method: 'POST',
+			data: {'product_id': product_id, 'qty': qty, 'price': price, 'special_price': special_price},
+			beforeSend: function(){
+				$('.addtocart span').html('Adding to Cart...');
+				$('.shop-cart').after("<img class='add-product-loader'>");
+				$('.shop-cart').css('display', 'none');
+			},
+			success: function(response){
+				if(response != ''){
+					var cart_item = parseInt($('.item-count').data('count'));
+				
+					$('.addtocart span').html('Add to Cart');
+					$('.add-product-loader').remove();
+					$('.shop-cart').css('display', 'inline-block');
+					$('.item-count').removeData('count');
+					$('.item-count').attr('data-count', cart_item+1);
+					$('.item-count').text(2);
+					$('.mini-cart-product').fadeIn();
+					
+					setInterval(function(){
+						$('.mini-cart-product').fadeOut();
+					}, 3000);
+				}
+			},
+			error: function(error){
+				
+			}
+		});
+	}
+} 
+
+$(document).ready(function(){
+	var quantitiy=0;
+	$('.qty_inc').click(function(e){
+		var quantity = parseInt($('#quantity').val());
+		$('#quantity').val(quantity + 1);
+	});
+
+	$('.qty_dec').click(function(e){
+		var quantity = parseInt($('#quantity').val());
+		if(quantity>0){
+			$('#quantity').val(quantity - 1);
+		}
+	});
+	
+	$('.product-gallery').click(function(){
+		$('.original-img').attr('src', $(this).attr('src'));
+		$('.zoomWindow').css('background-image', 'url('+$(this).attr('src')+')');
+	});
+	
+	$('#elevate-zoom').elevateZoom({
+		easing: true,
+		zoomType: "window",
+		cursor: "crosshair",
+		scrollZoom : true,
+		zoomWindowFadeIn: 500,
+		zoomWindowFadeOut: 750
+	});
+	
+	$(".rateyo").rateYo();
+});
+$("#image-gallery").owlCarousel({
+	loop: true,
+	items: 4,
+	nav: true,
+	autoPlay: true,
+	slideSpeed: 200,
+	mouseDrag: true,
+	touchDrag: true,
+	pagination: false,
+	stopOnHover: false,
+	paginationSpeed: 500,
+	navigation: true,
+	navigationText:["<i class='fa fa-angle-left nav-icon'></i>","<i class='fa fa-angle-right nav-icon'></i>"]
+});
+function openInfo(evt, divId) {
+    var i, tabcontent, tablinks;
+    tabcontent = document.getElementsByClassName("tabcontent");
+    for (i = 0; i < tabcontent.length; i++) {
+        tabcontent[i].style.display = "none";
+    }
+    tablinks = document.getElementsByClassName("tablinks");
+    for (i = 0; i < tablinks.length; i++) {
+        tablinks[i].className = tablinks[i].className.replace(" active", "");
+    }
+    document.getElementById(divId).style.display = "block";
+    evt.currentTarget.className += " active";
+}
+
+/* star rating */
+$.fn.stars = function() {
+    return $(this).each(function() {
+        var val = parseFloat($(this).html());
+		var size = Math.max(0, (Math.min(5, val))) * 16;
+        var $span = $('<span />').width(size);
+        $(this).html($span);
+    });
+}
+$(function() {
+    $('span.stars').stars();
+});
+</script>
+{% endblock %}

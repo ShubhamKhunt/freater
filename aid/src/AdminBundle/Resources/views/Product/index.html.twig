@@ -1,0 +1,215 @@
+{% extends "AdminBundle::Layout/adminlayout.html.twig" %}
+{% block title %} Products List {% endblock %}
+{% block css %}{% endblock %}
+{% block content %}
+<section class="content-header">
+		<h1>
+		  <small></small>
+		</h1>
+		<ol class="breadcrumb">
+		  <li><a href="{{path('admin_dashboard_index')}}"><i class="fa fa-dashboard"></i>Dashboard</a></li>
+		  <li class="active">Product List</li>
+		</ol>
+	  </section>
+	  <section class="content">
+		{% for flashMessage in app.session.flashbag.get('success_msg') %}
+			<div role="alert" class="alert alert-success alert-dismissible fade in">
+				 <button aria-label="Close" data-dismiss="alert" class="close" type="button"><span aria-hidden="true">×</span></button>
+				 <strong>Alert!</strong>&nbsp; {{ flashMessage }}
+		    </div>
+	     {% endfor %}
+		 {% for flashMessage in app.session.flashbag.get('warning_msg') %}
+			<div role="alert" class="alert alert-warning alert-dismissible fade in">
+				 <button aria-label="Close" data-dismiss="alert" class="close" type="button"><span aria-hidden="true">×</span></button>
+				 <strong>Alert!</strong>&nbsp; {{ flashMessage }}
+			</div>
+	     {% endfor %}
+	     {% for flashMessage in app.session.flashbag.get('error_msg') %}
+			<div role="alert" class="alert alert-danger alert-dismissible fade in">
+				 <button aria-label="Close" data-dismiss="alert" class="close" type="button"><span aria-hidden="true">×</span></button>
+				 <strong>Alert!</strong>&nbsp; {{ flashMessage }}
+			</div>
+	     {% endfor %}
+		
+		<div class="row">
+			<div class="col-xs-12">
+                <div class="box box-solid">
+                    <div class="box-header with-border">
+                    	<h3 class="box-title">Product List</h3>
+                      {#<h3 class="box-title">Progress Bars Different Sizes</h3>#}
+                      <div class="pull-right">
+                        <a data-toggle="tooltip" data-original-title="Add Product" href="{{path('admin_product_addproduct')}}" class="btn btn-primary btn-flat"><i class="fa fa-plus"></i><b>&nbsp;&nbsp;Add Product</b></a>
+                      </div>
+                    </div>
+                    <div class="box-body">
+						<lable class="" style="color: red">* To change quantity of product, double click on stock bellow stock column</lable>
+                        <div class="container-fluid table-responsive">
+							<table id="example1" class="table table-bordered table-striped">
+								<thead>
+									<th style="width: 10px;">No.</th>
+									 <th>Order</th>
+									<th style="width: 110px;">Image</th>
+									{% if language is defined and language is not empty %}
+											{%for language in language %}
+												<th>Name : {{language.display_title}}</th>
+										    {%endfor%}
+									{% endif %}
+									{#<th style="width: 40px;">Ordered Quantity</th>#}
+									<th style="width: 40px;">In Stock</th>
+								 	<th style="width: 40px;">Category</th>
+									<th style="width: 40px;">Status</th>
+                                    <th style="width: 100px;">Action</th>
+								</thead>
+								<tbody>
+
+                                 {%if product_list is defined and product_list is not empty %}
+										{% set total_length = product_list|length%}
+										{% for product_list in product_list %}
+
+										<tr>
+											<td>{{loop.index}}</td>
+
+											 <td>
+                                                {%if loop.index != 1 %}
+                                                    <a href="{{path('admin_product_downitem',{"main_product_id":product_list.main_product_id})}}"><span class="glyphicon glyphicon-arrow-up"></span></a>
+                                                    {%endif%}
+                                                    {%if loop.index != total_length %}
+                                                    <a href="{{path('admin_product_upitem',{"main_product_id":product_list.main_product_id})}}"><span class="glyphicon glyphicon-arrow-down"></span></a>
+						{%endif%}
+                                           </td>
+
+
+											<td><img src="{{product_list.image}}" class="col-xs-5 img-responsive img-thumbnail" /></td>
+
+											{% if product_list.lang_arr_product_wise is defined and product_list.lang_arr_product_wise is not empty %}
+												{%for lang_arr_product_wise in product_list.lang_arr_product_wise %}
+													<td>{{ lang_arr_product_wise.product_name|length > 40 ? lang_arr_product_wise.product_name|slice(0, 40) ~ '...' : lang_arr_product_wise.product_name  }}</td>
+												{%endfor%}
+										    {% endif %}
+										{#<td>{{product_list.product_qty}}</td>#}
+										<td ondblclick="orderchange({{product_list.main_product_id}})" style="">
+										 <input type="text" name="order_{{product_list.main_product_id}}" id="order_{{product_list.main_product_id}}" value="{{product_list.quantity}}" style="visibility: hidden;display: none;" onblur="changeorder({{product_list.main_product_id}},this.value)" />
+										 <span name="temp_{{product_list.main_product_id}}" id="temp_{{product_list.main_product_id}}">{{product_list.quantity}}</span>
+										</td>
+										{#<td>{{product_list.quantity}}</td>#}
+										<td>{{product_list.parent_category_name}}</td>
+
+											<td>{{product_list.status}}</td>
+											<td>
+												<a href="{{path('admin_product_addproduct',{'main_product_id':product_list.main_product_id,'language_id':product_list.language_id})}}" class="btn btn-primary btn-xs" data-toggle="tooltip" onclick="return confirm('Are you sure you want to edit the Product?');" data-original-title="Edit Product">
+														<span class="fa fa-edit"></span>
+												</a>
+												<a href="{{path('admin_product_deleteproduct',{'main_product_id':product_list.main_product_id})}}" onclick="return confirm('Are you sure you want to delete the product?');" class="btn btn-danger btn-xs" data-toggle="tooltip" data-original-title="Delete Product">
+														<span class="fa fa-remove"></span>
+												</a>
+												{#<a href="{{path('admin_servicearea_productcity',{'main_product_id':product_list.main_product_id})}}" class="btn btn-default btn-xs" data-toggle="tooltip" data-original-title="Product availabity"><span class="fa fa-map-marker"></span></a>#}
+											</td>
+										</tr>
+										{% endfor %}
+						         {% endif%}
+								</tbody>
+								<tfoot>
+									<th style="width: 10px;">No.</th>
+									<th>Order</th>
+									<th style="width: 110px;">Image</th>
+									{% if language is defined and language is not empty %}
+											{%for language in language %}
+												<th>Name : {{language.display_title}}</th>
+										    {%endfor%}
+									{% endif %}
+									<th style="width: 40px;">Category</th>
+									<th style="width: 40px;">Status</th>
+                                    <th style="width: 100px;">Action</th>
+								</tfoot>
+							</table>
+						</div>
+
+                    </div>
+                  </div>
+            </div>
+		</div>
+	</section>
+{% endblock %}
+{% block js %}
+<script>
+$(document).ready(function() {
+    var table = $('#example1').DataTable( {
+        dom: 'Bfrtip',
+
+        buttons: [
+            {
+                extend: 'copyHtml5',
+                exportOptions: {
+                  columns: [0, 2, 3, 4, 5, 6, 7],
+                  stripHtml: false,
+                },
+
+            },
+			{
+				extend: 'pdfHtml5',
+                orientation:'landscape',
+				exportOptions: {
+				   	columns: [0, 3, 4, 5, 6, 7],
+                 	stripHtml: false,
+			 },
+			 customize: function (doc) {
+    				doc.content[1].table.widths =
+        			Array(doc.content[1].table.body[0].length + 1).join('*').split('');
+  				},
+			},
+			{
+				 extend: 'excelHtml5',
+                 exportOptions: {
+               	 	columns: [0, 3, 4, 5, 6, 7],
+                 	stripHtml: false,
+                },
+			},
+			{
+				extend: 'csvHtml5',
+                exportOptions: {
+                	columns: [0, 3, 4, 5, 6, 7],
+               	 	stripHtml: false,
+                },
+			},
+			{
+                extend: 'print',
+                exportOptions: {
+                	columns: [0, 3, 4, 5, 6, 7],
+                	stripHtml: false,
+                },
+
+            },
+        ],
+        columnDefs: [
+  			{ targets:[2,8], orderable: false }
+		],
+    } );
+
+} );
+</script>
+<script>
+function orderchange(id)
+{
+
+document.getElementById("order_"+id).style.visibility = "visible";
+document.getElementById("order_"+id).style.display = "block";
+    //display: none;
+document.getElementById("temp_"+id).style.visibility = "hidden";
+document.getElementById("temp_"+id).style.display = "none";
+	//code
+}
+function changeorder(product_id,unit_id) {
+	if(unit_id=='' || unit_id < 0)
+	{
+		unit_id = 0;
+	}
+		$.post("{{path('admin_product_ajaxproductunit')}}",{product_id:product_id,unit_id:unit_id,flag:'change_status'});
+		document.getElementById("order_"+product_id).style.visibility = "hidden";
+		document.getElementById("order_"+product_id).style.display = "none";
+
+		document.getElementById("temp_"+product_id).style.visibility = "visible";
+		document.getElementById("temp_"+product_id).style.display = "block";
+		document.getElementById("temp_"+product_id).textContent=unit_id;
+	}
+</script>
+{% endblock %}

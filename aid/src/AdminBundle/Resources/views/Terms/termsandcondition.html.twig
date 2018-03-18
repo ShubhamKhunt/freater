@@ -1,0 +1,113 @@
+{% extends "AdminBundle::Layout/adminlayout.html.twig" %}
+{% block title %} Terms & Conditions {% endblock %}
+{% block css %}
+	 <link href="{{asset('bundles/design/')}}css/select2.min.css" rel="stylesheet" type="text/css" />
+	 <link href="{{asset('bundles/design/')}}css/dataTables.bootstrap.css" rel="stylesheet" type="text/css" />
+	  <link href="{{asset('bundles/design/')}}css/bootstrap-toggle.min.css" rel="stylesheet" type="text/css" />
+	  <link href="{{asset('bundles/design/')}}css/datepicker3.css" rel="stylesheet" type="text/css" />
+	  <link href="{{asset('bundles/design/')}}validation/datepicker3.css" rel="stylesheet" type="text/css" />
+{% endblock %}
+{% block content %}
+	  
+	<section class="content-header" >
+		
+      <h1>
+            Terms & Conditions
+		</h1>
+		  <small></small>
+
+		<ol class="breadcrumb">
+		  <li><a href="{{path('admin_dashboard_index',{'domain':app.session.get('domain')})}}"><i class="fa fa-dashboard"></i>Dashboard</a></li>
+		  <li class="active">Terms & Conditions</li>
+		</ol>
+	  </section>
+		<section class="content">
+		{% for flashMessage in app.session.flashbag.get('success_msg') %}
+		<div class="alert alert-success alert-dismissable">
+			<button aria-hidden="true" data-dismiss="alert" class="close" type="button">×</button>
+			<h4><i class="icon fa fa-check"></i> Alert!</h4>{{ flashMessage }}
+		</div>
+		{% endfor %}
+		{% for flashMessage in app.session.flashbag.get('error_msg') %}
+		<div class="alert alert-danger alert-dismissable">
+			<button aria-hidden="true" data-dismiss="alert" class="close" type="button">×</button>
+			<h4><i class="icon fa fa-check"></i> Alert!</h4>{{ flashMessage }}
+		</div>
+		{% endfor %}
+		<div class="row">
+			<div class="col-xs-12">
+				<div class="box box-solid">					
+	
+						<div class="nav-tab-custom">
+							<ul class="nav nav-pills">
+								{% if  language is defined %}
+									{% for lang in language %}
+										<li {% if loop.index == 1 %}class="active"{% endif %}>
+											<a href="#tab_{{lang.language_master_id}}" data-toggle="tab">{{lang.language_name}}</a>
+										</li>
+									{% endfor %}
+								{% endif %}
+							</ul>
+						</div>
+						<div class="tab-content">							
+								{% if language is defined %}
+									{% for lang in language %}
+										<div class="tab-pane fade{% if loop.index == 1 %}in active{% endif %}" id="tab_{{lang.language_master_id}}">
+										<form id="" class="form" method="POST" enctype="multipart/form-data"  action="{{path('admin_terms_saveterms',{'domain':app.session.get('domain'),'lang_id':lang.language_master_id,'domain_id':app.session.get('domain_id')})}}">
+                                            <div class="box-body">
+                                                <div class="form-group">
+                                                    <label for="exampleInputEmail1">Terms and Conditions</label>
+                                                    <textarea name="description" class="textarea" placeholder="Place some text here">{% if terms_conditions_info is defined and terms_conditions_info is not empty %}{% for terms in terms_conditions_info %}{% if terms.language_id == lang.language_master_id %}{{terms.description}}{% endif %}{% endfor %}{% endif %}</textarea>
+                                                </div>
+                                            </div>	
+                                            <div class="box-footer">
+                                                <a href="{{path('admin_dashboard_index',{'domain':app.session.get('domain')})}}" class="btn btn-default">Cancel</a>
+                                                <button type="submit" class="btn btn-primary pull-right" name="save_terms" value="save_terms">Save changes</button>
+                                            </div>
+												 
+										</form>
+										</div>
+									{% endfor %}
+								{% endif %}
+						</div>
+	
+				</div>
+			</div>
+		</div>
+	</section>
+
+{% endblock %}
+
+{% block js %}
+<script src="{{asset('bundles/design/')}}js/bootstrapValidator.min.js" type="text/javascript"></script>
+<script language="Javascript" src="{{asset('bundles/design/')}}tinymce/tinymce.min.js" type="text/javascript"></script>
+<script language="Javascript" type="text/javascript">
+tinymce.init({
+    selector: "textarea",
+	max_chars : 1000,
+	width:      '100%',
+	height:     '300px',
+    plugins: [
+        "advlist autolink lists link charmap print preview anchor",
+        "searchreplace visualblocks code",
+        "insertdatetime table contextmenu paste moxiemanager",
+		"textcolor"
+    ],
+    statusbar:  true,
+	menubar:    true,
+    toolbar: "sizeselect | fontselect |  fontsizeselect | forecolor backcolor | undo redo | bold underline italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link",
+
+	rel_list:   [ { title: 'Lightbox', value: 'lightbox' } ]
+});
+function validate(){
+
+	var textarea = tinymce.get('description').getContent();
+	if ( (textarea=="") || (textarea==null) ) {
+        tinymce.get('description').focus();
+		return false; 
+	}
+	return true;
+}
+
+</script>
+{% endblock %}

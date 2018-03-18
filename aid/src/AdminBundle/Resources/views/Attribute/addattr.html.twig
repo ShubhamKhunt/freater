@@ -1,0 +1,146 @@
+{% extends "AdminBundle::Layout/adminlayout.html.twig" %}
+{% block title %}{% endblock %}
+{% block css %}
+	 <link href="{{asset('bundles/design/')}}css/select2.min.css" rel="stylesheet" type="text/css" />
+	 <link href="{{asset('bundles/design/')}}css/dataTables.bootstrap.css" rel="stylesheet" type="text/css" />
+	 <link href="{{asset('bundles/design/')}}css/bootstrap-toggle.min.css" rel="stylesheet" type="text/css" />
+{% endblock %}
+{% block content %}
+	<section class="content-header">
+		<h1>
+		  Attribute
+		</h1>
+		<ol class="breadcrumb">
+		  <li><a href="{{path('admin_dashboard_index',{"domain":app.session.get('domain')})}}"><i class="fa fa-dashboard"></i> Dashboard</a></li>
+		  <li><a href="{{path('admin_attribute_attributes',{"domain":app.session.get('domain')})}}">Attribute List</a></li>
+		  <li class="active">Add - Update Attribute</li>
+		</ol>
+	</section>
+	<section class="content">
+		{% for flashMessage in app.session.flashbag.get('success_msg') %}
+		<div class="alert alert-success alert-dismissable">
+			<button aria-hidden="true" data-dismiss="alert" class="close" type="button">×</button>
+			<h4><i class="icon fa fa-check"></i> Alert!</h4>{{ flashMessage }}
+		</div>
+        {% endfor %}
+        {% for flashMessage in app.session.flashbag.get('error_msg') %}
+		<div class="alert alert-danger alert-dismissable">
+			<button aria-hidden="true" data-dismiss="alert" class="close" type="button">×</button>
+			<h4><i class="icon fa fa-check"></i> Alert!</h4>{{ flashMessage }}
+		</div>
+		{% endfor %}
+		<div class="row">
+			<div class="col-xs-12">
+				<div class="box box-solid">
+					
+					{% if language is defined and language is not empty %}
+                    <div class="nav-tabs-custom">
+                        <ul class="nav nav-tabs">
+                        
+                            {% for lang in language %}
+                            <li {% if loop.index == 1 %}class="active"{% endif %}><a data-toggle="tab" href="#tab_{{lang.language_master_id}}">{{lang.language_name}}</a></li>
+                            {% endfor %}
+                         
+                        </ul>
+                        <div class="tab-content">
+                            {% for lang in language %}
+                            <div id="tab_{{lang.language_master_id}}" class="tab-pane{% if loop.index == 1 %} active{% endif %}">
+					
+					<div class="box-body">
+						<form class="form-horizontal" method="post" enctype="multipart/form-data" action="{{path('admin_attribute_saveattributes',{"domain":app.session.get('domain')})}}">
+							<div class="form-group">
+								{% if attr is defined and attr is not empty %}
+									<input type="hidden" name="attr" value="{{attr[0].main_attribute_id}}" />
+								{% endif %}
+								<input type="hidden" name="language_id" value="{{lang.language_master_id}}">
+								<label class="control-label col-sm-2">Attribute Name</label>
+								<div class="col-sm-6">
+									<input type="text" name="name" class="form-control" required="" placeholder="Attribute Name"
+										{% if attr is defined and attr is not empty %}
+											{% for a in attr %}
+												{% if a.language_id == lang.language_master_id %}
+												value="{{a.attribute_name}}"
+												{% endif %}
+											{% endfor %}
+										{% endif %}
+									/>
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="control-label col-sm-2">Display Name</label>
+								<div class="col-sm-6">
+									<input type="text" name="public_name" class="form-control" required="" placeholder="Display Name"
+										   {% if attr is defined and attr is not empty %}
+											{% for a in attr %}
+												{% if a.language_id == lang.language_master_id %}
+												value="{{a.public_name}}"
+												{% endif %}
+											{% endfor %}
+										{% endif %}
+									/>
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="control-label col-sm-2">Field Type</label>
+								<div class="col-sm-6">
+									<select name="attribute_field_type_id" class="form-control">
+										<option>Select Field Type</option>
+										{% if field_type is defined and field_type is not empty %}
+											{% for field in field_type %}
+												<option value="{{field.attribute_field_type_id}}"
+				{% if attr is defined and attr is not empty %}
+					{% for a in attr %}{% if a.language_id == lang.language_master_id %}
+						{% if field.attribute_field_type_id == a.attribute_field_type_id %}selected{% endif %}
+				{% endif %}{% endfor %}
+			{% endif %}
+			>{{field.type_name}}</option>
+											{% endfor %}
+										{% endif %}
+									</select>
+								</div>
+							</div>
+							<hr />
+							<div class="form-group">
+								<div class="col-sm-9 col-sm-offset-2 col-xs-12">
+									<div class="row">
+										<div class="col-xs-6">
+											<button class="form-btn btn btn-primary" name="save" type="submit">Save</button>
+										</div>
+										<div class="col-xs-6">
+											<a href="{{path('admin_attribute_attributes',{"domain":app.session.get('domain')})}}" class="form-btn btn btn-default">
+												Cancel
+											</a>
+										</div>
+									</div>
+								</div>
+							</div>
+						</form>
+					</div>
+					</div>
+                            {% endfor %}
+                        </div>
+                      </div>
+                    {% endif %}
+				</div>
+			</div>
+		</div>
+	</section>
+{% endblock %}
+{% block js %}
+
+<script src="{{asset('bundles/design/')}}js/bootstrap-toggle.min.js" type="text/javascript"></script>	
+<script src="{{asset('bundles/design/')}}js/jquery.dataTables.min.js" type="text/javascript"></script>
+<script src="{{asset('bundles/design/')}}js/dataTables.bootstrap.min.js" type="text/javascript"></script>
+  
+
+
+<script type="text/javascript">
+	$(function () {
+	  $("#example1").DataTable();
+	});
+</script>
+
+
+
+
+{% endblock %}

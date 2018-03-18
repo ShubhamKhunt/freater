@@ -1,0 +1,179 @@
+{% extends "AdminBundle::Layout/adminlayout.html.twig" %}
+{% block title %} Category List {% endblock %}
+{% block css %}
+	 <link href="{{asset('bundles/design/')}}css/select2.min.css" rel="stylesheet" type="text/css" />
+	 <link href="{{asset('bundles/design/')}}css/dataTables.bootstrap.css" rel="stylesheet" type="text/css" />
+	  <link href="{{asset('bundles/design/')}}css/bootstrap-toggle.min.css" rel="stylesheet" type="text/css" />
+	  <link href="{{asset('bundles/design/')}}css/datepicker3.css" rel="stylesheet" type="text/css" />
+	  <link href="{{asset('bundles/design/')}}validation/datepicker3.css" rel="stylesheet" type="text/css" />
+{% endblock %}
+{% block content %}
+	  
+	<section class="content-header" >
+		
+      <h1>
+            Add Category
+		</h1>
+		  <small></small>
+
+		<ol class="breadcrumb">
+		  <li><a href="{{path('admin_dashboard_index',{'domain':app.session.get('domain')})}}"><i class="fa fa-dashboard"></i>Dashboard</a></li>
+		  <li class="active">Category List</li>
+		</ol>
+	  </section>
+		<section class="content">
+		{% for flashMessage in app.session.flashbag.get('success_msg') %}
+		<div class="alert alert-success alert-dismissable">
+			<button aria-hidden="true" data-dismiss="alert" class="close" type="button">×</button>
+			<h4><i class="icon fa fa-check"></i> Alert!</h4>{{ flashMessage }}
+		</div>
+		{% endfor %}
+		{% for flashMessage in app.session.flashbag.get('error_msg') %}
+		<div class="alert alert-danger alert-dismissable">
+			<button aria-hidden="true" data-dismiss="alert" class="close" type="button">×</button>
+			<h4><i class="icon fa fa-check"></i> Alert!</h4>{{ flashMessage }}
+		</div>
+		{% endfor %}
+		<div class="row">
+			<div class="col-xs-12">
+				<div class="box box-primary">					
+					<div class="box-body">
+						<div class="nav-tab-custom">
+							<ul class="nav nav-tabs">
+								{% if  language is defined %}
+									{% for lang in language %}
+										<li {% if loop.index == 1 %}class="active"{% endif %}>
+											<a href="#tab_{{lang.language_master_id}}" data-toggle="tab">{{lang.language_name}}</a>
+										</li>
+									{% endfor %}
+								{% endif %}
+							</ul>
+						</div>
+						<div class="tab-content">							
+							    {% set main_category_id = 0 %}
+								{% if selected_category is defined and selected_category is not empty %}
+									{% for selected_category in selected_category %}
+										{% set main_category_id = selected_category.main_course_category_id %}
+									{%endfor%}
+								{%endif%}
+								{% set flag1 = 'false' %}
+								{% set flag = 'false' %}
+								{% if language is defined %}
+									{% for lang in language %}
+										 <div class="tab-pane fade{% if loop.index == 1 %}in active{% endif %}" id="tab_{{lang.language_master_id}}">
+										  
+										  <form class="form" method="POST" enctype="multipart/form-data"  {% if selected_category is defined and selected_category is not empty %}{% set flag1 = 'false' %}{% for selected_category in selected_category %}{% if (selected_category.language_id) == (lang.language_master_id) %}{% set flag1 = 'true' %}action="{{path('admin_category_updatecategory',{'domain':app.session.get('domain')})}}/{{selected_category.course_category_master_id}}" {%endif%}{%endfor%}{%else%}action="{{path('admin_category_savecategory',{'domain':app.session.get('domain')})}}"{%endif%} {%if flag1 == 'false' %}  action="{{path('admin_category_savecategory',{'domain':app.session.get('domain')})}}" {%endif%}
+										  {% if selected_category is defined and selected_category is not empty %} {%else%} {%endif%} >
+												<input type="hidden" name="language_id" value="{{lang.language_master_id}}" />
+												<input type="hidden" name="main_category_id" value="{{main_category_id}}" />
+												<br>
+												<div class="row">
+													  <div class="col-md-12">
+															<div class="col-md-2">Category Name</div> 
+															<div class="col-md-10"><input type="text" class="form-control" name="category_name" placeholder="Enter Category Name " value="{% if selected_category is defined and selected_category is not empty %}{% for selected_category in selected_category %}{% if (selected_category.language_id) == (lang.language_master_id) %}{{selected_category.course_category_name}}{%endif%}{%endfor%}{%endif%}" required/></div> 
+													  </div>													 
+												 </div>
+												<br>
+												<div class="row">
+													  <div class="col-md-12">
+															<div class="col-md-2">Category Description</div> 
+															<div class="col-md-10"><input type="text" class="form-control" name="category_description" placeholder="Enter Category Description "  value="{% if selected_category is defined and selected_category is not empty %}{% for selected_category in selected_category %}{% if (selected_category.language_id) == (lang.language_master_id) %}{{selected_category.course_category_description}}{%endif%}{%endfor%}{%endif%}"  required/></div> 
+													  </div>													 
+												 </div>
+												 <br>
+												 {% set selected_parent = 0 %}
+												<div class="row">
+													  <div class="col-md-12">
+															<div class="col-md-2">Parent Category</div> 
+															<div class="col-md-10">
+																  <select class="form-control select" name="parent_category" required>
+																		<option value="0">Select Parent Category</option>
+ 																		{% set selected_parent = 0 %}
+																		{% if parent_category is defined and parent_category  is not empty %}
+																			  {% for parent_cat in parent_category %}
+																					{% set selected_parent = 0 %}
+																					{% if parent_cat.language_id == lang.language_master_id %}
+																						{% if selected_category is defined and selected_category is not empty %}{% for selected_category in selected_category %}{% if (selected_category.language_id) == (lang.language_master_id) %}{% set selected_parent = selected_category.course_parent_category_id %} {%endif%}{%endfor%}{%endif%}
+																					<option {% if selected_parent == parent_cat.main_course_category_id %} selected {% endif %} value="{{parent_cat.main_course_category_id}}">{{parent_cat.course_category_name}}</option>
+																					{% endif %}
+																			  {% endfor %}
+																        {% endif %}
+																  </select>
+															</div> 
+													  </div>													 
+												 </div><br>
+												<div class="row">
+													  <div class="col-md-12">
+															<div class="col-md-2">Domain/Organization</div> 
+															<div class="col-md-10">
+																  <select class="form-control select" name="domain_id" required>
+																	
+																	{% set  selected_dom = '' %}
+																	{% if domain_list is defined and domain_list  is not empty %}
+																			  {% for domain_list in domain_list %}
+																				
+																				{% if selected_category is defined and selected_category is not empty %}
+																				    {% for selected_category in selected_category %}
+																					  {% if domain_list.domain_id == selected_category.domain_id %}
+																						{% set selected_dom = 'selected'%}
+																					   {% else %}
+																						 {% set selected_dom = '' %}
+																						{%endif%}
+																				    {%endfor%}
+																				{%endif%}
+																				<option {{selected_dom}} value="{{domain_list.domain_id}}">{{domain_list.domain_name}}</option>
+																				
+																			  {% endfor %}
+																	{% endif %}
+
+																  </select>
+															</div>
+													  </div>
+												</div>
+												 <div class="form-group">
+													  <div class="col-sm-10 pull-left">
+															  {% if selected_category is defined and selected_category is not empty %}
+																{% set flag = 'false' %}
+																{% for selected_category in selected_category %}
+																  {% if (selected_category.language_id) == (lang.language_master_id) %}
+																	{% set flag = 'true' %}
+																	<button name="save" type="submit"  class="btn btn-primary" value="">Update</button>
+																  {%endif%}
+																{%endfor%}
+															
+															  {% endif %}
+															  {%if flag == 'false' %}
+																   <button name="save" type="submit" class="btn btn-primary" value="save_category">Save</button>
+															  {% endif %}
+																  <a href="{{path('admin_category_index',{'domain':app.session.get('domain')})}}"  class="btn btn-default form-btn">Cancel</a>
+													  </div>
+												</div>
+											
+											
+											
+												
+										  </form>
+										 </div>
+									{% endfor %}
+								{% endif %}
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</section>
+
+{% endblock %}
+
+{% block js %}
+<script>
+$(document).ready(function() {
+    $('#example1').DataTable( {
+        dom: 'Bfrtip',
+        buttons: [
+            'copy', 'csv', 'excel', 'pdf', 'print'
+        ]
+    } );
+} );
+</script>
+{% endblock %}

@@ -1,0 +1,232 @@
+{% extends "SiteBundle::Layout/index.html.twig" %}
+{% block style %}
+<style>
+.logo{ max-height: 35px !important;}
+a.call-to-action-1.bg-dark.white-text { height: 165px; }
+</style>
+{% endblock %}
+{% block content %}
+	
+	<div class="main container">
+		<div class="row">
+			<div class="col-main">
+				<div class="cart">
+					<div class="page-title title-buttons">
+						<span class="cart-title pull-left">Shopping Cart</span>
+						<button type="button" title="Proceed to Checkout" class="btn btn-primary btn-proceed-checkout btn-checkout" onclick="location.href='{{ path('site_checkout_onepage') }}'">
+							<span>Proceed to Checkout</span>
+						</button>
+					</div>
+					
+					<div class="row">
+						<div class="col-sm-12 col-md-8 col-lg-9">
+						
+							{% if cart_products is defined and cart_products is not empty %}
+						
+							<div class="cart-table-wrap">
+								<form action="" method="post">
+									<fieldset>
+										<table id="shopping-cart-table" class="data-table cart-table">
+											<thead>
+												<tr class="first last">
+													<th rowspan="1">&nbsp;</th>
+													<th rowspan="1">&nbsp;</th>
+													<th rowspan="1">
+														<span class="nobr">Product Name</span>
+													</th>
+                                                    <th colspan="1">
+														<span class="nobr">Unit Price</span>
+													</th>
+													<th rowspan="1">Qty</th>
+													<th class="last" colspan="1">Subtotal</th>
+												</tr>
+                                            </thead>
+											<tfoot>
+												<tr class="first last">
+													<td colspan="50" class="a-right last">
+														<button type="button" title="Continue Shopping" class="button btn-continue" onclick="location.href='{{ live_path }}'">
+															<span><span>Continue Shopping</span></span>
+														</button>
+                                                        <button type="submit" name="update_cart_action" value="update_qty" title="Update Shopping Cart" class="button btn-update">
+															<span><span>Update Shopping Cart</span></span>
+														</button>
+														<button type="submit" name="update_cart_action" value="empty_cart" title="Clear Shopping Cart" class="button btn-empty" id="empty_cart_button">
+															<span><span>Clear Shopping Cart</span></span>
+														</button>                                    
+													</td>
+												</tr>
+											</tfoot>
+											<tbody>
+												{% for item in cart_products %}
+												<tr class="first last odd">
+													<td class="action-td">
+														<a href=""><i class="fa fa-times"></i></a>
+													</td>
+													<td class="pr-img-td">
+														<a href="" title="{{ item.product_name }}" class="product-image">
+															<img src="{{ item.media_url }}" width="80" height="80" alt="{{ item.product_name }}">
+														</a>
+													</td>
+													<td class="product-name-td">
+														<h2 class="product-name">
+															<a href="">{{ item.product_name }}</a>
+														</h2>
+														<!-- <dl class="item-options">
+															<dt>Vendor</dt>
+															<dd>Nutra Grace</dd>
+														</dl> -->
+                                                    </td>
+													<td>
+														<span class="cart-price">
+															<span class="price">₹{{ item.unit_price }}</span>                
+														</span>
+													</td>
+													<td>
+														<div class="qty-holder">
+															<a href="javascript:void(0)" class="qty_dec table_qty_dec" data-toggle="tooltip" title="Decrease Quantity">-</a>
+															
+															<input name="update_qty" data-cart-item-id="{{ item.product_name }}" id="quantity" value="{{ item.quantity }}" size="4" title="Qty" class="input-text qty" maxlength="12">
+															
+															<a href="javascript:void(0)" class="qty_inc table_qty_inc" data-toggle="tooltip" title="Increase Quantity">+</a>
+															
+															<a class="edit-qty" href="{{ path('site_product_view', {'product_id': item.product_id}) }}" title="Edit item parameters"><i class="fa fa-pencil"></i></a>
+														</div>
+													</td>
+													<td class="td-total last">
+														<span class="cart-price">
+															<span class="price">₹{{ item.subtotal }}</span>
+														</span>
+													</td>
+												</tr>
+												{% endfor %}
+                                            </tbody>
+										</table>
+										<script type="text/javascript">decorateTable('shopping-cart-table')</script>
+										<script type="text/javascript">
+											//<![CDATA[
+											jQuery(function($){
+												$(".cart .discount h2,.cart .shipping h2").click(function(){
+													if ($(this).hasClass('opened')) {
+														$(this).removeClass('opened');
+														$(this).next().slideUp();
+													} else {
+														$(this).addClass('opened');
+														$(this).next().slideDown();
+													}
+												});
+											})
+											//]]>
+										</script>
+									</fieldset>
+								</form>
+							</div>
+							
+							{% endif %}
+							
+						</div>
+						<!-- end: main content -->
+						
+						<!-- sidebar -->
+							<div class="col-sm-12 col-md-4 col-lg-3">
+								<div class="cart-collaterals">
+								<form id="discount-coupon-form" action="" method="post">
+									<div class="discount">
+										<h2>Discount Codes<i class="discount-sidebar fa fa-caret-down"></i></h2>
+										<div class="discount-form" style="display:none;">
+											<div class="input-box">
+											  <label for="coupon_code">Enter your coupon code if you have one.</label>
+											  <input class="input-text" id="coupon_code" name="coupon_code" value="">
+											</div>
+											<div class="buttons-set">
+											  <button type="button" title="Apply Coupon" class="btn btn-primary" onclick="discountForm.submit(false)" value="Apply Coupon"><span><span>Apply Coupon</span></span></button>
+											</div>
+										</div>
+									</div>
+								</form>
+								<script type="text/javascript">
+									//<![CDATA[
+									var discountForm = new VarienForm('discount-coupon-form');
+									discountForm.submit = function (isRemove) {
+										if (isRemove) {
+											$('coupon_code').removeClassName('required-entry');
+											$('remove-coupone').value = "1";
+										} else {
+											$('coupon_code').addClassName('required-entry');
+											$('remove-coupone').value = "0";
+										}
+										return VarienForm.prototype.submit.bind(discountForm)();
+									}
+									//]]>
+								</script>
+								<div class="totals">
+									<h2>Cart Totals</h2>
+									<div>
+										<table id="shopping-cart-totals-table">
+										   <colgroup>
+											  <col>
+											  <col width="1">
+										   </colgroup>
+										   <tfoot>
+											  <tr>
+												 <td style="" class="a-right" colspan="1">
+													<strong>Grand Total</strong>
+												 </td>
+												 <td style="" class="a-right">
+													{% if grandtotal is defined and grandtotal is not empty %}
+														<strong><span class="price">₹{{ grandtotal }}</span></strong>
+													{% endif %}
+												 </td>
+											  </tr>
+										   </tfoot>
+										   <tbody>
+											  <tr>
+												 <td style="" class="a-right" colspan="1">
+													Subtotal    
+												 </td>
+												 <td style="" class="a-right">
+													{% if subtotal is defined and subtotal is not empty %}
+														<span class="price">₹{{ subtotal }}</span>
+													{% endif %}
+												 </td>
+											  </tr>
+										   </tbody>
+										</table>
+										<ul class="checkout-types">
+										   <li>
+												<button type="button" title="Proceed to Checkout" class="btn btn-primary btn-proceed-checkout btn-checkout" onclick="location.href='{{ path('site_checkout_onepage') }}'">
+													<span><span>Proceed to Checkout</span></span>
+												</button>
+											</li>
+										</ul>
+									</div>
+								</div>
+							</div>
+						</div>
+						<!-- end: sidebar -->
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	
+{% endblock %}
+
+{% block javascript %}
+<script src="{{ asset('bundles/design/') }}js/custom.js"></script>
+<script>
+	$(document).ready(function(){
+		var quantitiy=0;
+		$('.qty_inc').click(function(e){
+			var quantity = parseInt($('#quantity').val());
+			$('#quantity').val(quantity + 1);
+		});
+
+		$('.qty_dec').click(function(e){
+			var quantity = parseInt($('#quantity').val());
+			if(quantity>1){
+				$('#quantity').val(quantity - 1);
+			}
+		});
+	});
+</script>
+{% endblock %}

@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>ENTITY GENERATOR</title>
+    <!-- Tell the browser to be responsive to screen width -->
+    <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+    <link rel="stylesheet" href="{{ asset('bundles/design/css/bootstrap.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('bundles/design/css/font-awesome.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('bundles/design/css/AdminLTE.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('bundles/design/css/skins/_all-skins.min.css') }}">
+  </head>
+  <body class="hold-transition login-page">
+    <div class="login-box">
+      <div class="login-logo">
+        <a href="../../index2.html"><b>ENTITY</b>GENERATOR</a>
+      </div><!-- /.login-logo -->
+      <div class="login-box-body">
+        {% for flashMessage in app.session.flashbag.get('success') %}
+            <div class="box-body">
+                <div class="alert alert-success alert-dismissable">
+                    <button aria-hidden="true" data-dismiss="alert" class="close" type="button"><i class="fa fa-close"></i></button>
+                    <h4><i class="icon fa fa-check"></i> Alert!</h4> {{flashMessage}}
+                </div>
+            </div>
+        {% endfor %}
+        {% for flashMessage in app.session.flashbag.get('error') %}
+            <div class="box-body">
+                <div class="alert alert-danger alert-dismissable">
+                    <button aria-hidden="true" data-dismiss="alert" class="close" type="button">×</button>
+                    <h4><i class="icon fa fa-ban"></i> Alert!</h4> {{flashMessage}}
+                </div>
+            </div>
+        {% endfor %}
+        <form action="{{path('admin_entity_createentity')}}" method="post">
+          <div class="form-group has-feedback">
+            <input type="text" class="form-control" name="namespace" placeholder="Namespace" value="AdminBundle\Entity" required>
+          </div>
+          <div class="form-group has-feedback">
+            <input type="text" class="form-control" name="table" placeholder="Table name" required>
+          </div>
+          <div class="row">
+            <div class="col-xs-4">
+              <button type="submit" name="create" value="create" class="btn btn-primary btn-block btn-flat">Generate</button>
+            </div><!-- /.col -->
+          </div>
+        </form>
+
+      </div><!-- /.login-box-body -->
+    </div><!-- /.login-box -->
+
+    <script src="{{ asset('bundles/design/js/jquery.js') }}"></script>
+    <script src="{{ asset('bundles/design/js/bootstrap.min.js') }}"></script>
+  </body>
+</html>

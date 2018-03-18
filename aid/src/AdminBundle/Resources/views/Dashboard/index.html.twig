@@ -1,0 +1,264 @@
+{% extends "AdminBundle::Layout/adminlayout.html.twig" %}
+{% block title %} Dashboard {% endblock %}
+{% block css %}
+	
+{% endblock %}
+{% block content %}
+	<section class="content-header">
+		<h1>
+            Dashboard {#{{time_taken_by_script}}#}
+		  <small></small>
+		</h1>
+		<ol class="breadcrumb">
+		  <li class="active"><a href="{{path('admin_dashboard_index',{'domain':app.session.get('domain')})}}"><i class="fa fa-dashboard"></i>Dashboard</a></li>		
+		</ol>
+	  </section>
+	  <section class="content">
+		<div class="row">
+		<div class="col-md-12">
+		{% for flashMessage in app.session.flashbag.get('success_msg') %}
+				<div role="alert" class="alert alert-success alert-dismissible fade in">
+				  <button aria-label="Close" data-dismiss="alert" class="close" type="button"><span aria-hidden="true">×</span></button>
+				  <strong>Alert!</strong>&nbsp; {{ flashMessage }}
+			</div>
+		{% endfor %}
+		{% for flashMessage in app.session.flashbag.get('error_msg') %}
+				<div role="alert" class="alert alert-danger alert-dismissible fade in">
+				  <button aria-label="Close" data-dismiss="alert" class="close" type="button"><span aria-hidden="true">×</span></button>
+				  <strong>Alert!</strong>&nbsp; {{ flashMessage }}
+				</div>
+		{% endfor %}
+		</div>
+		</div>
+		<div class="row">
+			<div class="col-xs-12">
+				<div class="row">
+					<!-- /.col -->
+					<div class="col-md-3 col-sm-6 col-xs-12">
+					  <div class="info-box">
+						<span class="info-box-icon bg-red"><i class="fa ion-android-contact"></i></span>
+			
+						<div class="info-box-content">
+						  <span class="info-box-text">Supplier</span>
+						  <span class="info-box-number">{{total_supplier}}</span>
+						</div>
+						<!-- /.info-box-content -->
+					  </div>
+					  <!-- /.info-box -->
+					</div>
+					<!-- /.col -->
+					<!-- fix for small devices only -->
+					<div class="clearfix visible-sm-block"></div>
+			
+					<div class="col-md-3 col-sm-6 col-xs-12">
+					  <div class="info-box">
+						<span class="info-box-icon bg-green"><i class="ion ion-ios-people-outline"></i></span>
+			
+						<div class="info-box-content">
+						  <span class="info-box-text">Customer</span>
+						  <span class="info-box-number">{{total_customer}}</span>
+						</div>
+						<!-- /.info-box-content -->
+					  </div>
+					  <!-- /.info-box -->
+					</div>
+					<!-- /.col -->
+				
+				
+				</div>
+            </div>
+		</div>
+	 <!---------------------------------------------------------------------------------------------->
+	 <div class="row">
+        <div class="col-md-8">
+		 <!-- TABLE: LATEST ORDERS -->
+          <div class="box box-info">
+            <div class="box-header with-border">
+              <h3 class="box-title">Latest Orders</h3>
+
+              <div class="box-tools pull-right">
+                <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
+                </button>
+                <button type="button" class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
+              </div>
+            </div>
+            <!-- /.box-header -->
+            <div class="box-body">
+              <div class="table-responsive">
+                <table class="table no-margin">
+                  <thead>
+                  <tr>
+                    <th>Order ID</th>
+                    <th>Customer/Phone</th>
+                    <th class="text-center">Total Items</th>
+                    <th>Bill Amount</th>
+                  </tr>
+                  </thead>
+                  <tbody>
+					{% if orders_list is defined and orders_list is not empty %}					
+						{% for order in orders_list %}
+							  <tr>
+								<td><a data-toggle="tooltip" data-original-title="View Order" href="{{path('admin_order_vieworder',{'domain':app.session.get('domain'),'order_id':order.order_master_id})}}">{{order.unique_no}}</a></td>
+								<td>{% if order.username is not empty %} {{ order.username }} /   {% endif %} {% if order.user_mobile is not empty %} {{ order.user_mobile }} {% else %} --- {% endif %} </td>
+								<td class="text-center"><span class="label label-warning">{{order.total_no_of_items}}</td>
+								<td>{{order.order_bill_amount}}</td>
+							  </tr>
+						{% endfor %}						
+					{% endif %}
+                
+               </tbody>
+                </table>
+              </div>
+              <!-- /.table-responsive -->
+            </div>
+            <!-- /.box-body -->
+            <div class="box-footer clearfix">
+              <a href="{{path('admin_order_index',{'domain':app.session.get('domain')})}}" class="btn btn-sm btn-info btn-flat pull-right">View All Orders</a>
+            </div>
+            <!-- /.box-footer -->
+          </div>
+          <!-- /.box -->
+		</div>
+       <div class="col-md-4">
+              <!-- USERS LIST -->
+              <div class="box box-danger">
+                <div class="box-header with-border">
+                  <h3 class="box-title">Latest Products</h3>
+
+                  <div class="box-tools pull-right">
+                  
+                    <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
+                    </button>
+                    <button type="button" class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i>
+                    </button>
+                  </div>
+                </div>
+                <!-- /.box-header -->
+                <div class="box-body no-padding">
+                  <ul class="users-list clearfix">
+					{% if products_list is defined and products_list is not empty %}					
+						{% for product in products_list %}
+							 <li>
+								<img  src=" {{product.image}}" alt="User Image">
+								
+								<span class="users-list-date">{{product.product_name|length > 40 ? product.product_name|slice(0, 40) ~ '...' :product.product_name}}</span>
+							  </li>
+						{% endfor %}						
+					{% endif %}
+                   
+                  </ul>
+                  <!-- /.users-list -->
+                </div>
+                <!-- /.box-body -->
+                <div class="box-footer text-center">
+                  <a href="{{path('admin_product_index',{'domain':app.session.get('domain')})}}" class="uppercase">View All Products</a>
+                </div>
+                <!-- /.box-footer -->
+              </div>
+              <!--/.box -->
+            </div>
+            <div class="col-md-4">
+              <!-- USERS LIST -->
+              <div class="box box-danger">
+                <div class="box-header with-border">
+                  <h3 class="box-title">Out Of Stock Products</h3>
+
+                  <div class="box-tools pull-right">
+                  
+                    <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
+                    </button>
+                    <button type="button" class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i>
+                    </button>
+                  </div>
+                </div>
+                <!-- /.box-header -->
+                <div class="box-body no-padding">
+                  <ul class="users-list clearfix">
+          {% if out_of_stock_product is defined and out_of_stock_product is not empty %}          
+            {% for product in out_of_stock_product %}
+               <li>
+                <img  src=" {{product.image}}" alt="User Image">
+                
+                <span class="users-list-date">{{product.product_name|length > 40 ? product.product_name|slice(0, 40) ~ '...' :product.product_name}}</span>
+                </li>
+            {% endfor %}            
+          {% else %}
+			  </ul> <h5 class="users-list clearfix">No Record Found.</h5>
+			   {% endif %}
+                   
+                 
+                  <!-- /.users-list -->
+                </div>
+                <!-- /.box-body -->
+				 {% if out_of_stock_product is defined and out_of_stock_product is not empty %}   
+                <div class="box-footer text-center">
+                  <a href="{{path('admin_product_index',{'domain':app.session.get('domain')})}}" class="uppercase">View All Out Of Stock Products</a>
+                </div>
+				 {% endif %}
+                <!-- /.box-footer -->
+              </div>
+              <!--/.box -->
+            </div>
+    </div>
+    
+    
+	<div class="row">
+		<div class="col-md-4">
+          <!-- Info Boxes Style 2 -->
+          <div class="info-box bg-red">
+            <span class="info-box-icon"><i class="ion ion-ios-pricetag-outline"></i></span>
+
+            <div class="info-box-content">
+              <span class="info-box-text">Orders</span>
+              <span class="info-box-number">{{pending_order_master}}</span>
+              
+                  <span class="progress-description">
+                    Pending
+                  </span>
+            </div>
+            <!-- /.info-box-content -->
+          </div>
+         
+		</div>
+		<div class="col-md-4">
+          <!-- Info Boxes Style 2 -->
+          <div class="info-box bg-yellow">
+            <span class="info-box-icon"><i class="ion ion-ios-pricetag-outline"></i></span>
+
+            <div class="info-box-content">
+              <span class="info-box-text">Orders</span>
+              <span class="info-box-number">{{inprogress_order_master}}</span>
+
+             
+                  <span class="progress-description">
+                   In Progress
+                  </span>
+            </div>
+            <!-- /.info-box-content -->
+          </div>
+         
+		</div>
+		<div class="col-md-4">
+          <!-- Info Boxes Style 2 -->
+          <div class="info-box bg-green">
+            <span class="info-box-icon"><i class="ion ion-ios-pricetag-outline"></i></span>
+
+            <div class="info-box-content">
+              <span class="info-box-text">Orders</span>
+              <span class="info-box-number">{{delivered_order_master}}</span>
+
+             
+                  <span class="progress-description">
+                    Delivered
+                  </span>
+            </div>
+            <!-- /.info-box-content -->
+          </div>
+         
+		</div>
+		
+	  </section>
+{% endblock %}
+
+{% block js %}
+{% endblock %}

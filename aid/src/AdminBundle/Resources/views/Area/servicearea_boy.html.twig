@@ -1,0 +1,312 @@
+{% extends "AdminBundle::Layout/adminlayout.html.twig" %}
+{% block title %} Delivery Boy Service Area  {% endblock %}
+{% block css %}
+	
+{% endblock %}
+{% block content %}
+	<section class="content-header">
+		<h1>
+           Service Area
+		  <small></small>
+		</h1>
+		<ol class="breadcrumb">
+		  <li><a href="{{path('admin_dashboard_index',{'domain':app.session.get('domain')})}}"><i class="fa fa-dashboard"></i>Dashboard</a></li>
+          <li><a href="{{path('admin_deliveryboy_index',{'domain':app.session.get('domain')})}}"></i>Delivery Boy List</a></li> 
+		  <li class="active">Delivery Boy - Service Area</li>
+		</ol>
+		
+	  </section>
+	
+		<section class="content">
+		{% for flashMessage in app.session.flashbag.get('success_msg') %}
+			<div role="alert" class="alert alert-success alert-dismissible fade in">
+				<button aria-label="Close" data-dismiss="alert" class="close" type="button"><span aria-hidden="true">×</span></button>
+				<strong>Alert!</strong>&nbsp; {{ flashMessage }}
+			</div>
+		{% endfor %}
+		{% for flashMessage in app.session.flashbag.get('error_msg') %}
+			<div role="alert" class="alert alert-danger alert-dismissible fade in">
+				<button aria-label="Close" data-dismiss="alert" class="close" type="button"><span aria-hidden="true">×</span></button>
+				<strong>Alert!</strong>&nbsp; {{ flashMessage }}
+			</div>
+		{% endfor %}
+		<div class="row">
+			<div class="col-xs-12">
+                <div class="box box-solid">
+                    <form class="form-horizontal" action="{{path('admin_area_saveservicearea',{'domain':app.session.get('domain'),'user_id':user_id})}}" method="post" enctype="multipart/form-data">
+                        
+                        <div class="box-body">
+							<input type="hidden" name="area_user_id" value="{{user_id}}" />
+						{#	<div class="form-group">
+                                <label class="col-sm-2 control-label">Country</label>
+                                <div class="col-sm-6">
+									{% if city_id is defined and city_id is not empty and city_id != "" %}
+										{{country_name}}
+									{% else %}
+                                  <select class="form-control" name="main_country_id" id="main_country_id" onchange="getState(this.value,1);">
+                                        <option value="">Select Country</option>
+										{% if country_list is defined and country_list is not empty %}
+                                            {% for service_country in country_list %}
+                                                <option value="{{service_country.main_country_id}}">{{service_country.country_name}}</option>
+                                            {% endfor %}
+                                        {% endif %}
+									{% endif %}
+                                  </select>
+                                </div>
+                            </div>
+							
+							<div class="form-group">
+                                <label class="col-sm-2 control-label">State</label>
+                                <div class="col-sm-6">
+									{% if city_id is defined and city_id is not empty and city_id != "" %}
+										{{state_name}}
+									{% else %}
+                                  <select class="form-control" name="main_state_id" id="main_state_id" onchange="getCity(this.value,1);">
+                                        <option value="">Select State</option>
+                                  </select>
+								  {% endif %}
+                                </div>
+                            </div>
+							<div class="form-group">
+                                <label class="col-sm-2 control-label">City</label>
+                                <div class="col-sm-6">
+									{% if city_id is defined and city_id is not empty and city_id != "" %}
+										{{city_name}}
+									{% else %}
+                                  <select class="form-control" name="main_city_id" id="main_city_id" onchange="getArea(this.value,1);">
+                                        <option value="">Select City</option>
+                                  </select>
+								   {% endif %}
+                                </div>
+                            </div>
+			#}
+							<div class="form-group">
+                                <label class="col-sm-2 control-label">&nbsp;</label>
+                                <div class="col-sm-6" id="area_display">
+                                    <!-- Display area checkbox --------->
+									
+									
+									<div class="box box-primary box-solid">
+		                <div class="box-header with-border">
+		                    <h3 class="box-title">Area list</h3>
+		                </div>
+		                <div class="box-body">
+		                    
+		                  {% for sval in  service_area_list %}
+		                   
+		                    <div class="col-sm-3">
+
+		                        <div class="checkbox">
+
+		                            <label>
+									{%set checked="" %}
+		                                <input type="checkbox" value="{{sval.main_area_id}}" name="service_area_main_id[]"
+
+		                                {%  if delivery_service_area is not empty%}
+				
+		                               
+			                               {%for val  in  delivery_service_area %}
+
+			                                {% if val.area_id == sval.main_area_id %}
+												{%set checked="checked" %}
+											{% endif %}	
+												
+											 {% endfor %}
+
+										{% endif %}	
+										{{checked}}>										
+		                             {{sval.area_name}}
+									    
+
+		                            </label>
+
+		                        </div>
+
+		                    </div>
+					{% endfor %}
+
+		                
+
+
+
+
+		                </div>
+
+		            </div>
+
+                                </div>
+                            </div>
+                             
+                             
+
+                        </div>
+                      
+                      <div class="box-footer">
+                        <a href="{{path('admin_deliveryboy_index',{'domain':app.session.get('domain')})}}" class="btn btn-default btn-flat">Cancel</a>
+                            <button type="submit" class="btn btn-info pull-right btn-flat" name="save_area" value="save_area">Save</button>
+                      </div>
+                      <br>
+                  {#  <div class="box-header with-border">
+                        <h3 class="box-title">Delivery Boy - Service Area</h3>
+                    </div>
+                      <div class="box-body">
+                        <table id="example1" class="table table-bordered table-striped">
+								<thead>
+									<th style="width: 20px;">No.</th>
+									<th>Area</th>
+									<th>City</th>
+                                    <th>State</th>
+                                    <th>Country</th>
+									
+                                    <th style="width: 100px;">Action</th>
+								</thead>
+								<tbody>
+                                    {% if area_list is defined and area_list is not empty %}
+                                        {% for area in area_list %}
+										<tr>
+											<td>{{loop.index}}</td>	
+											<td>{{area.area_name}}</td>
+											<td>{{area.city_name}}</td>
+											<td>{{area.state_name}}</td>
+											<td>{{area.country_name}}</td>
+                                           
+                                            <td>
+												<a onclick="return confirm('Do you want to Delete Service area ?')"  href="{{path('admin_area_deleteservicearea',{'domain':app.session.get('domain'),'delivery_service_area_id':area.delivery_service_area_id,'user_id':user_id})}}" class="btn btn-danger btn-xs"><i class="fa fa-remove"></i></a>
+											</td>
+										</tr>
+                                        {% endfor %}
+                                    {% endif %}
+								</tbody>
+								<tfoot>
+									<th>No.</th>
+									<th>Area</th>
+									<th>City</th>
+                                    <th>State</th>
+                                    <th>Country</th>
+									
+                                    <th>Action</th>
+								</tfoot>
+							</table>
+                      </div>#}
+                    </form>
+                </div>
+            </div>
+		</div>
+	  </section>
+{% endblock %}
+
+{% block js %}
+<script>
+$('.change_status').on('click', function(){
+	var $this = $(this);
+	var tbl = 'coupon_city';
+	var pkey = $this.val();
+	
+	$this.button('loading');
+	$.ajax({
+		type: 'POST',
+		url : "{{path('admin_servicearea_changestatuscouponcity',{'domain':app.session.get('domain')})}}",
+		data: {'pkey':pkey,'tbl':tbl,'flag':'change_status_couponcity'},
+		dataType: 'json',
+		success: function(res)
+		{
+			if (res.status == 'active')
+			{
+				var sts = 'Active';
+				var acls = 'btn-success';
+				var rcls = 'btn-danger';
+			}
+			else
+			{
+				var sts = 'Inactive';
+				var acls = 'btn-danger';
+				var rcls = 'btn-success';
+			}
+			$this.button('reset');
+			$this.removeClass(rcls).addClass(acls).text(sts);
+			$this.text(sts);
+		}
+	});
+});
+
+$('.send_noti').on('click', function(){
+	var $this = $(this);
+	var tbl = 'coupon_city';
+	var id = $this.val();
+	
+	$this.button('loading');
+	$.ajax({
+		type: 'POST',
+		url : "{{path('admin_servicearea_sendnotificationcity',{'domain':app.session.get('domain')})}}",
+		data: {'city_id':id,'coupon_id':'{{user_id}}','flag':'send_notification'},
+		dataType: 'json',
+		success: function(res)
+		{
+			//alert(res.coupon_id);
+			//alert(res.city_id);
+			alert(res.msg);
+			//alert("Notification has been sent");
+			$this.button('reset');
+		}
+		
+	});
+});
+
+function getState(val,lang_id)
+{
+    //call ajax
+    $.ajax({
+        type : "POST",
+        url : "{{path('admin_servicearea_getservicestateoption',{'domain':app.session.get('domain')})}}",
+        data : {'main_country_id':val,'lang_id':lang_id,'flag':'getstate_options'},
+        success : function(resp){
+            $("#main_state_id").html(resp);
+        }
+    }) ;
+}
+function getCity(val,lang_id)
+{
+    //call ajax
+    $.ajax({
+        type : "POST",
+        url : "{{path('admin_servicearea_getmaincitylist_boy',{'domain':app.session.get('domain')})}}",
+        data : {'main_state_id':val,'lang_id':lang_id,'flag':'getcity_list'},
+        success : function(resp){
+			$("#main_city_id").html(resp);
+        }
+    }) ;
+}
+{% if city_id is defined and city_id is not empty and city_id != "" %}
+		function getArea()
+		{
+			lang_id=1;
+			//call ajax
+			$.ajax({
+				type : "POST",
+				url : "{{path('admin_servicearea_getmainareaoption',{'domain':app.session.get('domain')})}}",
+				data : {'main_city_id':{{city_id}},'lang_id':lang_id,'user_id':{{user_id}},'flag':'getarea_options'},
+				success : function(resp){
+					$("#area_display").html(resp);
+				}
+			}) ;
+		}
+		getArea();
+{% else %}
+function getArea(val,lang_id)
+{
+    //call ajax
+    $.ajax({
+        type : "POST",
+        url : "{{path('admin_servicearea_getmainareaoption',{'domain':app.session.get('domain')})}}",
+        data : {'main_city_id':val,'lang_id':lang_id,'user_id':{{user_id}},'flag':'getarea_options'},
+        success : function(resp){
+			$("#area_display").html(resp);
+        }
+    }) ;
+}
+{% endif %}
+$(document).ready(function() {
+    $('#example1').DataTable();
+} );
+</script>
+{% endblock %}

@@ -1,0 +1,106 @@
+{% extends "AdminBundle::Layout/adminlayout.html.twig" %}
+{% block title %} Change Password {% endblock %}
+{% block css %}{% endblock %}
+{% block content %}
+<section class="content-header">
+		<h1>
+            
+		  <small></small>
+		</h1>
+		<ol class="breadcrumb">
+		  <li><a href="{{path('admin_dashboard_index')}}"><i class="fa fa-dashboard"></i>Dashboard</a></li>
+		  <li class="active">Change Password</li>
+		</ol>
+	  
+</section>
+
+	  <section class="content">
+		{% for flashMessage in app.session.flashbag.get('success_msg') %}
+			<div role="alert" class="alert alert-success alert-dismissible fade in">
+				<button aria-label="Close" data-dismiss="alert" class="close" type="button"><span aria-hidden="true">×</span></button>
+				<strong>Alert!</strong>&nbsp; {{ flashMessage }}
+			</div>
+		{% endfor %}
+		{% for flashMessage in app.session.flashbag.get('error_msg') %}
+			<div role="alert" class="alert alert-danger alert-dismissible fade in">
+				<button aria-label="Close" data-dismiss="alert" class="close" type="button"><span aria-hidden="true">×</span></button>
+				<strong>Alert!</strong>&nbsp; {{ flashMessage }}
+			</div>
+		{% endfor %}
+		<div class="row">
+			<div class="col-xs-12">
+                <div class="box box-solid">
+                    <div class="box-header with-border">
+                    	<h3 class="box-title">Change Password</h3>
+                      {#<h3 class="box-title">Progress Bars Different Sizes</h3>#}
+                      <div class="pull-right">
+                        
+                      </div>
+                    </div>
+                    <div class="box-body">
+                        <div class="container-fluid table-responsive">
+							<form>
+								<div id="example1">
+										<div>
+												<div style="width: 10px;float: left;">
+																
+												</div>
+												<div style="width: 130px;float: left;">
+														Old Password		
+												</div>
+												<div style="float: left;">
+														<input type="password" class="form-control" name="oldpass" id="oldpass" />	
+												</div>
+										</div>
+										<br>
+										<div style="clear: both; margin-top: 30px;">
+												<div style="width: 10px;float: left;">
+																
+												</div>
+												<div style="width: 130px;float: left;">
+														New Password		
+												</div>
+												<div style="float: left;">
+														<input type="password" class="form-control" name="newpass" id="newpass" />	
+												</div>
+										</div>
+										<br>
+										<div style="clear: both; margin-top: 30px;">
+												<div style="width: 10px;float: left;">
+																
+												</div>
+												<div style="width: 130px;float: left;">
+														Confirm Password		
+												</div>
+												<div style="float: left;">
+														<input type="password" class="form-control" name="confpass" id="confpass" />	
+												</div>
+										</div>
+										<br>
+										<div style="clear: both; margin-top: 30px;">
+												<div style="width: 10px;float: left;">
+																
+												</div>
+												<div style="width: 130px;float: left;">
+													&nbsp;			
+												</div>
+												<div style="float: left;">
+														<input type="submit" name="updatepass" id="updatepass" value="Change" data-toggle="tooltip" data-original-title="Change Password" class="btn btn-primary btn-flat">	
+												</div>
+										</div>
+								</div>
+							
+							</form>
+						</div>
+
+                    </div>
+                  </div>
+            </div>
+		</div>
+	  </section>
+{% endblock %}
+{% block js %}
+<script>
+
+</script>
+{% endblock %}

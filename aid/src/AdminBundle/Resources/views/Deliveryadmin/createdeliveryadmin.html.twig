@@ -1,0 +1,500 @@
+{% extends "AdminBundle::Layout/adminlayout.html.twig" %}
+{% block title %} Create Delivery Admin  {% endblock %}
+{% block css %}
+	
+{% endblock %}
+{% block content %}
+	<section class="content-header">
+		<h1>
+            Create Delivery Admin
+		  <small></small>
+		</h1>
+		<ol class="breadcrumb">
+		  <li><a href="{{path('admin_dashboard_index',{'domain':app.session.get('domain')})}}"><i class="fa fa-dashboard"></i>Dashboard</a></li>
+          <li><a href="{{path('admin_deliveryadmin_index',{'domain':app.session.get('domain')})}}"></i>Delivery Admin List</a></li> 
+		  <li class="active">Create Delivery Admin</li>
+		</ol>
+		
+	  </section>
+	
+		<section class="content">
+		{% for flashMessage in app.session.flashbag.get('success_msg') %}
+			<div role="alert" class="alert alert-success alert-dismissible fade in">
+				<button aria-label="Close" data-dismiss="alert" class="close" type="button"><span aria-hidden="true">×</span></button>
+				<strong>Alert!</strong>&nbsp; {{ flashMessage }}
+			</div>
+		{% endfor %}
+		{% for flashMessage in app.session.flashbag.get('error_msg') %}
+			<div role="alert" class="alert alert-danger alert-dismissible fade in">
+				<button aria-label="Close" data-dismiss="alert" class="close" type="button"><span aria-hidden="true">×</span></button>
+				<strong>Alert!</strong>&nbsp; {{ flashMessage }}
+			</div>
+		{% endfor %}
+		<div class="row">
+			<div class="col-xs-12">
+                <div class="box box-solid">
+					<form method="post" class="form-horizontal" id="del_admin_form" action="{%if user_master is defined and user_master is not empty %}{{path('admin_deliveryadmin_savedadmin',{'domain':app.session.get('domain')})}}/{{user_master.user_master_id}}{% else %}{{path('admin_deliveryadmin_savedadmin',{'domain':app.session.get('domain')})}}{% endif %}" enctype="multipart/form-data" autocomplete="off">
+					<div class="box-body">
+						
+						<div class="form-group">
+						  <label class="col-sm-2 control-label">Name</label>
+						  <div class="col-sm-3">
+							<input type="text" placeholder="First name" required class="form-control input-sm" name="first_name" {%if user_master is defined and user_master is not empty %}
+								value="{{user_master.user_firstname}}"
+							{% endif %}>
+						  </div>
+						  <div class="col-sm-3">
+							<input type="text" placeholder="Last name" required class="form-control input-sm" name="last_name" {%if user_master is defined and user_master is not empty %}
+								value="{{user_master.user_lastname}}"
+							{% endif %}>
+						  </div>
+						</div>
+						
+						<div class="form-group">
+							<label class="col-sm-2 control-label">Image</label>
+							<div class="col-sm-6">
+								  <input type="file" name="image" class="" {% if user_master is defined and user_master is not empty %}{% else %}required{% endif %}>
+								  
+								  <p class="help-block">Max image resolution is <b>512 X 512</b> and size will be <b>10 Kb</b> allowed</p>
+							</div>
+							{% if user_master is defined and user_master is not empty %}
+							<div class="col-lg-2">
+								{% set logo = render(controller('AdminBundle:Base:getmedia', {'media_library_master_id': user_master.user_image,'live_path':live_path})) %}
+								<img src="{{logo}}" style="height:100px;">
+							</div>
+							{% endif %}
+						</div>
+						
+						<div class="form-group">
+							<label class="col-sm-2 control-label">Email Address</label>
+							<div class="col-sm-4">
+							  <input type="email" placeholder="Email address" required class="form-control input-sm" name="email_address" {%if user_master is defined and user_master is not empty %}
+								value="{{user_master.user_emailid}}"
+							{% endif %}>
+							</div>
+						  </div>
+						  
+						  <div class="form-group">
+							<label class="col-sm-2 control-label">Username</label>
+							<div class="col-sm-6">
+							  <input type="text" placeholder="Username" required class="form-control input-sm" name="username" {%if user_master is defined and user_master is not empty %}
+								value="{{user_master.username}}"
+							{% endif %}>
+							</div>
+						  </div>
+						  
+						  <div class="form-group">
+							<label class="col-sm-2 control-label">Password</label>
+							<div class="col-sm-3">
+							  <input type="password" placeholder="Password" class="form-control input-sm" name="pass" id="pass" value="" {% if user_master is defined and user_master is not empty %}{% else %}required{% endif %}>
+							</div>
+							<div class="col-sm-3">
+							  <input type="password" placeholder="Confirm Password" class="form-control input-sm" name="confirm_pass" value="" {% if user_master is defined and user_master is not empty %}{% else %}required{% endif %}>
+							</div>
+						  </div>
+						  
+						  
+						  
+						  <div class="form-group">
+							  <label class="col-sm-2 control-label">Status</label>
+							  <div class="col-sm-6">
+									<div class="radio">
+									  <label>
+										<input type="radio" value="active" required name="status" {%if user_master is defined and user_master is not empty %}{% if user_master.user_status == "active"%}checked{% endif %}{% endif %}> Active
+										{# {% if product_list is defined and product_list is not empty %}{% if product_list[0].status == 'active' %}checked{% endif %}{% endif %} #}
+									  </label>
+									</div>
+									<div class="radio">
+									  <label>
+										<input type="radio" value="inactive" required name="status" {%if user_master is defined and user_master is not empty %}{% if user_master.user_status == "inactive"%}checked{% endif %}{% endif %}> Inactive
+									  </label>
+									</div>
+							  </div>
+						  </div>
+						  
+						  <div class="form-group">
+								<label class="col-sm-2 control-label">Domain</label>
+								<div class="col-sm-6">
+									<select class="form-control" name="main_domain_id" required onchange="getCompany(this.value);">
+										<option>Select Domain</option>
+										{% if domain_list is defined and domain_list is not empty %}
+											{% for domain in domain_list %}
+												<option value="{{domain.domain_code}}" {% if domain_id is defined and domain_id is not empty  %}{% if domain_id == domain.domain_code %}selected{% endif %}{% endif %}>{{domain.domain_name}}</option>
+											{% endfor %}
+										{% endif %}
+									</select>
+								</div>
+                            </div>
+							
+							<div class="form-group">
+                                <label class="col-sm-2 control-label">Company</label>
+								<div class="col-sm-6">
+									<select class="form-control" name="main_company_id" required id="company" onchange="getBranch(this.value);">
+										<option>Select Company</option>
+										{% if company_master is defined and company_master is not empty %}
+											{% for company in company_master %}
+												<option value="{{company.main_company_id}}" {% if main_company_id is defined and main_company_id is not empty  %}{% if main_company_id == company.main_company_id %}selected{% endif %}{% endif %}>{{company.company_name}}</option>
+											{% endfor %}
+										{% endif %}	
+									</select>
+                                </div>
+                            </div>
+							
+							<div class="form-group">
+                                <label class="col-sm-2 control-label">Branch</label>
+								<div class="col-sm-6">
+									<select class="form-control" name="main_branch_id" id="branch" required>
+										<option>Select Branch</option>
+										{% if branch_master is defined and branch_master is not empty %}
+											{% for branch in branch_master %}
+												<option value="{{branch.main_branch_id}}" {% if main_branch_id is defined and main_branch_id is not empty  %}{% if main_branch_id == branch.main_branch_id %}selected{% endif %}{% endif %}>{{branch.branch_name}}</option>
+											{% endfor %}
+										{% endif %}	
+									</select>
+                                </div>
+                            </div>
+						  
+					
+						  
+					</div>
+					
+					
+                    
+                    {% if language is defined and language is not empty %}
+                    <div class="nav-tabs-custom">
+                        <ul class="nav nav-tabs">
+                        
+                            {% for lang in language %}
+                            <li {% if loop.index == 1 %}class="active"{% endif %}><a data-toggle="tab" href="#tab_{{lang.language_master_id}}">{{lang.language_name}}</a></li>
+                            {% endfor %}
+                         
+                        </ul>
+                        <div class="tab-content">
+                            {% for lang in language %}
+                            <div id="tab_{{lang.language_master_id}}" class="tab-pane{% if loop.index == 1 %} active{% endif %}">
+									
+								
+                                  <div class="box-body">
+                                    
+                                    
+                                    <div class="form-group">
+                                      <label class="col-sm-2 control-label">Address</label>
+                                      <div class="col-sm-6">
+                                        <textarea name="address_{{lang.language_master_id}}" class="form-control input-sm">{% if address_master is defined and address_master is not empty %}{% for address in address_master %}{% if address.language_id == lang.language_master_id %}{{address.address_name}}{% endif %}{% endfor %}{% endif %}</textarea>
+                                      </div>
+                                    </div>
+									
+									<div class="form-group">
+                                      <label class="col-sm-2 control-label">Country</label>
+                                      <div class="col-sm-6">
+										<select class="form-control" name="main_country_id" required onchange="getState(this.value,{{lang.language_master_id}});">
+											<option value="">Select Country</option>
+											{% if country_master is defined and country_master is not empty %}
+												{% for country in country_master %}
+													{% if country.language_id == lang.language_master_id %}
+														<option value="{{country.main_country_id}}" {% if main_country_id is defined and main_country_id is not empty  %}{% if main_country_id == country.main_country_id %}selected{% endif %}{% endif %}>{{country.country_title}}</option>
+													{% endif %}
+												{% endfor %}
+											{% endif %}
+										</select>
+                                      </div>
+                                    </div>
+									
+									<div class="form-group">
+                                      <label class="col-sm-2 control-label">State</label>
+                                      <div class="col-sm-6">
+										<select class="form-control" name="main_state_id" id="state_{{lang.language_master_id}}" onchange="getCity(this.value,{{lang.language_master_id}});" required>
+											<option value="">Select State</option>
+											{% if state_master is defined and state_master is not empty %}
+												{% for state in state_master %}
+													{% if state.language_id == lang.language_master_id %}
+														<option value="{{state.main_state_id}}" {% if main_state_id is defined and main_state_id is not empty  %}{% if main_state_id == state.main_state_id %}selected{% endif %}{% endif %}>{{state.state_name}}</option>
+													{% endif %}
+												{% endfor %}
+											{% endif %}
+										</select>
+                                      </div>
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                      <label class="col-sm-2 control-label">City</label>
+                                      <div class="col-sm-6">
+                                        <select name="city_{{lang.language_master_id}}" class="form-control input-sm" id="city_{{lang.language_master_id}}" onchange="getArea(this.value,{{lang.language_master_id}});" required>
+                                            <option value="">Select City</option>
+											{% if city_list is defined and city_list is not empty %}
+												{% for city in city_list %}
+													{% if city.language_id == lang.language_master_id %}
+														<option value="{{city.main_city_id}}" {% if main_city_id is defined and main_city_id is not empty  %}{% if main_city_id == city.main_city_id %}selected{% endif %}{% endif %}>{{city.city_name}}</option>
+													{% endif %}
+												{% endfor %}
+											{% endif %}
+                                        </select>
+                                      </div>
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                      <label class="col-sm-2 control-label">Area</label>
+                                      <div class="col-sm-6">
+                                        <select name="area_{{lang.language_master_id}}" class="form-control input-sm" id="area_{{lang.language_master_id}}">
+                                            <option value="">Select Area</option>
+											{% if area_list is defined and area_list is not empty %}
+												{% for area in area_list %}
+													{% if area.language_id == lang.language_master_id %}
+														<option value="{{area.main_area_id}}" {% if main_area_id is defined and main_area_id is not empty  %}{% if main_area_id == area.main_area_id %}selected{% endif %}{% endif %}>{{area.area_name}}</option>
+													{% endif %}
+												{% endfor %}
+											{% endif %}
+                                        </select>
+                                      </div>
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                      <label class="col-sm-2 control-label">Street</label>
+                                      <div class="col-sm-6">
+                                        <input type="text" placeholder="Street" class="form-control input-sm" name="street_{{lang.language_master_id}}" {% if address_master is defined and address_master is not empty %}
+											{% for address in address_master %}
+												{% if address.language_id == lang.language_master_id %}
+													value="{{address.street}}"
+												{% endif %}
+											{% endfor %}
+											{% endif %}>
+                                      </div>
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                      <label class="col-sm-2 control-label">House No.</label>
+                                      <div class="col-sm-3">
+                                        <input type="number" placeholder="House No." class="form-control input-sm" name="house_no_{{lang.language_master_id}}" {% if address_master is defined and address_master is not empty %}
+											{% for address in address_master %}
+												{% if address.language_id == lang.language_master_id %}
+													value="{{address.flate_house_number}}"
+												{% endif %}
+											{% endfor %}
+											{% endif %}>
+                                      </div>
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                      <label class="col-sm-2 control-label">Society/Building name</label>
+                                      <div class="col-sm-6">
+                                        <input type="text" placeholder="Society/Building name" class="form-control input-sm" name="society_building_name_{{lang.language_master_id}}" {% if address_master is defined and address_master is not empty %}
+											{% for address in address_master %}
+												{% if address.language_id == lang.language_master_id %}
+													value="{{address.society_building_name}}"
+												{% endif %}
+											{% endfor %}
+											{% endif %}>
+                                      </div>
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                      <label class="col-sm-2 control-label">Landmark</label>
+                                      <div class="col-sm-6">
+                                        <input type="text" placeholder="landmark" class="form-control input-sm" name="landmark_{{lang.language_master_id}}" {% if address_master is defined and address_master is not empty %}
+											{% for address in address_master %}
+												{% if address.language_id == lang.language_master_id %}
+													value="{{address.landmark}}"
+												{% endif %}
+											{% endfor %}
+											{% endif %}>
+                                      </div>
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                      <label class="col-sm-2 control-label">Pincode</label>
+                                      <div class="col-sm-3">
+                                        <input type="number" placeholder="Pincode" class="form-control input-sm" name="pincode_{{lang.language_master_id}}" {% if address_master is defined and address_master is not empty %}
+											{% for address in address_master %}
+												{% if address.language_id == lang.language_master_id %}
+													value="{{address.pincode}}"
+												{% endif %}
+											{% endfor %}
+											{% endif %}>
+                                      </div>
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                      <label class="col-sm-2 control-label">Latitude</label>
+                                      <div class="col-sm-3">
+                                        <input type="text" placeholder="Latitude" class="form-control input-sm" name="lat_{{lang.language_master_id}}" {% if address_master is defined and address_master is not empty %}
+											{% for address in address_master %}
+												{% if address.language_id == lang.language_master_id %}
+													value="{{address.lat}}"
+												{% endif %}
+											{% endfor %}
+											{% endif %}>
+                                      </div>
+									  <label class="col-sm-2 control-label">Longitude</label>
+                                      <div class="col-sm-3">
+                                        <input type="text" placeholder="Longitude" class="form-control input-sm" name="lng_{{lang.language_master_id}}" {% if address_master is defined and address_master is not empty %}
+											{% for address in address_master %}
+												{% if address.language_id == lang.language_master_id %}
+													value="{{address.lng}}"
+												{% endif %}
+											{% endfor %}
+											{% endif %}>
+                                      </div>
+                                    </div>
+                                    
+                                    
+                                  </div>
+                                  
+                            </div>
+                            {% endfor %}
+                        </div>
+                      </div>
+                    {% endif %} 
+                    
+					<div class="box-footer">
+						<a href="{{path('admin_deliveryadmin_index',{'domain':app.session.get('domain')})}}" class="btn btn-default btn-flat" type="submit">Cancel</a>
+	
+						<button class="btn btn-info pull-right btn-flat" type="submit" name="save_dadmin" value="save_dadmin">Save All</button>
+						
+					  </div>
+					</form>
+                  </div>				
+            </div>
+		</div>
+	  </section>
+{% endblock %}
+
+{% block js %}
+<script>
+$("#del_admin_form").validate({
+	  rules: {
+		  first_name: "required",
+		  last_name: "required",
+		  image: "required",
+		  email_address: {
+			required: true,
+			email: true
+			},
+		  username: "required",
+		  pass: "required",
+		  confirm_pass: {
+			required: true,
+			equalTo: "#pass"
+		  },
+		  status: "required",
+		  main_domain_id: "required",
+		  main_company_id: "required",
+		  main_branch_id: "required",
+		  main_country_id: "required",
+		  main_state_id: "required",
+		  city_1: "required",
+		  area_1: "required"
+	  },
+	  messages: {
+		  first_name: "Enter your first name",
+		  last_name: "Enter your last name",
+		  image: "Please browse an image",
+		  email_address: {
+			required: "Enter your email address",
+			email: "Invalid email address"
+			},
+		  username: "Enter your uniq username",
+		  pass: "Enter your password",
+		  confirm_pass: {
+			required: "Enter confirm password",
+			equalTo: "Password and its confirm doesnot match"
+		  },
+		  status: "Select status",
+		  main_domain_id: "Select domain",
+		  main_company_id: "Select company",
+		  main_branch_id: "Select branch",
+		  main_country_id: "Select country",
+		  main_state_id: "Select state",
+		  city_1: "Select city",
+		  area_1: "Select area"
+	  }
+  });
+function getCompany(val) {
+	//call ajax
+		$.ajax({
+			type : "POST",
+			url : "{{path('admin_deliveryadmin_getcompanyajax',{"domain":app.session.get('domain')})}}",
+			data : "domain_id="+val,
+			success : function(resp){
+				if (resp) {
+					$("#company").html(resp) ;
+				}else{
+					// alert("Price not available.") ;
+				}
+			}
+		}) ;
+}
+
+function getBranch(val) {
+	//call ajax
+		$.ajax({
+			type : "POST",
+			url : "{{path('admin_deliveryadmin_getbranchajax',{"domain":app.session.get('domain')})}}",
+			data : "company_id="+val,
+			success : function(resp){
+				if (resp) {
+					$("#branch").html(resp) ;
+				}else{
+					// alert("Price not available.") ;
+				}
+			}
+		}) ;
+}
+	
+function getState(val,lang_id) {
+	//call ajax
+		$.ajax({
+			type : "POST",
+			url : "{{path('admin_city_getstateajax',{'domain':app.session.get('domain')})}}",
+			data : "country_id="+val+"&lang_id="+lang_id,
+			success : function(resp){
+				if (resp) {
+					$("#state_"+lang_id).html(resp) ;
+				}else{
+					// alert("Price not available.") ;
+				}
+			}
+		}) ;
+}
+
+function getCity(val,lang_id) {
+	//call ajax
+		$.ajax({
+			type : "POST",
+			url : "{{path('admin_area_getcityajax',{'domain':app.session.get('domain')})}}",
+			data : "state_id="+val+"&lang_id="+lang_id,
+			success : function(resp){
+				if (resp) {
+					$("#city_"+lang_id).html(resp) ;
+				}else{
+					// alert("Price not available.") ;
+				}
+			}
+		}) ;
+}
+
+function getArea(val,lang_id) {
+	//call ajax
+		$.ajax({
+			type : "POST",
+			url : "{{path('admin_area_getareaajax',{'domain':app.session.get('domain')})}}",
+			data : "city_id="+val+"&lang_id="+lang_id,
+			success : function(resp){
+				if (resp) {
+					$("#area_"+lang_id).html(resp) ;
+				}else{
+					// alert("Price not available.") ;
+				}
+			}
+		}) ;
+}
+
+$(document).ready(function() {
+    $('#example1').DataTable( {
+        dom: 'Bfrtip',
+        buttons: [
+            'copy', 'csv', 'excel', 'pdf', 'print'
+        ]
+    } );
+} );
+</script>
+{% endblock %}

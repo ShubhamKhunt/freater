@@ -1,0 +1,105 @@
+{% extends "AdminBundle::Layout/adminlayout.html.twig" %}
+{% block title %} Company List {% endblock %}
+{% block css %}
+	
+{% endblock %}
+{% block content %}
+	  
+	<section class="content-header" style="padding: 26px 16px 0px 0px;">
+		  <small></small>
+
+		<ol class="breadcrumb">
+		  <li><a href="{{path('admin_dashboard_index',{'domain':app.session.get('domain')})}}"><i class="fa fa-dashboard"></i>Dashboard</a></li>
+		  <li class="active">Company List</li>
+		</ol>
+	  </section>
+	  <section class="content">
+		<div class ="row">
+			<div class="col-md-12">
+			{% for flashMessage in app.session.flashbag.get('success_msg') %}
+			  <div class="alert alert-success alert-dismissable">
+				  <button aria-hidden="true" data-dismiss="alert" class="close" type="button">×</button>
+				  <h4><i class="icon fa fa-check"></i> Alert!</h4>{{ flashMessage }}
+			  </div>
+			  {% endfor %}
+			  {% for flashMessage in app.session.flashbag.get('error_msg') %}
+			  <div class="alert alert-danger alert-dismissable">
+				  <button aria-hidden="true" data-dismiss="alert" class="close" type="button">×</button>
+				  <h4><i class="icon fa fa-check"></i> Alert!</h4>{{ flashMessage }}
+			  </div>
+			{% endfor %}
+			</div>  
+		</div>	
+		<div class="row">
+			<div class="col-xs-12">
+                <div class="box box-solid">
+                    <div class="box-header with-border">
+                      <h3 class="box-title">Company List</h3>
+                      <div class="pull-right">
+                        <a href="{{path('admin_company_addcompany',{'domain':app.session.get('domain')})}}" class="btn btn-primary btn-flat"><i class="fa fa-plus"></i>&nbsp;&nbsp;ADD</a>
+                      </div>
+                    </div>
+                    <div class="box-body">
+                        <div class="container-fluid table-responsive">
+							<table id="example1" class="table table-bordered table-striped text-center">
+								<thead>
+									{% if language is defined and language is not empty %}
+											{%for language in language %}
+												<th>Name : {{language.display_title}}</th>	
+										    {%endfor%}
+									{% endif %}	
+                                    <!--<th>Description</th>-->
+									<th>Domain Name</th>
+                                    <th>Action</th>
+								</thead>
+								<tbody>
+									{% if company is defined and company is not empty %}
+										  {%for company in company %}
+											 <tr>
+												{% if company.lang_arr_company_wise is defined and company.lang_arr_company_wise is not empty %}
+													  {%for lang_arr_company_wise in company.lang_arr_company_wise %}
+															<td>{{lang_arr_company_wise.company_name}}</td>	
+													  {%endfor%}
+												{% endif %}	
+												
+												<td>{{company.domain_id}}</td>
+												<td>
+													  <a href="{{path('admin_company_addcompany',{'domain':app.session.get('domain'),main_company_id:company.main_company_id})}}" onclick="return confirm('Are you sure?')" class="btn btn-warning btn-xs"  data-toggle="tooltip" data-original-title="Edit"><span class="fa fa-edit"></span></a>
+													  <a href="{{path('admin_company_deletecompany',{'domain':app.session.get('domain'),main_company_id:company.main_company_id})}}" onclick="return confirm('Are you sure?')" class="btn btn-danger btn-xs"  data-toggle="tooltip" data-original-title="Delete"><span class="fa fa-remove"></span></a>
+												</td>
+											 </tr>	
+										  {% endfor %}
+									{% endif %}
+								</tbody>
+								<tfoot>
+									{% if language is defined and language is not empty %}
+											{%for language in language %}
+												<th>Name : {{language.display_title}}</th>	
+										    {%endfor%}
+									{% endif %}	
+                                   <!-- <th>Description</th>-->
+                                    <th>Domain Name</th>
+									<th>Action</th>
+								</tfoot>
+							</table>
+						</div>
+
+                    </div>
+                  </div>
+            </div>
+		</div>
+	  </section>
+{% endblock %}
+
+{% block js %}
+<script>
+$(document).ready(function() {
+    $('#example1').DataTable( {
+        dom: 'Bfrtip',
+        buttons: [
+            'copy', 'csv', 'excel', 'pdf', 'print'
+        ]
+    } );
+} );
+</script>
+{% endblock %}

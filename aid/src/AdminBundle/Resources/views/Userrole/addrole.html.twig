@@ -1,0 +1,131 @@
+{% extends "AdminBundle::Layout/adminlayout.html.twig" %}
+{% block title %} User Role {% endblock %}
+{% block css %}
+	 <link href="{{asset('bundles/design/')}}css/select2.min.css" rel="stylesheet" type="text/css" />
+	 <link href="{{asset('bundles/design/')}}css/dataTables.bootstrap.css" rel="stylesheet" type="text/css" />
+	  <link href="{{asset('bundles/design/')}}css/bootstrap-toggle.min.css" rel="stylesheet" type="text/css" />
+	  <link href="{{asset('bundles/design/')}}css/datepicker3.css" rel="stylesheet" type="text/css" />
+	  <link href="{{asset('bundles/design/')}}validation/datepicker3.css" rel="stylesheet" type="text/css" />
+{% endblock %}
+{% block content %}
+	<section class="content-header">
+		<h1>
+		 Add Role
+		</h1>
+		<small></small>
+		<ol class="breadcrumb">
+		  <li><a href="{{path('admin_dashboard_index',{'domain':app.session.get('domain')})}}"><i class="fa fa-dashboard"></i>Dashboard</a></li>
+		  <li><a href="{{path('admin_userrole_index',{'domain':app.session.get('domain')})}}"><i class=""></i>User Role List</a></li>
+		  <li class="active">Create User Role</li>
+		</ol>
+	  </section>
+	  <section class="content">
+		{% for flashMessage in app.session.flashbag.get('success_msg') %}
+		<div class="alert alert-success alert-dismissable">
+			<button aria-hidden="true" data-dismiss="alert" class="close" type="button">×</button>
+			<h4><i class="icon fa fa-check"></i> Alert!</h4>{{ flashMessage }}
+		</div>
+		{% endfor %}
+		{% for flashMessage in app.session.flashbag.get('error_msg') %}
+		<div class="alert alert-danger alert-dismissable">
+			<button aria-hidden="true" data-dismiss="alert" class="close" type="button">×</button>
+			<h4><i class="icon fa fa-check"></i> Alert!</h4>{{ flashMessage }}
+		</div>
+		{% endfor %}
+		<div class="row">
+			<div class="col-xs-12">				
+				<div class="box box-primary">
+				
+					<div class="box-body">
+                        <form method="post" id="right_from" class="form-horizontal" enctype="multipart/form-data" {% if role_master is defined and role_master is not empty %}   action="{{path('admin_userrole_saveuserrole',{'role_id':role_master.role_master_id,'domain':app.session.get('domain')})}}" {%else%}   action="{{path('admin_userrole_saveuserrole',{'domain':app.session.get('domain')})}}" {% endif %}>
+							<div class="row">
+								<div class="form-group">
+									<label class="col-sm-2 control-label">Role Name</label>
+									<div class="col-sm-6">
+										<input type="text" class="form-control" name="name" id="name" placeholder="Enter Role Name" {% if role_master is defined and role_master is not empty %}  value="{{role_master.role_name}}" {% endif %}">
+									</div>
+								</div>
+							</div>
+							<div class="row">
+								<div class="form-group">
+									<label class="col-sm-2 control-label">Description</label>
+									<div class="col-sm-6">
+										<textarea class="form-control" name="description" placeholder="Enter Description">{% if role_master is defined and role_master is not empty %}  {{role_master.role_name}} {% endif %}</textarea>
+									</div>
+								</div>
+							</div>
+							<div class="row">
+								<div class="form-group">
+									<label class="col-sm-2 control-label">Status</label>
+									<div class="col-sm-6">
+										<label class="radio-inline"><input type="radio" name="statusradio" {% if role_master is defined and role_master is not empty and role_master.status =='active'%}  checked {% endif %} value="active">Active</label>
+										<label class="radio-inline"><input type="radio" name="statusradio" {% if role_master is defined and role_master is not empty and role_master.status =='inactive'%}  checked {% endif %} value="inactive">Inactive</label>
+									</div>
+								</div>
+							</div>
+							<div class="row">
+								<div class="form-group">
+									<label class="col-sm-2 control-label">Rights</label>
+									<div class="col-sm-8">									
+										{% if right_master is defined and right_master is not empty %}
+											{% for right_master in right_master %}
+												<div class="checkbox-inline">
+													{% set sel = '' %}													
+													{% if right_master.right_master_id in user_right %}
+														{% set sel = 'checked' %}
+													{% endif %}
+													<input type="checkbox" {{sel}} name="rigth_checkbox[]" value="{{right_master.right_master_id}}" />{{right_master.display_name}}
+												</div>
+											{% endfor %}
+										{% endif %}
+									</div>
+								</div>
+							</div>
+							<div class="row">
+								<div class="form-group">
+									<div class="col-sm-10">
+										<div class="pull-right">
+											{% if role_master is defined and role_master is not empty %}
+												<button name="update_role" type="submit" class="btn btn-primary form-btn" value="Update">Update</button>
+											{% else %}
+												<button name="save_role" type="submit" class="btn btn-primary form-btn" value="Save">Save</button>
+											{% endif %}
+											<a href="{{path('admin_userrole_index',{'domain':app.session.get('domain')})}}" class="btn btn-default form-btn">Cancel</a>
+										</div>
+									</div>
+								</div>
+							</div>
+                        </form>
+					</div>
+				</div>
+			</div>
+		</div>
+	</section>
+{% endblock %}
+
+{% block js %}
+<script src="{{ asset('bundles/design/js/jquery.validate.min.js') }}"></script>
+<script src="{{asset('/bundles/design/js/jquery.form.min.js')}}"></script>
+{#<script src="{{asset('bundles/design/')}}js/bootstrapValidator.min.js" type="text/javascript"></script>
+<script>
+$(document).ready(function(){		
+    $('#right_group').bootstrapValidator({
+        fields: {
+            speed: {
+                validators: {
+                    notEmpty: {
+                        message: 'The wifi speed is required and cannot be empty'
+                     }
+                 }
+             }
+         }
+     });
+});
+</script>#}
+<script>
+	$(document).ready(function () {
+		
+    });
+</script>
+{% endblock %}
+{# MP - 30.10.15 #}

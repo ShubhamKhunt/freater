@@ -1,0 +1,317 @@
+{% extends "AdminBundle::Layout/adminlayout.html.twig" %}
+{% block title %} General Setting {% endblock %}
+{% block css %}
+	
+{% endblock %}
+{% block content %}
+	<section class="content-header">
+		<h1>
+            General Setting
+		  <small></small>
+		</h1>
+		<ol class="breadcrumb">
+		  <li><a href="{{path('admin_dashboard_index',{'domain':app.session.get('domain')})}}"><i class="fa fa-dashboard"></i>Dashboard</a></li>
+		  <li class="active">General Setting</li>
+		</ol>
+	  </section>
+	  <section class="content">
+		{% for flashMessage in app.session.flashbag.get('success_msg') %}
+			<div role="alert" class="alert alert-success alert-dismissible fade in">
+				<button aria-label="Close" data-dismiss="alert" class="close" type="button"><span aria-hidden="true">×</span></button>
+				<strong>Alert!</strong>&nbsp; {{ flashMessage }}
+			</div>
+		{% endfor %}
+		{% for flashMessage in app.session.flashbag.get('error_msg') %}
+			<div role="alert" class="alert alert-danger alert-dismissible fade in">
+				<button aria-label="Close" data-dismiss="alert" class="close" type="button"><span aria-hidden="true">×</span></button>
+				<strong>Alert!</strong>&nbsp; {{ flashMessage }}
+			</div>
+		{% endfor %}
+		<form method="post" class="form-horizontal" action="#" enctype="multipart/form-data">
+		
+			<div class="row form-group">
+			<div class="col-md-3">
+				  <div class="box box-primary box-solid">
+					<div class="box-header with-border">
+					  <h3 class="box-title">Minimum order amount for Food Supplement</h3>
+					</div>
+					<div class="box-body">
+						<div class="input-group">
+							<span class="input-group-addon"><i class="fa fa-usd"></i></span>
+							<input type="text" class="form-control" name="min_order_amount" id="min_order_amount" placeholder="minimum order amount" value="{{amount}}">
+							<span class="input-group-btn">
+								<button class="btn btn-primary btn-flat" type="button" id="update_amount_button" onclick="update_order_amount();" data-loading-text="<i class='fa fa-circle-o-notch fa-spin'></i> Loading...">Update</button>
+							</span>
+						</div>
+						<span id="amount_msg"></span>
+					</div>
+				  </div>
+				</div>
+			
+			
+			<div class="col-md-3">
+				  <div class="box box-primary box-solid">
+					<div class="box-header with-border">
+					  <h3 class="box-title">Delivery Charge for ASAP Order</h3>
+					</div>
+					<div class="box-body">
+						<div class="input-group">
+							<span class="input-group-addon"><i class="fa fa-usd"></i></span>
+							<input type="text" class="form-control" name="delivery_charge" id="delivery_charge" placeholder="Delivery Charge for ASAP Order" value="{{delivery_charge}}">
+							<span class="input-group-btn">
+								<button class="btn btn-primary btn-flat" type="button" id="update_delivery_charge_button" onclick="update_delivery_charge();" data-loading-text="<i class='fa fa-circle-o-notch fa-spin'></i> Loading...">Update</button>
+							</span>
+						</div>
+						<span id="delivery_charge_msg"></span>
+					</div>
+				  </div>
+				</div>
+			
+				<div class="col-md-3">
+				  <div class="box box-primary box-solid">
+					<div class="box-header with-border">
+					  <h3 class="box-title">Phone Number</h3>
+					</div>
+					<div class="box-body">
+						<div class="input-group">
+							<span class="input-group-addon"><i class="fa fa-phone"></i></span>
+							<input type="text" class="form-control" name="phone_no" id="phone_no" placeholder="Phone No" value="{{phone_no}}">
+							<span class="input-group-btn">
+								<button class="btn btn-primary btn-flat" type="button" id="update_phone_no_button" onclick="update_phone_no();" data-loading-text="<i class='fa fa-circle-o-notch fa-spin'></i> Loading...">Update</button>
+							</span>
+						</div>
+						<span id="phone_no_msg"></span>
+					</div>
+				  </div>
+				</div>
+			
+		</div>
+		</form>
+	
+		{#<div class="row" id="contentbox">
+			<div class="col-md-4">
+				<div class="box bg-olive box-solid">
+				  <div class="box-header with-border">
+					<h3 class="box-title">Default Date Format</h3>
+				  </div>
+				  <div class="box-body">
+					<div class="input-group">
+						<span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+						<select name="date_format" class="form-control">
+							<option>Select Date Format</option>
+							{% if date_format is defined and date_format is not empty %}
+								{% for d in date_format%}
+									<option value="{{d.date_format_id}}" {% if generalsetting is defined and generalsetting is not empty %}{% if generalsetting.date_format == d.date_format_id %}selected{% endif %}{% endif %}>{{d.date_format_expression}}</option>
+								{% endfor %}
+							{% endif %}
+						</select>
+					  </div>
+				  </div>
+				  <div class="box-footer bg-olive">
+					<button type="submit" name="save" class="btn btn-default pull-right" value="save_order_amount_limit">Save</button>
+				  </div>
+				</div>
+			  </div>
+			<div class="col-md-4">
+				<div class="box bg-navy box-solid">
+				  <div class="box-header with-border">
+					<h3 class="box-title">Time zone</h3>
+				  </div>
+				  <div class="box-body">
+					<div class="input-group">
+						<span class="input-group-addon"><i class="fa fa-clock-o"></i></span>
+						<select name="time_zone" class="form-control">
+							<option>Select Time Zone</option>
+							{% if timezone_master is defined and timezone_master is not empty %}
+								{% for t in timezone_master%}
+									<option value="{{t.timezone_master_id}}" {% if generalsetting is defined and generalsetting is not empty %}{% if generalsetting.default_time_zone_id == t.timezone_master_id %}selected{% endif %}{% endif %}>{{t.timezone_label}}</option>
+								{% endfor %}
+							{% endif %}
+						</select>
+					  </div>
+				  </div>
+				  <div class="box-footer bg-navy">
+					<button type="submit" name="save" class="btn btn-default pull-right" value="save_session_timeout">Save</button>
+				  </div>
+				</div>
+			  </div>
+			<div class="col-md-4">
+				<div class="box bg-teal box-solid">
+				  <div class="box-header with-border">
+					<h3 class="box-title">Currency</h3>
+				  </div>
+				  <div class="box-body">
+					<div class="input-group">
+						<span class="input-group-addon"><i class="fa fa-money"></i></span>
+						<select name="currency" class="form-control">
+							<option>Select Cuurency</option>
+							{% if currency_master is defined and currency_master is not empty %}
+								{% for c in currency_master%}
+									<option value="{{c.currency_master_id}}" {% if generalsetting is defined and generalsetting is not empty %}{% if generalsetting.currency_id == c.currency_master_id %}selected{% endif %}{% endif %}>{{c.currency_name}}</option>
+								{% endfor %}
+							{% endif %}
+						</select>
+					  </div>
+				  </div>
+				  <div class="box-footer bg-teal">
+					<button type="submit" name="save" class="btn btn-default pull-right" value="save_session_timeout">Save</button>
+				  </div>
+				</div>
+			  </div>
+			<div class="col-md-4">
+				<div class="box box-solid bg-purple">
+				  <div class="box-header with-border">
+					<h3 class="box-title">Default Language</h3>
+				  </div>
+				  <div class="box-body">
+					<div class="input-group">
+						<span class="input-group-addon"><i class="fa fa-money"></i></span>
+						<select name="default_language_id" class="form-control">
+							<option>Select Language</option>
+							{% if language_master is defined and language_master is not empty %}
+								{% for l in language_master%}
+									<option value="{{l.language_master_id}}" {% if generalsetting is defined and generalsetting is not empty %}{% if generalsetting.default_language_id == l.language_master_id %}selected{% endif %}{% endif %}>{{l.language_name}}</option>
+								{% endfor %}
+							{% endif %}
+						</select>
+					  </div>
+				  </div>
+				  <div class="box-footer bg-purple">
+					<button type="submit" name="save" class="btn btn-default pull-right" value="save_session_timeout">Save</button>
+				  </div>
+				</div>
+			  </div>
+			<div class="col-md-4">
+				<div class="box bg-orange box-solid">
+				  <div class="box-header with-border">
+					<h3 class="box-title">Logo</h3>
+				  </div>
+				  <div class="box-body">
+					<div class="input-group">
+						<span class="input-group-addon"><i class="fa fa-image"></i></span>
+						<input type="file" name="logo" class="form-control"/>
+					  </div>
+				  </div>
+				  <div class="box-footer bg-orange">
+					<button type="submit" name="save" class="btn btn-default pull-right" value="save_session_timeout">Save</button>
+				  </div>
+				</div>
+			  </div>
+			<div class="col-md-4">
+				<div class="box bg-maroon box-solid">
+				  <div class="box-header with-border">
+					<h3 class="box-title">Favicon</h3>
+				  </div>
+				  <div class="box-body">
+					<div class="input-group">
+						<span class="input-group-addon"><i class="fa fa-file-image-o"></i></span>
+						<input type="file" name="favicon" class="form-control"/>
+					  </div>
+				  </div>
+				  <div class="box-footer bg-maroon">
+					<button type="submit" name="save" class="btn btn-default pull-right" value="save_session_timeout">Save</button>
+				  </div>
+				</div>
+			  </div>
+		</div>#}
+		
+		
+		
+	  </section>
+{% endblock %}
+
+{% block js %}
+<script>
+$(document).ready(function() {
+    $('#example1').DataTable( {
+        dom: 'Bfrtip',
+        buttons: [
+            'copy', 'csv', 'excel', 'pdf', 'print'
+        ]
+    });
+});
+function update_order_amount()
+{
+	$("#update_amount_button").button('loading');
+	$("#amount_msg").html("");
+	var min_order_amount = $("#min_order_amount").val();
+	console.log("{{path('admin_setting_updatesetting',{'domain':app.session.get('domain')})}}");
+	console.log({'key':'minimum_order_amount','setting_id':'1','setting_value':min_order_amount,'setting_field':'amount','flag':'update_setting'})
+	
+	$.ajax({
+		type : "POST",
+		url : "{{path('admin_setting_updatesetting',{'domain':app.session.get('domain')})}}",
+		data : {'key':'minimum_order_amount','setting_id':'1','setting_value':min_order_amount,'setting_field':'amount','flag':'update_setting'},
+		dataType: 'json',
+		success : function(resp){
+			if(resp.type == 'success')
+			{
+				$("#amount_msg").html("<span class='text-green'>"+resp.msg+"</span>");
+			}
+			else
+			{
+				$("#amount_msg").html("<span class='text-red'>"+resp.msg+"</span>");
+			}
+			$("#update_amount_button").button('reset');
+		}
+	});
+}
+
+
+function update_delivery_charge()
+{
+	$("#update_delivery_charge_button").button('loading');
+	$("#delivery_charge_msg").html("");
+	var delivery_charge = $("#delivery_charge").val();
+	console.log("{{path('admin_setting_updatesetting',{'domain':app.session.get('domain')})}}");
+	console.log({'key':'delivery_charge','setting_id':'3','setting_value':delivery_charge,'setting_field':'amount','flag':'update_setting'})
+	
+	$.ajax({
+		type : "POST",
+		url : "{{path('admin_setting_updatesetting',{'domain':app.session.get('domain')})}}",
+		data : {'key':'delivery_charge','setting_id':'3','setting_value':delivery_charge,'setting_field':'amount','flag':'update_setting'},
+		dataType: 'json',
+		success : function(resp){
+			if(resp.type == 'success')
+			{
+				$("#delivery_charge_msg").html("<span class='text-green'>"+resp.msg+"</span>");
+			}
+			else
+			{
+				$("#delivery_charge_msg").html("<span class='text-red'>"+resp.msg+"</span>");
+			}
+			$("#update_delivery_charge_button").button('reset');
+		}
+	});
+}
+
+
+function update_phone_no()
+{
+	$("#update_phone_no_button").button('loading');
+	$("#phone_no_msg").html("");
+	var phone_no = $("#phone_no").val();
+	console.log("{{path('admin_setting_updatesetting',{'domain':app.session.get('domain')})}}");
+	console.log({'key':'phone_no','setting_id':'4','setting_value':phone_no,'setting_field':'amount','flag':'update_setting'})
+	
+	$.ajax({
+		type : "POST",
+		url : "{{path('admin_setting_updatesetting',{'domain':app.session.get('domain')})}}",
+		data : {'key':'phone_no','setting_id':'4','setting_value':phone_no,'setting_field':'amount','flag':'update_setting'},
+		dataType: 'json',
+		success : function(resp){
+			console.log(resp);
+			if(resp.type == 'success')
+			{
+				$("#phone_no_msg").html("<span class='text-green'>"+resp.msg+"</span>");
+			}
+			else
+			{
+				$("#phone_no_msg").html("<span class='text-red'>"+resp.msg+"</span>");
+			}
+			$("#update_phone_no_button").button('reset');
+		}
+	});
+}
+</script>
+{% endblock %}

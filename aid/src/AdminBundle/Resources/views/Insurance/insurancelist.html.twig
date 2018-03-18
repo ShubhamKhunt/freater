@@ -1,0 +1,179 @@
+{% extends "AdminBundle::Layout/adminlayout.html.twig" %}
+{% block title %}Insurance List{% endblock %}
+{% block css %}
+	 <link href="{{asset('bundles/design/')}}css/select2.min.css" rel="stylesheet" type="text/css" />
+	 <link href="{{asset('bundles/design/')}}css/dataTables.bootstrap.css" rel="stylesheet" type="text/css" />
+	 <link href="{{asset('bundles/design/')}}css/bootstrap-toggle.min.css" rel="stylesheet" type="text/css" />
+{% endblock %}
+{% block content %}
+<!----------- PAGE HEADER : START ------------------------------------------------------------>
+	<section class="content-header">
+	<!-------- PAGE TITLE --------------->
+ <h1>
+           
+      <small></small>
+    </h1>
+	<!--------- BREADCUMB ---------------------->
+		<ol class="breadcrumb align-left">
+		  <li><a href="{{path('admin_dashboard_index')}}"><i class="fa fa-dashboard"></i> Dashboard</a></li>
+		  <li class="active">Insurance</li>
+		</ol>
+	</section>
+<!----------- PAGE HEADER : END ------------------------------------------------------------>
+<!----------- Main content : START ------------------------------------------------------------>
+	<section class="content">
+		{% for flashMessage in app.session.flashbag.get('success_msg') %}
+		<div class="alert alert-success alert-dismissable">
+			<button aria-hidden="true" data-dismiss="alert" class="close" type="button">×</button>
+			<h4><i class="icon fa fa-check"></i> Alert!</h4>{{ flashMessage }}
+		</div>
+        {% endfor %}
+        {% for flashMessage in app.session.flashbag.get('error_msg') %}
+		<div class="alert alert-danger alert-dismissable">
+			<button aria-hidden="true" data-dismiss="alert" class="close" type="button">×</button>
+			<h4><i class="icon fa fa-check"></i> Alert!</h4>{{ flashMessage }}
+		</div>
+		{% endfor %}
+		<div class="row">
+            <div class="col-xs-12">
+				<div class="box box-primary">
+                <div class="box-header with-border">
+				<h3 class="box-title">Insurance List</h3>
+				<div class="box-tools pull-right">
+				  <a href="{{path('admin_insurance_addinsurance')}}" class="btn btn-primary btn-flat" title="Add"><i class="fa fa-plus"><b>&nbsp;&nbsp;Add Insurance</b></i></a>
+				
+				</div>
+                </div><!-- /.box-header -->
+                
+				<div class="box-body">
+                  <table id="example1" class="table table-bordered table-striped text-center">
+                    <thead>
+                      <tr>
+                        <th>No.</th>
+                        {% if languages is defined and languages is not empty %}
+                          {% for lang in languages %}
+                        	<th>{{lang.language_name}}</th>
+                          {% endfor %}
+                        {% endif %}
+						
+                        <th>Action</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+						
+                      {% if insurancelist is defined and insurancelist is not empty %}
+                        {% for insurance in insurancelist %}
+                          <tr>
+                            <td>{{loop.index}}</td>
+							 {% if languages is defined and languages is not empty %}
+                              {% for lang in languages %}
+                                <td>
+								  {% if insurance.data is defined and insurance.data is not empty %}
+									{% for ct in insurance.data %}
+									  {% if ct.language_id == lang.language_master_id %}
+										{{ct.insurance_name}}
+									  {% endif %}
+									{% endfor %}
+								  {% endif %}
+								</td>
+                              {% endfor %}                              
+                               {% endif %}
+                           
+                            <td>
+							  {% if insurance.data is defined and insurance.data is not empty %}
+                                <a onclick="return confirm('Are you sure you want to Edit?')"
+                                   href="{{path('admin_insurance_addinsurance')}}/{{insurance.data[0].main_insurance_master_id}}"
+                                   class="btn btn-info btn-xs" data-toggle="tooltip" title="Edit">
+                                    <i class="fa fa-edit"></i>
+                                </a>
+                                <a onclick="return confirm('Are you sure you want to Delete?')"
+                                   href="{{path('admin_insurance_deleteinsurance')}}/{{insurance.data[0].main_insurance_master_id}}"
+                                   class="btn btn-danger btn-xs" data-toggle="tooltip" title="Delete">
+                                    <i class="fa fa-close"></i>
+                                </a>
+                             
+                                {% endif %}
+                            </td>
+                          </tr>
+                        {% endfor %}                              
+                            {% endif %}
+                    </tbody>
+                    <tfoot>
+                      <tr>
+                        <th>No.</th>
+                        {% if languages is defined and languages is not empty %}
+                          {% for lang in languages %}
+                        	<th>{{lang.language_name}}</th>
+                          {% endfor %}
+                        {% endif %}
+                        <th>Action</th>
+                      </tr>
+                    </tfoot>
+                  </table>
+                </div>
+
+
+           
+          </div><!-- /.box -->
+
+			  
+	</section>
+<!----------- Main content : END ---------------------------------------------------------->
+{% endblock %}
+{% block js %}
+
+
+<script type="text/javascript">
+	$(function () {
+	  $('#example1').DataTable( {
+        dom: 'Bfrtip',
+    
+        buttons: [
+            {
+                extend: 'copyHtml5',        
+                exportOptions: {
+                 columns: ':not(:last-child)',
+                },
+                
+            },
+          {
+                extend: 'pdfHtml5',
+                orientation:'landscape',        
+                customize: function (doc) {
+            doc.content[1].table.widths = 
+              Array(doc.content[1].table.body[0].length + 1).join('*').split('');
+          },
+                exportOptions: {
+                columns: ':not(:last-child)',
+             },
+            },
+            {
+               extend: 'excelHtml5',
+                      exportOptions: {
+                       columns: ':not(:last-child)',
+                      },
+            },
+            {
+               extend: 'csvHtml5',
+                      exportOptions: {
+                       columns: ':not(:last-child)',
+                      },
+            },
+            {
+                      extend: 'print',        
+                      exportOptions: {
+                       columns: ':not(:last-child)',
+                      },
+                      
+                  },
+              ],
+            columnDefs: [
+            { targets:[3], orderable: false }
+            ],
+    } );
+	});
+</script>
+
+
+
+{% endblock %}

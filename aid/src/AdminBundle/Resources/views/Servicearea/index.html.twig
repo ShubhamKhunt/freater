@@ -1,0 +1,138 @@
+{% extends "AdminBundle::Layout/adminlayout.html.twig" %}
+{% block title %} Area List {% endblock %}
+{% block css %}
+	
+{% endblock %}
+{% block content %}
+	<section class="content-header">
+		<h1>
+            Area List
+		  <small></small>
+		</h1>
+		<ol class="breadcrumb">
+		  <li><a href="{{path('admin_dashboard_index',{'domain':app.session.get('domain')})}}"><i class="fa fa-dashboard"></i>Dashboard</a></li>
+		  <li class="active">Area List</li>
+		</ol>
+	  </section>
+	  <section class="content">
+        {% for flashMessage in app.session.flashbag.get('success_msg') %}
+			<div role="alert" class="alert alert-success alert-dismissible fade in">
+				<button aria-label="Close" data-dismiss="alert" class="close" type="button"><span aria-hidden="true">×</span></button>
+				<strong>Alert!</strong>&nbsp; {{ flashMessage }}
+			</div>
+		{% endfor %}
+		{% for flashMessage in app.session.flashbag.get('error_msg') %}
+			<div role="alert" class="alert alert-danger alert-dismissible fade in">
+				<button aria-label="Close" data-dismiss="alert" class="close" type="button"><span aria-hidden="true">×</span></button>
+				<strong>Alert!</strong>&nbsp; {{ flashMessage }}
+			</div>
+		{% endfor %}
+		<div class="row">
+			<div class="col-xs-12">
+                <div class="box box-solid">
+                    <div class="box-header with-border">
+                      {#<h3 class="box-title">Progress Bars Different Sizes</h3>#}
+                      <div class="pull-right">
+                        <a href="{{path('admin_servicearea_addservicearea',{'domain':app.session.get('domain')})}}" class="btn btn-primary btn-flat"><i class="fa fa-plus"></i>&nbsp;&nbsp;ADD</a>
+                      </div>
+                    </div>
+                    <div class="box-body">
+                        <div class="container-fluid table-responsive">
+							<table id="example1" class="table table-bordered table-striped text-center">
+								<thead>
+									<th>No.</th>
+									<th>Area name</th>
+									<th>City</th>
+                                    <th>State</th>
+                                    <th>Status</th>
+                                    <th>Action</th>
+								</thead>
+								<tbody>
+                                    {% if service_area_list is defined and service_area_list is not empty %}
+                                        {% for service_area in service_area_list %}
+                                        <tr>
+                                            <td>{{loop.index}}</td>
+                                            <td>{{service_area.area_name}}</td>
+                                            <td>{{service_area.city_name}}</td>
+                                            <td>{{service_area.state_name}}</td>
+                                            <td>
+												{% if service_area.status == 'active' %}
+													{% set cls = 'btn-success' %}
+													{% set sts = 'Active' %}
+												{% else %}
+													{% set cls = 'btn-danger' %}
+													{% set sts = 'Inactive' %}
+												{% endif %}
+												<button type="button" value="{{service_area.service_area_relation_id}}" class="btn btn-xs change_status {{cls}}" data-loading-text="<i class='fa fa-circle-o-notch fa-spin'></i> Loading...">{{sts}}</button>
+											</td>
+                                            <td>
+                                                <a class="btn btn-danger btn-xs btn-flat" data-toggle="tooltip" title="" onclick="return confirm('Are you sure you want to Delete?');" href="{{path('admin_servicearea_removeservicearea',{'domain':app.session.get('domain'),'service_area_relation_id':service_area.service_area_relation_id})}}" data-original-title="Delete"><span class="fa fa-remove"></span></a>
+                                            </td>
+                                        </tr>
+                                        {% endfor %}
+                                    {% endif %}
+								</tbody>
+								<tfoot>
+									<th>No.</th>
+									<th>Area name</th>
+									<th>City</th>
+                                    <th>State</th>
+                                    <th>Status</th>
+                                    <th>Action</th>
+								</tfoot>
+							</table>
+						</div>
+
+                    </div>
+                  </div>
+            </div>
+		</div>
+	  </section>
+{% endblock %}
+
+{% block js %}
+<script>
+$('.change_status').on('click', function(){
+	var $this = $(this);
+	var tbl = 'area';
+	var pkey = $this.val();
+	
+	$this.button('loading');
+	$.ajax({
+		type: 'POST',
+		url : "{{path('admin_servicearea_changestatus',{'domain':app.session.get('domain')})}}",
+		data: {'pkey':pkey,'tbl':tbl,'flag':'change_status'},
+		dataType: 'json',
+		success: function(res)
+		{
+			if (res.status == 'active')
+			{
+				var sts = 'Active';
+				var acls = 'btn-success';
+				var rcls = 'btn-danger';
+			}
+			else
+			{
+				var sts = 'Inactive';
+				var acls = 'btn-danger';
+				var rcls = 'btn-success';
+			}
+			$this.button('reset');
+			$($this).removeClass(rcls).addClass(acls);
+			setTimeout(function () {
+				$($this).text(sts);
+			}, 10);
+			
+		}
+	});
+});
+$(document).ready(function() {
+    $('#example1').DataTable( {
+        dom: 'Bfrtip',
+        buttons: [
+            'copy', 'csv', 'excel', 'pdf', 'print'
+        ]
+    } );
+} );
+</script>
+{% endblock %}

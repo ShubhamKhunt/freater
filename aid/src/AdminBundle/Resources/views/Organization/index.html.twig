@@ -1,0 +1,118 @@
+{% extends "AdminBundle::Layout/adminlayout.html.twig" %}
+{% block title %} Organization {% endblock %}
+{% block css %}
+	<link href="{{asset('bundles/design/')}}css/bootstrap-toggle.min.css" rel="stylesheet" type="text/css" />
+{% endblock %}
+{% block content %}
+	<section class="content-header">
+		<h1>
+		  Organization List
+		  <small></small>
+		</h1>
+		<ol class="breadcrumb">
+		  <li><a href="{{path('admin_dashboard_index')}}"><i class="fa fa-dashboard"></i>Dashboard</a></li>
+		  <li class="active">Organization</li>
+		</ol>
+	  </section>
+	  <section class="content">
+		<div class="row">
+			<div class="col-xs-12">
+				{% for flashMessage in app.session.flashbag.get('success_msg') %}
+						<div role="alert" class="alert alert-success alert-dismissible fade in">
+						  <button aria-label="Close" data-dismiss="alert" class="close" type="button"><span aria-hidden="true">×</span></button>
+						  <strong>Alert!</strong>&nbsp; {{ flashMessage }}
+					</div>
+				{% endfor %}
+				{% for flashMessage in app.session.flashbag.get('error_msg') %}
+						<div role="alert" class="alert alert-danger alert-dismissible fade in">
+						  <button aria-label="Close" data-dismiss="alert" class="close" type="button"><span aria-hidden="true">×</span></button>
+						  <strong>Alert!</strong>&nbsp; {{ flashMessage }}
+						</div>
+				{% endfor %}
+				<div class="box box-primary">
+					<div class="box-header with-border" >
+						<!--<h3 class="box-title">Organization List</h3>-->
+						<a href="{{path('admin_organization_addorganization')}}" role="button" class="btn btn-primary pull-right btn-flat"><i class="fa fa-plus"></i>&nbsp;&nbsp;ADD</a>
+					</div>
+					<div class="box-body">
+						<div class="container-fluid table-responsive">
+							<table id="example1" class="table table-bordered table-striped text-center">
+								<thead>
+									<th>No.</th>
+									<th>Name</th>
+									<th>Mobile No</th>
+									<th>Website Link</th>
+									<th>Status</th>
+									<th>Action</th>
+								</thead>
+								<tbody>
+									{% if organization is defined and organization is not empty %}
+										{% for organization in organization %}
+											<tr>
+												<td>{{loop.index}}</td>
+												<td>{{organization.organization_name}}</td>
+												<td>{{organization.mobile}}</td>
+												<td>{{organization.website}}</td>
+												<td>
+													{% if organization.status == 'active' %}
+														{% set chk = "checked" %}
+													{% else %}
+														{% set chk = "" %}
+													{% endif %}
+													  <input data-on="Active" onchange="change_sts({{organization.main_organization_master_id}})" data-off="Inactive" type="checkbox" data-toggle="toggle" {{chk}} data-size="mini" data-onstyle="success" value="{{organization.main_organization_master_id}}" />
+												</td>
+												<td>
+													 <a href="{{path('admin_organization_addorganization',{main_organization_master_id:organization.main_organization_master_id})}}" onclick="return confirm('Are you sure you want to Edit?');" class="btn btn-default btn-xs"><span class="fa fa-edit"></span></a>
+													 <a href="{{path('admin_organization_deleteorganization',{main_organization_master_id:organization.main_organization_master_id})}}" onclick="return confirm('Are you sure you want to Delete?');" class="btn btn-danger btn-xs"><span class="fa fa-remove"></span></a>
+												</td>
+											</tr>
+										{%endfor%}
+									{%endif%}
+								</tbody>
+								<tfoot>
+									<th>No.</th>
+									<th>Name</th>
+									<th>Mobile No</th>
+									<th>Website Link</th>
+									<th>Status</th>
+									<th>Action</th>
+								</tfoot>
+							</table>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	  </section>
+{% endblock %}
+
+{% block js %}
+<script src="{{asset('bundles/design/')}}js/bootstrap-toggle.min.js" type="text/javascript"></script>
+<script>
+function change_sts(val)
+{
+	var main_organization_master_id = val;
+	
+	  $.ajax({
+		  type: 'POST',
+		  url : "{{path('admin_organization_changestatus')}}",
+		  data: {"main_organization_master_id":main_organization_master_id,"flag":"status_change"},
+		  dataType: 'json',
+		  success: function(response){
+			  //console.log(response);
+			 // location.reload();
+		  }
+	  });
+}
+</script>
+<script>
+$(document).ready(function() {
+    $('#example1').DataTable( {
+        dom: 'Bfrtip',
+        buttons: [
+            'copy', 'csv', 'excel', 'pdf', 'print'
+        ]
+    } );
+} );
+</script>
+{% endblock %}

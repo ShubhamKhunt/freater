@@ -1,0 +1,196 @@
+{% extends "AdminBundle::Layout/adminlayout.html.twig" %}
+{% block title %} Add city  {% endblock %}
+{% block css %}
+	
+{% endblock %}
+{% block content %}
+	<section class="content-header">
+		<h1>
+            Add city
+		  <small></small>
+		</h1>
+		<ol class="breadcrumb">
+		  <li><a href="{{path('admin_dashboard_index',{'domain':app.session.get('domain')})}}"><i class="fa fa-dashboard"></i>Dashboard</a></li>
+          <li><a href="{{path('admin_product_index',{'domain':app.session.get('domain')})}}"></i>Product list</a></li> 
+		  <li class="active">Add city</li>
+		</ol>
+		
+	  </section>
+	
+		<section class="content">
+		{% for flashMessage in app.session.flashbag.get('success_msg') %}
+			<div role="alert" class="alert alert-success alert-dismissible fade in">
+				<button aria-label="Close" data-dismiss="alert" class="close" type="button"><span aria-hidden="true">×</span></button>
+				<strong>Alert!</strong>&nbsp; {{ flashMessage }}
+			</div>
+		{% endfor %}
+		{% for flashMessage in app.session.flashbag.get('error_msg') %}
+			<div role="alert" class="alert alert-danger alert-dismissible fade in">
+				<button aria-label="Close" data-dismiss="alert" class="close" type="button"><span aria-hidden="true">×</span></button>
+				<strong>Alert!</strong>&nbsp; {{ flashMessage }}
+			</div>
+		{% endfor %}
+		
+		<div class="row">
+			<div class="col-xs-12">
+                <div class="box box-solid">
+                    <form class="form-horizontal" action="{{path('admin_servicearea_saveproductcity',{'domain':app.session.get('domain'),'main_product_id':main_product_id})}}" method="post" enctype="multipart/form-data">
+                        
+                        <div class="box-body">
+
+							<div class="form-group">
+                                <label class="col-sm-2 control-label">Country</label>
+                                <div class="col-sm-6">
+                                  <select class="form-control" name="main_country_id" id="main_country_id" onchange="getState(this.value,1);">
+                                        <option value="">Select Country</option>
+										{% if service_country_list is defined and service_country_list is not empty %}
+                                            {% for service_country in service_country_list %}
+                                                <option value="{{service_country.main_country_id}}">{{service_country.country_title}}</option>
+                                            {% endfor %}
+                                        {% endif %}
+                                  </select>
+                                </div>
+                            </div>
+							
+							<div class="form-group">
+                                <label class="col-sm-2 control-label">State</label>
+                                <div class="col-sm-6">
+                                  <select class="form-control" name="main_state_id" id="main_state_id" onchange="getCity(this.value,1);">
+                                        <option value="">Select State</option>
+                                  </select>
+                                </div>
+                            </div>
+
+							<div class="form-group">
+                                <label class="col-sm-2 control-label">&nbsp;</label>
+                                <div class="col-sm-6" id="city_display">
+                                    <!-- Display area checkbox --------->
+                                </div>
+                            </div>
+                             
+                             
+
+                        </div>
+                      
+                      <div class="box-footer">
+                        <a href="{{path('admin_product_index',{'domain':app.session.get('domain')})}}" class="btn btn-default btn-flat">Cancel</a>
+                            <button type="submit" class="btn btn-info pull-right btn-flat" name="save_product_city" value="save_product_city">Save</button>
+                      </div>
+                      <br>
+                    <div class="box-header with-border">
+                        <h3 class="box-title">Product available city</h3>
+                    </div>
+                      <div class="box-body">
+                        <table id="example1" class="table table-bordered table-striped">
+								<thead>
+									<th style="width: 20px;">No.</th>
+									<th>City</th>
+                                    <th>State</th>
+                                    <th>Country</th>
+									<th style="width: 60px;">Status</th>
+                                    <th style="width: 100px;">Action</th>
+								</thead>
+								<tbody>
+                                    {% if city_list is defined and city_list is not empty %}
+                                        {% for city in city_list %}
+										<tr>
+											<td>{{loop.index}}</td>	
+											<td>{{city.city_name}}</td>
+											<td>{{city.state_name}}</td>
+											<td>{{city.country_title}}</td>
+                                            <td>
+												{% if city.status == 'active' %}
+													{% set cls = 'btn-success' %}
+													{% set sts = 'Active' %}
+												{% else %}
+													{% set cls = 'btn-danger' %}
+													{% set sts = 'Inactive' %}
+												{% endif %}
+												<button type="button" id="stbtn_{{city.product_city_relation_id}}" value="{{city.product_city_relation_id}}" class="btn btn-xs change_status {{cls}}" data-loading-text="<i class='fa fa-circle-o-notch fa-spin'></i> Loading...">{{sts}}</button>
+											</td>
+                                            <td>
+												<a href="{{path('admin_servicearea_removeproductcity',{'domain':app.session.get('domain'),'product_city_relation_id':city.product_city_relation_id,'main_product_id':main_product_id})}}" class="btn btn-danger btn-xs"><i class="fa fa-remove"></i></a>
+											</td>
+										</tr>
+                                        {% endfor %}
+                                    {% endif %}
+								</tbody>
+								<tfoot>
+									<th>No.</th>
+									<th>City</th>
+                                    <th>State</th>
+                                    <th>Country</th>
+									<th>Status</th>
+                                    <th>Action</th>
+								</tfoot>
+							</table>
+                      </div>
+                    </form>
+                </div>
+            </div>
+		</div>
+	  </section>
+{% endblock %}
+
+{% block js %}
+<script>
+$('.change_status').on('click', function(){
+	var $this = $(this);
+	var tbl = 'product_city';
+	var pkey = $this.val();
+	
+	$this.button('loading');
+	$.ajax({
+		type: 'POST',
+		url : "{{path('admin_servicearea_changestatus',{'domain':app.session.get('domain')})}}",
+		data: {'pkey':pkey,'tbl':tbl,'flag':'change_status'},
+		dataType: 'json',
+		success: function(res)
+		{
+			if (res.status == 'active')
+			{
+				var sts = 'Active';
+				var acls = 'btn-success';
+				var rcls = 'btn-danger';
+			}
+			else
+			{
+				var sts = 'Inactive';
+				var acls = 'btn-danger';
+				var rcls = 'btn-success';
+			}
+			$this.button('reset');
+			$this.removeClass(rcls).addClass(acls).text(sts);
+			$this.text(sts);
+		}
+	});
+});
+function getState(val,lang_id)
+{
+    //call ajax
+    $.ajax({
+        type : "POST",
+        url : "{{path('admin_servicearea_getservicestateoption',{'domain':app.session.get('domain')})}}",
+        data : {'main_country_id':val,'lang_id':lang_id,'flag':'getstate_options'},
+        success : function(resp){
+            $("#main_state_id").html(resp);
+        }
+    }) ;
+}
+function getCity(val,lang_id)
+{
+    //call ajax
+    $.ajax({
+        type : "POST",
+        url : "{{path('admin_servicearea_getproductcity',{'domain':app.session.get('domain')})}}",
+        data : {'main_state_id':val,'product_id':'{{main_product_id}}','lang_id':lang_id,'flag':'get_product_city'},
+        success : function(resp){
+            $("#city_display").html(resp);
+        }
+    }) ;
+}
+$(document).ready(function() {
+    $('#example1').DataTable();
+} );
+</script>
+{% endblock %}

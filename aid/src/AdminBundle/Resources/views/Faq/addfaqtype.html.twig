@@ -1,0 +1,201 @@
+{% extends "AdminBundle::Layout/adminlayout.html.twig" %}
+
+{% set state = '' %}
+
+{% block title %}Add - Update FAQ Type{% endblock %}
+{% block css %}
+	 <link href="{{asset('bundles/design/')}}css/select2.min.css" rel="stylesheet" type="text/css" />
+	 <link href="{{asset('bundles/design/')}}css/dataTables.bootstrap.css" rel="stylesheet" type="text/css" />
+	  <link href="{{asset('bundles/design/')}}css/bootstrap-toggle.min.css" rel="stylesheet" type="text/css" />
+	  <link href="{{asset('bundles/design/')}}css/datepicker3.css" rel="stylesheet" type="text/css" />
+ <style type="text/css"> 
+	.save-btn, .cancel-btn {	
+    width: 85%;
+}
+</style>
+ 
+ <script type="text/javascript">
+   $(document).ready(function(){
+    var d = new Date();
+    $(".datepicker").val(d.getDate()+"-"+(d.getMonth() + 1)+"-" + d.getFullYear());
+});
+</script>
+{% endblock %}
+{% block content %}
+<!----------- PAGE HEADER : START ----------------------------------------------------------->
+	<section class="content-header">
+	<!-------- PAGE TITLE --------------->
+		<h1>
+		FAQ Type
+		  <small></small>
+		</h1>
+	<!------- BREADCUMB --------------------->
+		<ol class="breadcrumb">
+		  <li><a href="{{path('admin_dashboard_index',{'domain':app.session.get('domain')})}}"><i class="fa fa-dashboard"></i> Dashboard</a></li>
+		 
+		  <li><a href="{{path('admin_faq_faqtypelist',{'domain':app.session.get('domain')})}}">FAQ Type List</a></li>
+		  <li class="active">Edit Faq Type</li>
+		</ol>
+	</section>
+<!----------- PAGE HEADER : END ----------------------------------------------------------->
+<!----------- Main content : START ----------------------------------------------------------->
+	<section class="content">
+		{% for flashMessage in app.session.flashbag.get('success_msg') %}
+		<div class="alert alert-success alert-dismissable">
+			<button aria-hidden="true" data-dismiss="alert" class="close" type="button">×</button>
+			<h4><i class="icon fa fa-check"></i> Alert!</h4>{{ flashMessage }}
+		</div>
+        {% endfor %}
+        {% for flashMessage in app.session.flashbag.get('error_msg') %}
+		<div class="alert alert-danger alert-dismissable">
+			<button aria-hidden="true" data-dismiss="alert" class="close" type="button">×</button>
+			<h4><i class="icon fa fa-check"></i> Alert!</h4>{{ flashMessage }}
+		</div>
+		{% endfor %}
+		<div class="row">
+		 <style>
+			img{
+			   padding-top: 10px;
+			   max-width: 70%;
+			}
+		 </style>
+            <div class="col-xs-12">
+				<div class="box box-primary">
+                <div class="box-header with-border">
+                  <h3 class="box-title">Add - Update FAQ Type</h3>
+				   <a href="{{path('admin_faq_faqtypelist',{'domain':app.session.get('domain')})}}" class="btn btn-primary btn-flat pull-right"><i class="glyphicon glyphicon-chevron-left"></i><b>&nbsp;&nbsp;Back</b></a>
+                </div><!-- /.box-header -->
+                
+				<div class="box-body">
+				  <div class="nav-tabs-custom">
+                    <ul class="nav nav-tabs">
+                    {% if languages is defined %}
+                        {% for lang in languages %}
+						   
+                        <li class="{% if selected is defined %}{% if selected == lang.language_master_id%}active{% endif %}{% else %}{% if loop.index == 1 %}active{% endif %}{% endif %}">
+                            <a href="#lang{{loop.index}}" data-toggle="tab">{{lang.language_name}}</a>
+                        </li>
+                        {% endfor %}
+                    {% endif %}
+                    </ul>
+                </div>
+                <div class="tab-content">
+               {% if languages is defined %}
+                    {% for lang in languages %}
+                    <div class="tab-pane {% if selected is defined %}{% if selected == lang.language_master_id%}active{% endif %}{% else %}{% if loop.index == 1 %}active{% endif %}{% endif %}" id="lang{{loop.index}}">
+                        <form method="post" enctype="multipart/form-data" action="{{path('admin_faq_addfaqtypedb',{'domain':app.session.get('domain')})}}">
+                            
+                           <input type="hidden" value="{{lang.language_master_id}}" name="language_master_id"/>
+						   
+						     {% if faq_id is defined %} 
+                                <input type="hidden" name="faq_id" value="{{faq_id}}"/>
+                            {% endif %}
+							
+							<div class="row form-group">
+							  <div class="col-lg-2">
+								 <label>Faq Type Name</label>
+							  </div>
+							  <div class="col-lg-4">
+								 <input type="text" name="faq_question" class="form-control" {{state}}
+                                        {% if faqs is defined and faqs is not empty %}
+										   {% for faq in faqs %}
+												{% if faq.language_id == lang.language_master_id %}
+                                             value="{{faq.faq_type_name}}"
+												{% endif %}
+										  {% endfor %}
+                                    {% endif %}/>
+							  </div>
+							</div>
+							
+							
+							
+                            <div class="row form-group">
+                                <div class="col-lg-2">
+                                    <label>Status</label>
+                                </div>
+                                <div class="col-lg-4">
+									<label class="radio-inline">
+                                        <input type="radio" name="status" required="" value="active" {{state}}
+                                        {% if faqs is defined and faqs is not empty %}
+                                            {% for faq in faqs %}
+											   
+                                                    {% if faq.status == 'active' %}
+                                                        checked="checked"
+                                                    {% endif %}
+                                            {% endfor %}
+                                        {% endif %} /> Active
+                                    </label>
+									<label class="radio-inline">
+                                        <input type="radio" name="status" required="" value="inactive" {{state}}
+                                        {% if faqs is defined and faqs is not empty %}
+                                            {% for faq in faqs %}
+                                                    {% if faq.status == 'inactive' %}
+                                                        checked="checked"
+                                                    {% endif %}
+                                            {% endfor %}
+                                        {% endif %} /> Inactive
+                                    </label>
+                                </div>
+                            </div>
+                            <hr />
+                            <div class="row" align="center">
+                                <div class="col-lg-10 col-lg-offset-2">
+								 
+                                    <div class="col-lg-6">
+                                        <button type="submit" class="btn btn-primary save-btn" name="add">Save</button>
+                                    </div>
+								 
+                                    <div class="col-lg-6">
+									    	<a href="{{path('admin_faq_faqtypelist',{'domain':app.session.get('domain')})}}" class="btn btn-default cancel-btn">Cancel</a>
+                                    </div>
+                                </div>
+                            </div>
+							
+                        </form>
+				
+            
+					  </div>
+				  {% endfor %}
+                {% endif %}
+			    </div>
+            </div>
+                   
+            </div>
+				
+		  
+
+           
+          </div><!-- /.box -->
+
+			  
+	</section>
+<!----------- Main content : END ---------------------------------------------------------->
+{% endblock %}
+{% block js %}
+
+
+<script src="{{asset('bundles/design/')}}js/bootstrap-toggle.min.js" type="text/javascript"></script>	
+<script src="{{asset('bundles/design/')}}js/jquery.dataTables.min.js" type="text/javascript"></script>
+<script src="{{asset('bundles/design/')}}js/dataTables.bootstrap.min.js" type="text/javascript"></script>
+<script src="{{asset('bundles/design/')}}js/bootstrap-datepicker.js" type="text/javascript"></script>
+
+
+
+<script type="text/javascript">
+	$(function () {
+	  $("#example1").DataTable();
+	});
+</script>
+
+<script type="text/javascript">
+   $(document).ready(function(){
+    $(".datepicker").datepicker({
+			"setDate": new Date(),
+	        "autoclose": true
+		});
+	
+});
+</script>
+
+
+{% endblock %}

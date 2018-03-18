@@ -1,0 +1,172 @@
+{% extends "AdminBundle::Layout/adminlayout.html.twig" %}
+{% block title %} Category List {% endblock %}
+{% block css %}
+{% endblock %}
+{% block content %}
+	  
+	<section class="content-header" >
+		 <h1>
+           
+		  <small></small>
+		</h1>
+
+		<ol class="breadcrumb">
+		  <li><a href="{{path('admin_dashboard_index',{'domain':app.session.get('domain')})}}"><i class="fa fa-dashboard"></i>Dashboard</a></li>
+		  <li class="active">Category List</li>
+		</ol>
+	  </section>
+	  <section class="content">
+		<div class ="row">
+			<div class="col-md-12">
+			{% for flashMessage in app.session.flashbag.get('success_msg') %}
+			  <div class="alert alert-success alert-dismissable">
+				  <button aria-hidden="true" data-dismiss="alert" class="close" type="button">×</button>
+				  <h4><i class="icon fa fa-check"></i> Alert!</h4>{{ flashMessage }}
+			  </div>
+			  {% endfor %}
+			  {% for flashMessage in app.session.flashbag.get('error_msg') %}
+			  <div class="alert alert-danger alert-dismissable">
+				  <button aria-hidden="true" data-dismiss="alert" class="close" type="button">×</button>
+				  <h4><i class="icon fa fa-check"></i> Alert!</h4>{{ flashMessage }}
+			  </div>
+			{% endfor %}
+			</div>  
+		</div>	
+		<div class="row">
+			<div class="col-xs-12">
+                <div class="box box-solid">
+                    <div class="box-header with-border">
+                     <h3 class="box-title">Category List</h3>
+                      <div class="pull-right">
+                        <a href="{{path('admin_category_addcategory',{'domain':app.session.get('domain')})}}" class="btn btn-primary btn-flat" ><i class="fa fa-plus"></i><b>&nbsp;&nbsp;Add Category</b></a>
+                      </div>
+                    </div>
+                    <div class="box-body">
+                        <div class="container-fluid table-responsive">
+							<table id="example1" class="table table-bordered table-striped text-center">
+								<thead>
+									<th hidden>Mian Category ID</th>
+									<th>Image</th>
+									{% if language is defined and language is not empty %}
+										  {% for language in language %}
+												<th>Name :{{language.language_name}}</th>
+										  {%endfor%}
+									{%endif%}
+                                   <!-- <th>Description</th>-->
+                                    <th> Category Type</th>
+                                  <!--  <th>Tags</th>-->
+                                    <th>Action</th>
+								</thead>
+								<tbody>
+									{% if all_category is defined and all_category is not empty %}
+										  {%for all_category in all_category %}
+											 <tr>
+												<td hidden>{{all_category.main_category_id}}</td>
+												<td><img src="{{render(controller('AdminBundle:Base:getmedia', {'media_library_master_id': all_category.category_image_id,'live_path':live_path}))}}" style="height:30;width:30px;"></td>
+													{% if all_category.lang_wise_category is defined and all_category.lang_wise_category is not empty %}
+															{% for lang_wise_category in all_category.lang_wise_category %}
+																  <td>{{lang_wise_category.category_name}}</td>
+															{%endfor%}
+												    {%endif%}
+												<!--<td>{% autoescape false %}{{all_category.category_description}}{% endautoescape %}</td>-->
+												<td>{{all_category.parent_category_name}}</td>
+												<!--<td><a onclick="return confirm('Are you sure?')" class="btn bg-purple btn-xs" href="{{path('admin_category_tags',{'domain':app.session.get('domain')})}}/{{all_category.main_category_id}}/{{all_category.language_id}}" data-toggle="tooltip" data-original-title="View Tags">Tags</a></td>-->
+												<td>
+													  <a onclick="return confirm('Are you sure you want to Edit Category?')" class="btn btn-primary btn-xs" href="{{path('admin_category_addcategory',{'category_id':all_category.main_category_id})}}" data-toggle="tooltip" data-original-title="Edit"><span class="fa fa-edit"></span></a>
+													  <a onclick="return confirm('Are you sure you want to delete Category?')" class="btn btn-danger btn-xs" href="{{path('admin_category_deletecategory',{'category_id':all_category.main_category_id})}}" data-toggle="tooltip" data-original-title="Delete"><span class="fa fa-remove"></span></a>
+												</td>
+											 </tr>	
+										  {% endfor %}
+									{% endif %}
+								</tbody>
+								<tfoot>
+									<thead>
+									<th hidden>Mian Category ID</th>
+									<th>Image</th>
+									{% if language is defined and language is not empty %}
+										  {% for language in language %}
+												<th>Name :{{language.language_name}}</th>
+										  {%endfor%}
+									{%endif%}
+                                   <!-- <th>Description</th>-->
+                                    <th> Category Type</th>
+                                  <!--  <th>Tags</th>-->
+                                    <th>Action</th>
+								</thead>
+								</tfoot>
+							</table>
+						</div>
+
+                    </div>
+                  </div>
+            </div>
+		</div>
+	  </section>
+{% endblock %}
+
+{% block js %}
+	
+<script>
+$(document).ready(function() {
+
+    var table= $('#example1').DataTable( {
+        dom: 'Bfrtip',
+		
+        buttons: [
+            {
+                extend: 'copyHtml5',				
+                exportOptions: {
+                columns:[2, 3, 4],
+                stripHtml:false,
+             	},
+								
+            },
+			{
+				extend: 'pdfHtml5',
+                orientation:'landscape',				
+				exportOptions: {
+				columns:[ 2, 3, 4],
+				stripHtml:false,
+			 	},
+			 	customize: function (doc) {
+    				doc.content[1].table.widths =  Array(doc.content[1].table.body[0].length + 1).join('*').split('');
+                       
+                           
+  				}, 
+    			
+			},
+			{
+				extend: 'excelHtml5',
+                exportOptions: {
+                columns:[2, 3, 4],
+                stripHtml:false,
+                },
+			},
+			{
+				 extend: 'csvHtml5',
+                exportOptions: {
+                columns:[2, 3, 4],
+                stripHtml:false,
+                },
+
+			},
+			{
+                extend: 'print',				
+                exportOptions: {
+                columns:[2, 3, 4],
+                stripHtml:false,
+                },
+								
+            },
+            
+        ],
+        columnDefs: [
+  { targets:[1,5], orderable: false },
+
+],
+	 
+       } );
+
+} );
+</script>
+{% endblock %}

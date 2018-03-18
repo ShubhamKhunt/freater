@@ -1,0 +1,240 @@
+{% extends "AdminBundle::Layout/adminlayout.html.twig" %}
+{% block title %} Apply Coupon {% endblock %}
+{% block css %}
+<link href="{{asset('bundles/design/')}}css/bootstrap-toggle.min.css" rel="stylesheet" type="text/css" />
+<style>
+	#example1{
+		width: 100% !important;
+	}
+</style>
+{% endblock %}
+{% block content %}
+	<section class="content-header">
+		<h1>
+            Apply Coupon
+		  <small></small>
+		</h1>
+		<ol class="breadcrumb">
+		  <li><a href="{{path('admin_dashboard_index',{'domain':app.session.get('domain')})}}"><i class="fa fa-dashboard"></i>Dashboard</a></li>
+		  <li><a href="{{path('admin_coupon_index',{'domain':app.session.get('domain')})}}">Coupon List</a></li>
+		  <li class="active">Apply Coupon</li>
+		</ol>
+	  </section>
+	  <section class="content">
+		<div class="row">
+			<div class="col-xs-12">
+				<form method="POST" action="{{path('admin_coupon_saveapplycoupon',{'domain':app.session.get('domain'),'coupon_master_id':coupon_master_id})}}">
+                <div class="box box-solid">
+					{% for flashMessage in app.session.flashbag.get('success_msg') %}
+							<div role="alert" class="alert alert-success alert-dismissible fade in">
+							  <button aria-label="Close" data-dismiss="alert" class="close" type="button"><span aria-hidden="true">×</span></button>
+							  <strong>Alert!</strong>&nbsp; {{ flashMessage }}
+						</div>
+					{% endfor %}
+					{% for flashMessage in app.session.flashbag.get('error_msg') %}
+							<div role="alert" class="alert alert-danger alert-dismissible fade in">
+							  <button aria-label="Close" data-dismiss="alert" class="close" type="button"><span aria-hidden="true">×</span></button>
+							  <strong>Alert!</strong>&nbsp; {{ flashMessage }}
+							</div>
+					{% endfor %}
+                    <div class="box-header with-border">
+                      {#<h3 class="box-title">Progress Bars Different Sizes</h3>#}
+                      {#<div class="pull-right">
+                        <a href="{{path('admin_coupon_addcoupon',{'domain':app.session.get('domain')})}}" class="btn btn-primary btn-flat"><i class="fa fa-plus"></i>&nbsp;&nbsp;ADD</a>
+                      </div>#}
+                    </div>
+					
+                    <div class="box-body form-horizontal">
+						<div class="form-group">
+							<label class="col-sm-2 control-label">Assign On</label>
+							<div class="col-sm-2">
+							  <select class="form-control"  name="assign_on" onchange="get_data(this.value);">
+									<option value="">-- select --</option>
+									<option value="product" {% if applied_product_info is defined and applied_product_info is not empty and applied_product_info.assign_on == 'product' %}selected="selected"{% endif %}>Product</option>
+									<option value="category" {% if applied_product_info is defined and applied_product_info is not empty and applied_product_info.assign_on == 'category' %}selected="selected"{% endif %}>Category</option>
+							  </select>
+							</div>
+						</div>
+						
+					<div class="form-group">
+						<label class="col-sm-2 control-label">Status</label>
+						<div class="col-sm-4">
+							<div class="radio">
+								<label>
+									<input type="radio" name="status" value="active"  {% if applied_product_info is defined and applied_product_info is not empty and applied_product_info.status == 'active' %}checked="checked"{% endif %}> Active 
+								</label>&nbsp;&nbsp;&nbsp;
+								<label>
+									<input type="radio" name="status" value="inactive" {% if applied_product_info is defined and applied_product_info is not empty and applied_product_info.status == 'inactive' %}checked="checked"{% endif %}> Inactive
+								</label>
+							</div>
+						</div>
+                    </div>
+						
+					
+					
+	
+	<!-------------- CATEGORY BLOCK : START ------------------------------------------------>
+		<div class="form-group" id="cat_block" {% if applied_product_info is defined and applied_product_info is not empty and applied_product_info.assign_on == 'category' %}{% else %}style="display:none;"{% endif %}>
+			<label class="col-sm-2 control-label">&nbsp;</label>
+			<div class="col-md-6">
+				<div class="box box-primary box-solid">
+					<div class="box-header with-border">
+						<h3 class="box-title">Category</h3>
+					</div>
+					<div class="box-body">
+						<div class="form-group" id="cat_block">
+							<div class="col-sm-8">
+						{% macro menu_links(links,applied_product_info,coupon_applied_list) %}
+							{% import _self as macros %}
+							{% for link in links %}
+								<li class="collapsed cat{{link.main_category_id}}">
+									<input type="checkbox"  value="{{ link.main_category_id }}" name="relation_id[]" class="check_parent" {% if applied_product_info is defined and applied_product_info is not empty and applied_product_info.assign_on == 'category' %}
+											   
+											   {% for product in coupon_applied_list %}
+												   
+												   {% if product.relation_id ==  link.main_category_id %}
+													   checked="checked"
+												   {% endif %}
+											   {% endfor %}
+											{% endif %}
+										   > &nbsp;&nbsp;&nbsp;{{ link.category_name }}
+									{% if link.child_data %}
+										<ul style="list-style-type: none;">
+											{{ macros.menu_links(link.child_data) }}
+										</ul>
+									{% endif %}
+								</li>
+							{% endfor %}
+						 {% endmacro %}
+						 {% import _self as macros %}
+						<div class="category_block">
+							 {% if category_details is not empty %}
+								{% for category_arr in category_details %}
+									<li class="collapsed cat{{category_arr.main_category_id}}" style="list-style:none;"><input type="checkbox" value="{{ category_arr.main_category_id }}" name="relation_id[]" class="check_parent" {% if applied_product_info is defined and applied_product_info is not empty and applied_product_info.assign_on == 'category' %}
+										{% for product in coupon_applied_list %}
+											{% if product.relation_id ==  category_arr.main_category_id %}
+												checked="checked"
+											{% endif %}
+										{% endfor %}
+									{% endif %}
+									>&nbsp;&nbsp;&nbsp;<span>{{category_arr.category_name}}</span>
+										{% if category_arr.child_data is defined and category_arr.child_data is not empty %}
+										  <ul style="list-style-type: none;">
+										  {{ macros.menu_links(category_arr.child_data,applied_product_info,coupon_applied_list) }}
+									  </ul>
+										{% endif %}
+									</li>
+									
+								{% endfor %}
+							 {%else%}
+								 No Category Defined
+							 {% endif %}
+							</div>
+						</div>
+					</div>
+					</div>
+				</div>
+            </div>
+		</div>
+	<!-------------- CATEGORY BLOCK : END ------------------------------------------------>
+	
+	<!-------------- PRODUCTS BLOCK : START ------------------------------------------------>						
+					<div class="form-group" id="prod_block" {% if applied_product_info is defined and applied_product_info is not empty and applied_product_info.assign_on == 'product' %}{% else %}style="display:none;"{% endif %}>
+						<label class="col-sm-2 control-label">&nbsp;</label>
+						<div class="col-md-6">
+							<div class="box box-primary box-solid">
+							  <div class="box-header with-border">
+								<h3 class="box-title">Products</h3>
+							  </div>
+							  
+								<div class="box-body">
+										
+									<div class="container-fluid table-responsive">
+										<table id="example1" class="table table-bordered table-striped">
+											<thead>
+												<th style="width: 10px;"><input type="checkbox" id="checkall"></th>
+												<th style="width: 10px;">No.</th>
+												<th style="width: 110px;">Image</th>									
+												<th>Product name</th>								
+											</thead>
+											<tbody>
+											 {%if product_list is defined and product_list is not empty %}
+													{% for product_list in product_list %}
+													<tr>
+														<td><input type="checkbox" name="relation_id[]" class="prod_check" value="{{product_list.product_master_id}}" {% if applied_product_info is defined and applied_product_info is not empty and applied_product_info.assign_on == 'product' %}{% for product in coupon_applied_list %}{% if product.relation_id ==  product_list.product_master_id %}checked="checked"{% endif %}{% endfor %}{% endif %}></td>
+														<td>{{loop.index}}</td>	
+														<td><img src="{{product_list.image}}" class="img-responsive img-thumbnail" width="50" height="50"/></td>	
+														<td>{{product_list.product_name}}</td>	
+													</tr>
+													{% endfor %}
+											 {% endif%}
+											</tbody>
+										</table>
+									</div>
+			
+								</div>
+
+							  </div>
+							  
+							</div>
+						  </div>
+						</div>
+	<!-------------- PRODUCTS BLOCK : END ------------------------------------------------>
+						<div class="box-footer">
+							<a href="{{path('admin_coupon_index',{'domain':app.session.get('domain')})}}"" class="btn btn-default">Cancel</a>
+							<button type="submit" class="btn btn-info pull-right" name="save_coupon_apply" value="save_coupon_apply">Save</button>
+						</div>
+					</div>
+                </form>
+				
+			</div>
+        </div>
+	</div>
+</section>
+{% endblock %}
+
+{% block js %}
+	<script src="{{asset('bundles/design/')}}js/bootstrap-toggle.min.js" type="text/javascript"></script>
+	<script>
+		function changestatus(id,status) {
+			$.post("{{path('admin_coupon_couponstatus',{'domain':app.session.get('domain')})}}",{id:id,status:status});
+		}
+	</script>
+	
+<script>
+
+$(function () {
+    $(".check_parent").change(function () {
+        $(this).siblings('ul')
+            .find("input[type='checkbox']")
+            .prop('checked', false);
+    });
+});
+function get_data(value)
+{
+	if (value == 'category')
+	{
+		$('input:checkbox').removeAttr('checked');
+		$("#cat_block").show();
+		$("#prod_block").hide();
+    }
+	else
+	{
+		$('input:checkbox').removeAttr('checked');
+		$("#prod_block").show();
+		$("#cat_block").hide();
+	}
+}
+$(document).ready(function() {
+    $('#example1').DataTable({
+    	paging: false,
+    	'columnDefs': [         // see https://datatables.net/reference/option/columns.searchable
+                { 
+                    'sortable'    : false, 
+                    'targets'       : [0] 
+                },
+            ]
+    });
+} );
+</script>
+{% endblock %}

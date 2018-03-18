@@ -1,0 +1,76 @@
+{% extends "AdminBundle::Layout/adminlayout.html.twig" %}
+{% block title %} Pricing Rule List {% endblock %}
+{% block css %}{% endblock %}
+{% block content %}
+<section class="content-header">
+		<h1>
+            Pricing Rule List
+		  <small></small>
+		</h1>
+		<ol class="breadcrumb">
+		  <li><a href="{{path('admin_dashboard_index',{'domain':app.session.get('domain')})}}"><i class="fa fa-dashboard"></i>Dashboard</a></li>
+		  <li class="active">Pricing Rule List</li>
+		</ol>
+	  </section>
+	  <section class="content">
+		<div class="row">
+			<div class="col-xs-12">
+                <div class="box box-solid">
+                    <div class="box-header with-border">
+                      {#<h3 class="box-title">Progress Bars Different Sizes</h3>#}
+                      <div class="pull-right">
+                        <a data-toggle="tooltip" data-original-title="Add Pricing Rule" href="{{path('admin_pricing_addpricing',{'domain':app.session.get('domain')})}}" class="btn btn-primary btn-flat"><i class="fa fa-plus"></i>&nbsp;&nbsp;ADD</a>
+                      </div>
+                    </div>
+                    <div class="box-body">
+                        <div class="container-fluid table-responsive">
+							<table id="example1" class="table table-bordered table-striped">
+								<thead>									
+									<th>Rule Name</th>
+									<th>Language</th>
+									<th>Start date</th>
+									<th>End date</th>
+									<th>Status</th>
+									<th>Operation</th>
+								</thead>
+								<tbody>
+									{% if pricing_rule_list	is defined or pricing_rule_list is not empty %}
+										{% for pricing_rule_list in pricing_rule_list %}
+											<tr>
+												<td>{{pricing_rule_list.rule_title}}</td>
+												<td>{{pricing_rule_list.language_name}}</td>
+												<td>{{pricing_rule_list.start_date}}</td>
+												<td>{{pricing_rule_list.end_date}}</td>
+												<td>{{pricing_rule_list.status}}</td>
+												<td>
+														<a onclick="return confirm('Are you sure?')" class="btn btn-warning btn-xs" href="{{path('admin_pricing_addpricing',{'domain':app.session.get('domain'),'price_rule_id':pricing_rule_list.main_pricing_rule_id})}}"	data-toggle="tooltip" data-original-title="Edit"><span class="fa fa-edit"></span></a>
+														<a onclick="return confirm('Are you sure?')" class="btn btn-danger btn-xs" href="" data-toggle="tooltip" data-original-title="Delete"><span class="fa fa-remove"></span></a>
+												</td>
+																						
+											</tr>	
+										{% endfor %}
+								    {% endif %}
+                                </tbody>
+								<tfoot>									
+									<th>Rule Name</th>
+									<th>Start date</th>
+									<th>End date</th>
+									<th>Status</th>
+									<th>Operation</th>
+								</tfoot>
+							</table>
+						</div>
+
+                    </div>
+                  </div>
+            </div>
+		</div>
+	</section>
+{% endblock %}
+{% block js %}
+<script>
+$(document).ready(function() {
+    $('#example1').DataTable();
+} );
+</script>
+{% endblock %}

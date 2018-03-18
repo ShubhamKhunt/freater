@@ -1,0 +1,616 @@
+{% extends "AdminBundle::Layout/adminlayout.html.twig" %}
+{% block title %} Product - Import {% endblock %}
+{% block css %}
+<link href="{{asset('bundles/design/')}}css/bootstrape_verticle_tab.min.css" rel="stylesheet" type="text/css" />
+
+<link rel="stylesheet" href="{{asset('bundles/design/')}}plugins/select2/select2.min.css">
+<link href="{{asset('bundles/design/')}}css/select2.min.css" rel="stylesheet" type="text/css" />
+
+<link rel="stylesheet" href="{{asset('bundles/design/')}}plugins/bootstrap-wysihtml5/bootstrap3-wysihtml5.min.css">
+<link rel="stylesheet" href="{{asset('bundles/design/')}}plugins/iCheck/all.css">
+<link rel="stylesheet" href="{{asset('bundles/design/')}}fileupload/css/blueimp-gallery.min.css">
+<link rel="stylesheet" href="{{asset('bundles/design/')}}fileupload/css/jquery.fileupload.css">
+<link rel="stylesheet" href="{{asset('bundles/design/')}}fileupload/css/jquery.fileupload-ui.css">
+ <style>
+    .verticle_tab .active a
+    {
+        background-color: #3fd5af !important;
+        color: #FFF !important;
+    }
+    .verticle_tab a
+    {
+        color: #000 !important;
+    }
+
+	.select2-container
+	{
+		 width: 100% !important;
+	}
+	.desabletab
+	{
+		 pointer-events: none !important;
+		 background-color: #ccc !important;
+	}
+	@media(max-width : 400px){
+	  .col-xs-10.newadd {
+			 width: 73%;
+			 margin-left: 0px;
+		 }
+		 .col-xs-2.newadd1{
+				 width:27%;
+		 }
+	 }
+
+ </style>
+{% endblock %}
+{% block content %}
+<section class="content-header">
+		<h1>
+            Import
+		  <small></small>
+		</h1>
+		<ol class="breadcrumb">
+		  <li><a href="{{path('admin_dashboard_index',{'domain':app.session.get('domain')})}}"><i class="fa fa-dashboard"></i>Dashboard</a></li>
+		  {#<li><a href="{{path('admin_product_index',{'domain':app.session.get('domain')})}}">Product list</a></li>
+          <li class="active">Add product</li>#}
+		</ol>
+	  </section>
+	  <section class="content">
+		 {% for flashMessage in app.session.flashbag.get('success_msg') %}
+			<div role="alert" class="alert alert-success alert-dismissible fade in">
+				 <button aria-label="Close" data-dismiss="alert" class="close" type="button"><span aria-hidden="true">×</span></button>
+				 <strong>Alert!</strong>&nbsp; {{ flashMessage }}
+		    </div>
+	     {% endfor %}
+		 {% for flashMessage in app.session.flashbag.get('warning_msg') %}
+			<div role="alert" class="alert alert-warning alert-dismissible fade in">
+				 <button aria-label="Close" data-dismiss="alert" class="close" type="button"><span aria-hidden="true">×</span></button>
+				 <strong>Alert!</strong>&nbsp; {{ flashMessage }}
+			</div>
+	     {% endfor %}
+	     {% for flashMessage in app.session.flashbag.get('error_msg') %}
+			<div role="alert" class="alert alert-danger alert-dismissible fade in">
+				 <button aria-label="Close" data-dismiss="alert" class="close" type="button"><span aria-hidden="true">×</span></button>
+				 <strong>Alert!</strong>&nbsp; {{ flashMessage }}
+			</div>
+	     {% endfor %}
+
+		<div class="row">
+
+
+            <div class="col-xs-12 newadd">
+                <div class="box box-solid">
+                    <div class="row">
+                        <div class="col-xs-12">
+                          <!-- Tab panes -->
+                            <div class="tab-content">
+							  <div class="tab-pane active" id="info">
+
+</br></br>
+									<div class="tab-content">
+
+										 <form method="post" enctype="multipart/form-data"  action="{{path('admin_product_saveproductimport',{'domain':app.session.get('domain')})}}">
+
+											 <div class="box-body form-horizontal">
+												<div class="form-group">
+												  <label class="col-sm-2 control-label">Select CSV</label>
+												  <div class="col-sm-4">
+													<input type="file" name="product_csv" class="form-control" required />
+												  </div>
+												  {# <label class="col-sm-2 control-label">Name (Ar)</label>
+												  <div class="col-sm-4">
+													<input type="text" class="form-control" name="product_title_arbic" required value="{% if product_info is defined and product_info is not empty %}{% for product in product_info %}{% if product.language_id == 2 %}{{product.product_title}}{% endif %}{% endfor %}{% endif %}">
+												  </div>#}
+												</div>
+											 </div>
+
+
+											 	<hr />
+							<br>
+
+
+											 {#<div class="form-group">
+												&nbsp;&nbsp;&nbsp;<b>** </b>Here Price is Original Price of Product , and Stock is actual Quantites of Product which have no attributes or Combinations . Price and Stock is also manage at Supplier level
+                      </div>#}
+											 <div class="box-footer">
+
+												   <button type="submit" class="btn btn-primary pull-right" name="save_basic_info" value="save_basic_info">Save</button>
+
+											</div>
+										  </form>
+
+									</div>
+
+
+								 </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+</section>
+<div class="modal fade" id="status_model" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="model_title"></h4>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+{% block js %}
+
+<script>
+   function onsupplierchange(val) {
+	var id= val.value;
+	var cls = "";
+	  if ($(val).is(':checked')) {
+		// alert(id);
+		$( "#"+id ).removeClass('collapsed-box');
+
+	  }else{
+		 //alert();
+		 $( "#"+id ).addClass('collapsed-box');
+	  }
+
+   }
+
+</script>
+
+<script id="template-upload" type="text/x-tmpl">
+{% verbatim %}
+{% for (var i=0, file; file=o.files[i]; i++) { %}
+    <tr class="template-upload fade">
+        <td>
+            <span class="preview"></span>
+        </td>
+        <td>
+            <p class="name">{%=file.name%}</p>
+            <strong class="error text-danger"></strong>
+        </td>
+        <td>
+            <p class="size">Processing...</p>
+            <div class="progress progress-striped active" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><div class="progress-bar progress-bar-success" style="width:0%;"></div></div>
+        </td>
+        <td>
+            {% if (!i && !o.options.autoUpload) { %}
+                <button class="btn btn-primary start" disabled>
+                    <i class="glyphicon glyphicon-upload"></i>
+                    <span>Start</span>
+                </button>
+            {% } %}
+            {% if (!i) { %}
+                <button class="btn btn-warning cancel">
+                    <i class="glyphicon glyphicon-ban-circle"></i>
+                    <span>Cancel</span>
+                </button>
+            {% } %}
+        </td>
+    </tr>
+{% } %}
+{% endverbatim %}
+</script>
+<!-- The template to display files available for download -->
+<script id="template-download" type="text/x-tmpl">
+{% verbatim %}
+{% endverbatim %}
+</script>
+<script src="{{asset('bundles/design/')}}plugins/select2/select2.full.min.js"></script>
+<script src="{{asset('bundles/design/')}}plugins/bootstrap-wysihtml5/bootstrap3-wysihtml5.all.min.js"></script>
+<script src="{{asset('bundles/design/')}}plugins/select2/select2.full.min.js"></script>
+<script src="{{asset('bundles/design/')}}plugins/bootstrap-wysihtml5/bootstrap3-wysihtml5.all.min.js"></script>
+<script language="Javascript" src="{{asset('bundles/design/')}}tinymce/tinymce.min.js" type="text/javascript"></script>
+<script src="{{asset('bundles/design/')}}plugins/iCheck/icheck.min.js"></script>
+
+<script src="{{asset('bundles/design/')}}fileupload/js/jquery.ui.widget.js"></script>
+<!-- The Templates plugin is included to render the upload/download listings -->
+<script src="{{asset('bundles/design/')}}fileupload/js/tmpl.min.js"></script>
+<!-- The Load Image plugin is included for the preview images and image resizing functionality -->
+<script src="{{asset('bundles/design/')}}fileupload/js/load-image.all.min.js"></script>
+<!-- The Canvas to Blob plugin is included for image resizing functionality -->
+<script src="{{asset('bundles/design/')}}fileupload/js/canvas-to-blob.min.js"></script>
+<!-- blueimp Gallery script -->
+<script src="{{asset('bundles/design/')}}fileupload/js/jquery.blueimp-gallery.min.js"></script>
+<!-- The Iframe Transport is required for browsers without support for XHR file uploads -->
+<script src="{{asset('bundles/design/')}}fileupload/js/jquery.iframe-transport.js"></script>
+<!-- The basic File Upload plugin -->
+<script src="{{asset('bundles/design/')}}fileupload/js/jquery.fileupload.js"></script>
+<!-- The File Upload processing plugin -->
+<script src="{{asset('bundles/design/')}}fileupload/js/jquery.fileupload-process.js"></script>
+<!-- The File Upload image preview & resize plugin -->
+<script src="{{asset('bundles/design/')}}fileupload/js/jquery.fileupload-image.js"></script>
+<!-- The File Upload audio preview plugin -->
+<script src="{{asset('bundles/design/')}}fileupload/js/jquery.fileupload-audio.js"></script>
+<!-- The File Upload video preview plugin -->
+<script src="{{asset('bundles/design/')}}fileupload/js/jquery.fileupload-video.js"></script>
+<!-- The File Upload validation plugin -->
+<script src="{{asset('bundles/design/')}}fileupload/js/jquery.fileupload-validate.js"></script>
+<!-- The File Upload user interface plugin -->
+<script src="{{asset('bundles/design/')}}fileupload/js/jquery.fileupload-ui.js"></script>
+<!-- The main application script -->
+{#<script src="{{asset('bundles/design/')}}fileupload/js/main.js"></script>#}
+<script src="{{asset('bundles/design/')}}plugins/select2/select2.full.min.js"></script>
+
+<script>
+
+      $(function () {
+   $(".select2").select2({
+	tags: true,
+	 tokenSeparators: [',']
+	});
+
+});
+
+{% if language is defined and language is not empty%}
+ {% for lang in language %}
+$("#basic_form_{{lang.language_master_id}}").validate({
+	  rules: {
+		  product_title: "required",
+		  refrence_code: "required",
+		  brand_id: "required",
+		  status: "required",
+		  price: {
+			  required: true,
+			  number: true
+		  },
+		  mprice: {
+			  required: true,
+			  number: true
+		  },
+		  quantity: {
+			  required: true,
+			  number: true
+		  }
+	  },
+	  messages: {
+		  product_title: "Please enter product title",
+		  refrence_code: "Please enter refrence code",
+		  brand_id: "Please select brand",
+		  status: "Please select status",
+		  price: {
+			  required: "Please enter original price",
+			  number: "Only numbers allowed"
+		  },
+		  mprice: {
+			  required: "Please enter market price",
+			  number: "Only numbers allowed"
+		  },
+		  quantity: {
+			  required: "Please enter a product Stock",
+			  number: "Only numbers allowed"
+		  }
+	  }
+  });
+  {% endfor %}
+  {% endif %}
+$(".supplier-form").validate({
+	  rules: {
+		  produtct_quantity: {
+			  required: true,
+			  number: true
+		  },
+		  spam: {
+			  required: function (element) {
+                var boxes = $('.mycheckbox');
+                if (boxes.filter(':checked').length == 0) {
+                    return true;
+                }
+                return false;
+            },
+            minlength: 1
+		  },
+		  product_price: {
+			  required: true,
+			  number: true
+		  }
+	  },
+	  messages: {
+		  produtct_quantity: {
+			  required: "Enter product Quantity",
+			  number: "Only numbers allowed"
+		  },
+		  supplier_1_6: {
+			  required: "Please select atlest one"
+		  },
+		  product_price: {
+			  required: "Enter product Price",
+			  number: "Only numbers allowed"
+		  }
+	  }
+  });
+{% if product_info is defined and product_info is not empty %}
+$(function () {
+var html = "";
+    'use strict';
+    // Initialize the jQuery File Upload widget:
+    $('#fileupload').fileupload({
+        // Uncomment the following to send cross-domain cookies:
+
+        url: '{{ip_path}}bundles/design/index.php?temp_dir=product_image',
+
+		success: function(response)
+		{
+
+		    console.log(response.files[0]);
+			//database insert ajax
+			$.ajax({
+			type: 'POST',
+			url : "{{ path('admin_product_saveproductgallery',{'domain':app.session.get('domain')}) }}",
+			data: {"img_name":response.files[0].name,'main_product_id':{{product_info[0].main_product_master_id}},'media_type_id':1,'flag':'save_gallery_image'},
+			async: false,
+			dataType: 'json',
+			xhrFields: {withCredentials: true},
+			success: function(response)
+			{
+
+					 if (response != false)
+					 {
+						   html += '<tr class="">';
+							  html += '<td>';
+								  html += '<span class="preview">';
+									  html += '<a data-gallery="" download="'+response.name+'" title="'+response.name+'" href="'+response.path+'">';
+										html += '<img src="'+response.thumbnail_path+'">';
+									  html += '</a>';
+								  html += '</span>';
+							  html += '</td>';
+							  html += '<td>';
+								  html += '<p class="name">';
+									  html += '<a data-gallery="" download="'+response.name+'" title="'+response.name+'" href="'+response.path+'">'+response.name+'</a>';
+								  html += '</p>';
+							  html += '</td>';
+							  html += '<td style="width:20px;">';
+								html += '<input type="radio" name="default_image" class="" value="1" onclick="set_default_image({{product_info[0].main_product_master_id}},'+response.media_library_master_id+');" title="Set default product image">';
+							  html += '</td>';
+							  html += '<td>';
+								  html += '<button class="btn btn-danger delete" onclick="delete_image('+response.media_library_master_id+','+response.gallery_master_id+');">';
+										  html += '<i class="glyphicon glyphicon-trash"></i>';
+										  html += '<span>Delete</span>';
+									  html += '</button>';
+									  //html += '<input type="checkbox" class="toggle" value="1" name="delete">';
+							  html += '</td>';
+						  html += '</tr>';
+						  $(".files").append(html);
+						  html = "";
+                     }
+
+			   }
+			});
+			$('input[type="checkbox"].minimal, input[type="radio"].minimal').iCheck({
+			checkboxClass: 'icheckbox_minimal-blue',
+			radioClass: 'iradio_minimal-blue'
+			});
+	    }
+    });
+});
+function delete_image(media_library_master_id,gallery_master_id)
+{
+   var answer = confirm ("Are you sure you want to delete?");
+
+   if (answer) {
+	  $.ajax({
+		   type: 'POST',
+		   url : "{{ path('admin_product_removeproductimage',{'domain':app.session.get('domain')}) }}",
+		   data: {"media_library_master_id":media_library_master_id,'gallery_master_id':gallery_master_id,'flag':'delete_image'},
+		   async: false,
+		   dataType: 'json',
+		   success: function(response)
+		   {
+
+		   }
+	   });
+   }
+}
+function set_default_image(main_product_master_id,media_library_master_id)
+{
+   $.ajax({
+		type: 'POST',
+		url : "{{ path('admin_product_setdefaultimage',{'domain':app.session.get('domain')}) }}",
+		data: {"main_product_master_id":main_product_master_id,'media_library_master_id':media_library_master_id,'flag':'set_default_product_image'},
+		async: false,
+		dataType: 'json',
+		success: function(response)
+		{
+
+		}
+	});
+}
+{% endif %}
+</script>
+<script language="Javascript" type="text/javascript">
+/*tinymce.init({
+    selector: "textarea",
+	max_chars : 1000,
+	width:      '100%',
+	height:     '50%',
+    plugins: [
+        "advlist autolink lists link charmap print preview anchor",
+        "searchreplace visualblocks code",
+        "insertdatetime table contextmenu paste moxiemanager",
+		"textcolor"
+    ],
+    statusbar:  true,
+	menubar:    true,
+    toolbar: "sizeselect | fontselect |  fontsizeselect | forecolor backcolor | undo redo | bold underline italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link",
+
+	rel_list:   [ { title: 'Lightbox', value: 'lightbox' } ]
+});*/
+// A $( document ).ready() block.
+$( document ).ready(function() {
+  $('input[type=checkbox]').click(function(){
+    // if is checked
+    if($(this).is(':checked')){
+        // check all children
+        $(this).parent().find('li input[type=checkbox]').prop('checked', true);
+        // check all parents
+        $(this).parent().prev().prop('checked', true);
+    } else {
+        // uncheck all children
+        $(this).parent().find('li input[type=checkbox]').prop('checked', false);
+    }
+
+});
+});
+function validate(){
+
+	var textarea = tinymce.get('description').getContent();
+	if ( (textarea=="") || (textarea==null) ) {
+        tinymce.get('description').focus();
+		return false;
+	}
+	return true;
+}
+function set_category_selected(clsname) {}
+
+function check_attr_validation(langid) {
+
+   var slected_attr = '' ;
+   var slctvalue = $('.attr_selected_vals_'+langid);
+   var slected_product = $('#main_product_id_'+langid).val();
+   $.each($('.attr_selected_ids_'+langid), function(i, item){
+	  if (slected_attr == '') {
+		slected_attr += $(this).val() + ":"+ $(slctvalue[i]).val() ;
+	  }
+	  else{
+		slected_attr += ","+ $(this).val() + ":"+ $(slctvalue[i]).val() ;
+	  }
+   });
+
+   var url =  "{{path('admin_product_checkattributevalue',{'domain':app.session.get('domain'),'attribute_arr':'slected_attr_text','language_id':'lang1','product_id':'prod1'})}}";
+   url = url.replace("slected_attr_text", slected_attr);
+   url = url.replace("prod1", slected_product);
+   url = url.replace("lang1", langid);
+   var returnvalue = '' ;
+   $.ajax({
+	   url:url,
+	   async:false,
+	   success: function(result){
+		 console.log(result);
+		if (result == 'true') {
+			console.log('if'+result);
+			returnvalue = true ;
+
+        }
+		else{
+		   console.log('else'+result);
+		   returnvalue = false ;
+		   alert("You can't insert this Combination , This combination already Inserted for this Product");
+
+		}
+	   }
+   });
+   return returnvalue ;
+}
+function addattribute(langid) {
+   attr_id = $('#attribute_id_'+langid).val();
+   attr_text =  $('#attribute_id_'+langid+' option:selected').text();
+   var attr_val =  ""+$('#attrvalue_'+langid).val();
+
+   var arr_attr_val = attr_val.split(',');
+    console.log(arr_attr_val);
+   attrval_text =  $('#attrvalue_'+langid+' option:selected').text();
+   if (attr_id == '' || attr_val == '' || attr_id == '0' || attr_val == 0) {
+	  alert("Please Select Attribute and Values");
+   }
+   else{
+	   var flag = 'true';
+	   $.each($('.attr_selected_ids_'+langid), function(i, item) {
+			if($(this).val() == attr_id){
+			    flag = 'false';
+			}
+		});
+	   if (flag =='true') {
+
+		 document.getElementById('comb_market').style.display = "";
+		 //document.getElementById('comb_market_price').required = true;
+		 $("#comb_market_price").attr('required', 'ture');
+         var html = '';
+		 html += "<div class='well well-sm'>";
+		 html += "<a onclick='$(this).parent().remove();' class='pull-right btn btn-xs btn-warning'><span class='fa fa-remove'></span></a>";
+		 html += "<label>"+attr_text+"</label><input type='hidden' class='attr_selected_ids_"+langid+"' name='attr_selected_ids_"+langid+"[]' value='"+attr_id+"'/>:";
+		 html += "&nbsp;&nbsp;"+attrval_text;
+		 for(var i = 0 ; i < arr_attr_val.length ; i++){
+			 html +=  "<input type='hidden' class='attr_selected_vals_"+langid+"' name='attr_selected_vals_"+langid+"_"+attr_id+"[]' value='"+arr_attr_val[i]+"'/>";
+		 }
+
+		 html += "</div>";
+
+		 $('#selected_attr_value_'+langid).append(html);
+       }
+	   else{
+		 alert("You can add only one combination per attribute type.")
+	   }
+
+    //code
+   }
+}
+function getAttributevalue(aid,lang) {
+   attridjs = $(aid).val() ;
+   langidjs = lang ;
+   if (attridjs != 0) {
+      var url =  "{{path('admin_product_getattributevalue',{'domain':app.session.get('domain'),'attribute_id':'attrid','language_id':'lang1'})}}";
+	  url = url.replace("attrid", attridjs);
+	  url = url.replace("lang1", langidjs);
+	   $.ajax({
+		 url:url,
+		 success: function(result){
+			var obj = jQuery.parseJSON( result );
+			$('#attrvalue_'+langidjs).html('');
+			$('#attrvalue_'+langidjs).append($('<option>', {
+				  value: 0,
+				  text: 'Select'
+			}));
+			for (var i = 0 ; i < obj.length ; i++ ) {
+			   console.log(obj[i]);  //code
+			   $('#attrvalue_'+langidjs).append($('<option>', {
+				 value: obj[i].main_attribute_value_id,
+				 text: obj[i].attribute_value
+			   }));
+			}
+		 }
+	  });
+   }
+   else{
+	  $('#attrvalue_'+langidjs).html('');
+	  $('#attrvalue_'+langidjs).append($('<option>', {
+			value: 0,
+			text: 'Select'
+	  }));
+   }
+}
+{% if product_info is defined and product_info is not empty %}
+function removeattr(comb_id)
+{
+   var product_id = '{{main_product_id}}';
+   $.ajax({
+		type: 'POST',
+		url : "{{path('admin_product_removecombination',{'domain':app.session.get('domain')})}}",
+		data: {'product_id':product_id,'comb_id':comb_id,'flag':'remove_attributr'},
+		async: false,
+		dataType: 'json',
+		success: function(response)
+		{
+			$("#model_title").html(response.msg);
+			$("#model_title").removeClass();
+			$("#model_title").addClass("modal-title "+response.cls);
+			$("#status_model").modal('show');
+			$(".attr_"+comb_id).remove();
+		}
+	});
+}
+{% endif %}
+</script>
+<script>
+$(function () {
+  // $(".select2").select2();
+   $(".editor").wysihtml5();
+});
+$('input[type="checkbox"].minimal, input[type="radio"].minimal').iCheck({
+checkboxClass: 'icheckbox_minimal-blue',
+radioClass: 'iradio_minimal-blue'
+});
+</script>
+{% endblock %}

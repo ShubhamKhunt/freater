@@ -1,0 +1,100 @@
+{% extends "AdminBundle::Layout/adminlayout.html.twig" %}
+{% block title %} Chat List  {% endblock %}
+{% block css %}{% endblock %}
+{% block content %}
+<section class="content-header">
+		<h1>
+            Chat List
+		  <small></small>
+		</h1>
+		<ol class="breadcrumb">
+		  <li><a href="{{path('admin_dashboard_index',{'domain':app.session.get('domain')})}}"><i class="fa fa-dashboard"></i>Dashboard</a></li>
+		  <li class="active">Chat List</li>
+		</ol>
+
+</section>
+
+	  <section class="content">
+		{% for flashMessage in app.session.flashbag.get('success_msg') %}
+			<div role="alert" class="alert alert-success alert-dismissible fade in">
+				<button aria-label="Close" data-dismiss="alert" class="close" type="button"><span aria-hidden="true">×</span></button>
+				<strong>Alert!</strong>&nbsp; {{ flashMessage }}
+			</div>
+		{% endfor %}
+		{% for flashMessage in app.session.flashbag.get('error_msg') %}
+			<div role="alert" class="alert alert-danger alert-dismissible fade in">
+				<button aria-label="Close" data-dismiss="alert" class="close" type="button"><span aria-hidden="true">×</span></button>
+				<strong>Alert!</strong>&nbsp; {{ flashMessage }}
+			</div>
+		{% endfor %}
+		<div class="row">
+			<div class="col-xs-12">
+                <div class="box box-solid">
+                    <div class="box-header with-border">
+                      {#<h3 class="box-title">Progress Bars Different Sizes</h3>#}
+                      <div class="pull-right">
+
+                      </div>
+                    </div>
+                    <div class="box-body">
+                        <div class="container-fluid table-responsive">
+							<form>
+								<div id="example5">
+									<div class="container-fluid table-responsive">
+												<table id="example1" class="table table-bordered table-striped text-center">
+													<tbody>
+														<tr>
+																<td><td>
+																<td><td>
+														</td>
+													</tbody>
+												</table>
+								</div>
+
+							</form>
+						</div>
+
+                    </div>
+                  </div>
+            </div>
+		</div>
+	  </section>
+{% endblock %}
+{% block js %}
+{% if professional_id is defined and professional_id is not empty %}
+<script>
+$(document).ready(function(){
+
+$('#example1').empty();
+
+	$.ajax({
+		type : "POST",
+		url : "{{live_path}}/ws/chatuserlist",
+		data : "professional_id={{professional_id}}&lang_id=1",
+		success : function(obj){
+			if(obj.error == 'SFD')
+			{
+					//alert("YES2");
+					var data = obj.data;
+					var html1 = '';
+					data.forEach(function(item){
+						html1 +='<tr>';
+						html1 +='<td style="width:10%"><img src="'+item.customer_profile_image+'" width="50px"></td>';
+						html1 +='<td style="text-align: left;">'+item.customer_name+'</td>';
+							html1 +='</tr>';
+					});
+					$('#example1').append(html1);
+			}
+			else{
+				//NRF
+				alert("NRF");
+			}
+		}
+	}) ;
+
+
+});
+
+</script>
+{% endif %}
+{% endblock %}

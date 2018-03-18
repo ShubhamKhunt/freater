@@ -1,0 +1,179 @@
+{% extends "AdminBundle::Layout/adminlayout.html.twig" %}
+{% block title %} Country Add {% endblock %}
+{% block css %}
+	
+{% endblock %}
+{% block content %}
+	<section class="content-header">
+		<h1>
+            Add Country
+		  <small></small>
+		</h1>
+		<ol class="breadcrumb">
+		  <li><a href="{{path('admin_dashboard_index',{'domain':app.session.get('domain')})}}"><i class="fa fa-dashboard"></i>Dashboard</a></li>
+          <li><a href="{{path('admin_country_index',{'domain':app.session.get('domain')})}}"></i>Country List</a></li> 
+		  <li class="active">Add Country</li>
+		</ol>
+	  </section>
+	  <section class="content">
+		<div class="row">
+			<div class="col-xs-12">
+                <div class="box box-solid">
+                    
+                    {% if language is defined and language is not empty %}
+                    <div class="nav-tabs-custom">
+                        <ul class="nav nav-tabs">
+                        
+                            {% for lang in language %}
+                            <li {% if loop.index == 1 %}class="active"{% endif %}><a data-toggle="tab" href="#tab_{{lang.language_master_id}}">{{lang.language_name}}</a></li>
+                            {% endfor %}
+                         
+                        </ul>
+                        <div class="tab-content">
+                            {% for lang in language %}
+                            <div id="tab_{{lang.language_master_id}}" class="tab-pane{% if loop.index == 1 %} active{% endif %}">
+                                <form method="post" class="form-horizontal" action="{% if country_master is defined and country_master is not empty %}{{path('admin_country_savecountry',{'domain':app.session.get('domain'),'language_id':lang.language_master_id,'main_country_id':main_country_id})}}{% else %}{{path('admin_country_savecountry',{'domain':app.session.get('domain'),'language_id':lang.language_master_id})}}{% endif %}" enctype="multipart/form-data" id="manage_country_{{lang.language_master_id}}">
+                                  <div class="box-body">
+                                    <div class="form-group">
+                                      <label class="col-sm-2 control-label">Country Name</label>
+                                      <div class="col-sm-6">
+										<input type="text" placeholder="Country Name" class="form-control input-sm" name="country_name" 										{% if country_master is defined %}
+											{% for country in country_master %}
+												{% if country.language_id == lang.language_master_id %}
+													value="{{country.country_name}}"
+												{% endif %}
+											{% endfor %}
+										{% endif %}
+										>
+                                      </div>
+                                    </div>
+									
+									<div class="form-group">
+                                      <label class="col-sm-2 control-label">Country Title</label>
+                                      <div class="col-sm-6">
+										<input type="text" placeholder="Country Title" class="form-control input-sm" name="country_title"
+											   {% if country_master is defined %}
+													{% for country in country_master %}
+														{% if country.language_id == lang.language_master_id %}
+															value="{{country.country_title}}"
+														{% endif %}
+													{% endfor %}
+												{% endif %}
+										>
+                                      </div>
+                                    </div>
+									
+									<div class="form-group">
+                                      <label class="col-sm-2 control-label">Country Code</label>
+                                      <div class="col-sm-6">
+										<input type="text" placeholder="Country Code" class="form-control input-sm" name="country_code"
+											{% if country_master is defined %}
+												{% for country in country_master %}
+													{% if country.language_id == lang.language_master_id %}
+														value="{{country.country_code}}"
+													{% endif %}
+												{% endfor %}
+											{% endif %}
+										>
+                                      </div>
+                                    </div>
+									
+                                    
+                                    <div class="form-group">
+                                        <label class="col-sm-2 control-label">Status</label>
+                                        <div class="col-sm-6">
+                                              <div class="radio">
+                                                <label>
+                                                  <input type="radio" value="active" name="status" {% if country_master is defined %}
+											{% for country in country_master %}
+												{% if country.language_id == lang.language_master_id %}
+													{% if country.status == "active" %}
+														checked
+													{% endif %}
+												{% endif %}
+											{% endfor %}
+										{% endif %}> Active
+                                                </label>
+                                              </div>
+                                              <div class="radio">
+                                                <label>
+                                                  <input type="radio" value="inactive" name="status" {% if country_master is defined %}
+											{% for country in country_master %}
+												{% if country.language_id == lang.language_master_id %}
+													{% if country.status == "inactive" %}
+														checked
+													{% endif %}
+												{% endif %}
+											{% endfor %}
+										{% endif %}> Inactive
+                                                </label>
+                                              </div>
+                                        </div>
+                                    </div>
+                                    
+                                  </div>
+                                  <div class="box-footer">
+                                    <a href="{{path('admin_country_index',{'domain':app.session.get('domain')})}}" class="btn btn-default btn-flat" type="submit">Cancel</a>
+                                    <button class="btn btn-info pull-right btn-flat" type="submit" name="save_country" value="save_country">Save</button>
+                                  </div>
+                                </form>
+
+                            </div>
+                            {% endfor %}
+                        </div>
+                      </div>
+                    {% endif %} 
+                    
+                  </div>
+            </div>
+		</div>
+	  </section>
+{% endblock %}
+
+{% block js %}
+<script src="{{asset('bundles/design/')}}js/bootstrapValidator.min.js" type="text/javascript"></script>
+<script>
+$(document).ready(function() {
+    $('#example1').DataTable( {
+        dom: 'Bfrtip',
+        buttons: [
+            'copy', 'csv', 'excel', 'pdf', 'print'
+        ]
+    } );
+	{% for lang in language %}
+	$('#manage_country_{{lang.language_master_id}}').bootstrapValidator({
+			fields: {
+				country_name: {
+					validators: {
+						notEmpty: {
+							message: '* Country Name is required and cannot be empty'
+						 }
+					 }
+				 },
+				 country_title: {
+					validators: {
+						notEmpty: {
+							message: '* Country Title is required and cannot be empty'
+						 }
+					 }
+				 },
+				 country_code: {
+					validators: {
+						notEmpty: {
+							message: '* Country Code is required and cannot be empty'
+						 }
+					 }
+				 },
+				 status: {
+					validators: {
+						notEmpty: {
+							message: '* Status is required and cannot be empty'
+						 }
+					 }
+				 },
+			 }
+		 });
+	  {% endfor %}
+} );
+</script>
+{% endblock %}

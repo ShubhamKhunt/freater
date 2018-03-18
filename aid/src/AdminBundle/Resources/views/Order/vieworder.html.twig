@@ -1,0 +1,349 @@
+{% extends "AdminBundle::Layout/adminlayout.html.twig" %}
+{% block title %}ORDER NO.&nbsp;&nbsp;{% if order_details is defined and order_details is not empty %}{{order_details.unique_no}}{% endif %}{% endblock %}
+{% block css %}
+	 <link href="{{asset('bundles/design/')}}css/select2.min.css" rel="stylesheet" type="text/css" />
+{% endblock %}
+{% block content %}
+<!----------- PAGE HEADER : START ----------------------------------------------------------->
+	<section class="content-header">
+	<!-------- PAGE TITLE --------------->
+		<h1>
+		  Order
+		  <small></small>
+		</h1>
+	<!------- BREADCUMB --------------------->
+		<ol class="breadcrumb">
+		  <li><a href="{{path('admin_dashboard_index',{'domain':app.session.get('domain')})}}"><i class="fa fa-dashboard"></i> Dashboard</a></li>
+		  <li><a href="{{path('admin_order_index',{'domain':app.session.get('domain')})}}">Order list</a></li>
+		  <li class="active">Order information</li>
+		</ol>
+	</section>
+<!----------- PAGE HEADER : END ----------------------------------------------------------->
+<!----------- Main content : START ----------------------------------------------------------->
+	<section class="content">
+		{% for flashMessage in app.session.flashbag.get('success_msg') %}
+		<div class="alert alert-success alert-dismissable">
+			<button aria-hidden="true" data-dismiss="alert" class="close" type="button">×</button>
+			<h4><i class="icon fa fa-check"></i> Alert!</h4>{{ flashMessage }}
+		</div>
+        {% endfor %}
+        {% for flashMessage in app.session.flashbag.get('error_msg') %}
+		<div class="alert alert-danger alert-dismissable">
+			<button aria-hidden="true" data-dismiss="alert" class="close" type="button">×</button>
+			<h4><i class="icon fa fa-check"></i> Alert!</h4>{{ flashMessage }}
+		</div>
+		{% endfor %}
+		<div class="row">
+		  {%	set order_type= order_details.order_type %}
+									{%	if order_type==1 or order_type==0 %}
+										{%	set order_type_text = "Without Prescription" %}
+									{% elseif order_type==2 %}
+										{%	set order_type_text="With Prescription" %}
+									{% elseif order_type==3 %}
+										{%	set order_type_text="Medical Examination" %}
+									{% endif %}
+
+            <div class="col-xs-12">
+				<div class="box box-primary">
+                <div class="box-header with-border">
+                  <h3 class="box-title">Order Information ({{order_type_text}})</h3>
+						 <a href="{% if order_details is defined and order_details is not empty and order_details.order_status_id == 5 %}{{path('admin_order_cancelledorder',{'domain':app.session.get('domain')})}}{% else %}{{path('admin_order_index',{'domain':app.session.get('domain')})}}{% endif %}" class="btn btn-primary btn-flat pull-right"><i class="glyphicon glyphicon-chevron-left"></i><b>&nbsp;&nbsp;Back</b></a>
+
+                </div>
+                <!-- form start -->
+                <form class="form-horizontal user_form" method="POST" action="" id="user_form" onsubmit="return checktotalamt();">
+                <div class="row margin">
+				  <div class="row">
+					<div class="col-md-3">
+
+					  <h3 class="text-light-blue">ORDER NO.&nbsp;&nbsp;{% if order_details is defined and order_details is not empty %}{{order_details.unique_no}}{% endif %}</h3>
+					  <input type="hidden" name="order_id" value="{% if order_info[0] is defined and order_info[0] is not empty %}{{order_info[0].order_id}}{% endif %}" placeholder="Total Price" id="order_id" class="form-control" style="width: 70px;border: 0px;background-color: transparent;" readonly>
+					  <dl>
+						<dd><small class="text-muted">Customer Name.</small></dd>
+						<dd>{% if user_info is defined  %} {% if user_info.username is not empty  %} {{ user_info.username }}&nbsp;  {%endif%} {{ user_info.user_mobile }}{% endif %}</dd>
+						<dd>&nbsp;</dd>
+
+					  </dl>
+					</div>
+
+					<div class="col-md-3">
+					  <div class="box box-solid bg-gray">
+						<div class="box-header with-border">
+						  <i class="fa   fa-building-o"></i>
+						  <h3 class="box-title">Delivery Address</h3>
+						</div>
+						<div class="box-body">
+							{#} {% if app.session.get('domain') == "fortune"%}
+							 <dl>
+								<dd><small class="text-muted">House no</small>&nbsp;:&nbsp;{% if delivery_address is defined  %}{{delivery_address.flate_house_number}}{% endif %}</dd>
+								<dd><small class="text-muted">Avenue</small>&nbsp;:&nbsp;{% if delivery_address is defined  %}{{delivery_address.society_building_name}}{% endif %}</dd>
+								<dd><small class="text-muted">Street</small>&nbsp;:&nbsp;{% if delivery_address is defined  %}{{delivery_address.street}}{% endif %}</dd>
+								<dd><small class="text-muted">Landmark</small>&nbsp;:&nbsp;{% if delivery_address is defined  %}{{delivery_address.landmark}}{% endif %}</dd>
+							</dl>
+							{% else %}{#}
+								{% if delivery_address is defined  %}{{delivery_address}}{% endif %}
+							{#}{% endif %}{#}
+						</div>
+					  </div>
+					</div>
+					<div class="col-md-4">
+					  <div class="box box-solid bg-gray">
+						<div class="box-header with-border">
+						  <i class="fa   fa-building-o"></i>
+						  <h3 class="box-title">Timings</h3>
+						</div>
+						<div class="box-body">
+							 <dl>
+							  <dd><large class="text-muted">Order Created Datetime</large>&nbsp;:&nbsp;{% if order_details is defined  %}{{order_details.order_dateadded}}{% endif %} </dd>
+
+
+								<dd><large class="text-muted">Order Deliver Time Approx</large>&nbsp;:&nbsp;{% if order_details is defined %}  {%if order_details.delivery_time_type is not empty %}
+							{%	set order_delivery_time_type= order_details.delivery_time_type %}
+									{%	if order_details.delivery_time_type==1 %}
+										{%	set order_delivery_time_type_text=order_details.delivery_date|date('d-m-Y') ~ ' ' ~ order_details.delivery_time|date('H:i:A') %}
+										{{order_delivery_time_type_text}}
+									{% elseif order_details.delivery_time_type==2 %}
+										{%	set order_delivery_time_type_text="As soon as poosible" %}
+										{{order_delivery_time_type_text}}
+									{% elseif order_details.delivery_time_type==3 %}
+										{%	set order_delivery_time_type_text="With in 48 Hour" %}
+										{{order_delivery_time_type_text}}
+									{% endif %}
+
+									{%endif%}{%endif%}</dd>
+
+							</dl>
+						</div>
+					  </div>
+					</div>
+
+					<div class="col-md-2">
+					  <select class="form-control" id="orderstatus" onchange="changeSTS(this.value);" {% if order_details is defined and order_details is not empty and order_details.order_status_id == 5 %}disabled{% endif %}>
+						  {% if status_list is defined and status_list is not empty %}
+							{% for status in status_list %}
+							  <option value="{{status.status_id}}" {% if order_details is defined and order_details is not empty and order_details.order_status_id == status.status_id %}selected="selected"{% endif %}>{{status.status_name}}</option>
+							{% endfor %}
+						  {% endif %}
+					  </select>
+					  <br>
+						{% if order_details.delivery_boy_id == '0' %}
+								{% if app.session.get('domain') != "fortune"%}
+									{% if order_details.order_status_id == '10' %}
+					<a href="{{path('admin_order_assignorder',{'domain':app.session.get('domain'),'order_id':order_details.order_master_id})}}" class="btn btn-primary btn-sm btn-block">Assign order</a>
+									{% endif %}
+							{% endif %}
+						{% else %}
+							{% if all_delivery_boy is defined and all_delivery_boy is not empty %}
+									{% for all_delivery_boy in all_delivery_boy %}
+										{% if all_delivery_boy.user_master_id == order_details.delivery_boy_id %}
+												<small class="text-muted">AID MAN :</small><br>{{all_delivery_boy.user_firstname}} {{all_delivery_boy.user_lastname}}
+										{% endif %}
+									{% endfor %}
+							{% endif %}
+						{% endif %}
+
+					</div>
+
+
+					{# if order_details is defined  %}
+					  {% if order_details.coupon_code is defined and order_details.coupon_code is not empty %}
+						<div class="col-md-2">
+						  <div class="box box-solid bg-gray">
+							<div class="box-header with-border">
+							  <i class="fa fa-building-o"></i>
+							  <h3 class="box-title">Coupon</h3>
+							</div>
+							<div class="box-body">
+								 <dl>
+
+									<dd><large class="text-muted">Code</large>&nbsp;:&nbsp;{% if order_details is defined  %}{{order_details.coupon_code}}{% endif %} </dd>
+									</dl>
+							</div>
+						  </div>
+						</div>
+					  {% endif %}
+					{% endif #}
+				  </div>
+				{% if product_details_arr is defined and product_details_arr is not empty %}
+
+				<div class="row margin">
+				  <div class="box">
+					<div class="box-body table-responsive no-padding">
+					  <table class="table table-hover">
+						<tbody>
+						<tr>
+						  <th>Product</th>
+						  {%if order_details.order_type == 3%}
+						  <th>Name</th>
+						  <th>Email</th>
+						  {%endif%}
+						  <th>Combination</th>
+						  <th>Supplier</th>
+						  <th>Quantity</th>
+						  <th>Unit Price</th>
+						  <th>Total</th>
+						</tr>
+
+
+						  {% for product_details_arr in product_details_arr %}
+						  <tr>
+							<td>{{product_details_arr.product_title}}</td>
+							{%set attribute_disp = '' %}
+							{% if product_details_arr.selected_attribute is defined and product_details_arr.selected_attribute is not empty %}
+							  {%for attr in product_details_arr.selected_attribute %}
+								{%set attribute_disp = attribute_disp ~ attr.name ~  " : " ~ attr.value_name%}
+							  {% endfor%}
+							{% endif %}
+							 {%if order_details.order_type == 3%}
+							<td>{{product_details_arr.category_name}}</td>
+							<td>{{product_details_arr.email}}</td>
+							{%endif%}
+							<td>{{attribute_disp}}</td>
+
+							<td>{{product_details_arr.supplier_name}}</td>
+							<td>{{product_details_arr.quantity}}</td>
+							<td>{{product_details_arr.final_price}}</td>
+							<td>{{product_details_arr.total_price}}</td>
+
+						  </tr>
+						{%endfor%}
+
+					    </tbody></table>
+					</div><!-- /.box-body -->
+				  </div>
+				</div>
+				{%endif%}
+				<div class="row margin">
+				  <div class="col-md-6 pull-right">
+				  <div class="box box-primary">
+					{% if order_details is defined  %}
+					  {% if order_details.coupon_code is defined and order_details.coupon_code is not empty %}
+						<div class="box-header with-border">
+						  <h3 class="box-title">Amount</h3>
+						  <h3 class="box-title pull-right">
+							<input type="text" name="amount" value="{{order_details.total_bill_amount|number_format(3, '.')}} KD" placeholder="Total Price" id="amount" class="form-control" style="width: 150px;border: 0px;background-color: transparent;font-size:18px;" readonly></h3>
+						</div>
+
+						<div class="box-header with-border">
+						  <h3 class="box-title">Discount</h3>
+						  <h3 class="box-title pull-right">
+							<input type="text" name="amount" value="{{order_details.total_discount|number_format(3, '.')}} KD" placeholder="Total Price" id="amount" class="form-control" style="width: 150px;border: 0px;background-color: transparent;font-size:18px;" readonly></h3>
+						</div>
+					  {% endif %}
+				    {% endif %}
+
+				    <div class="box-header with-border">
+						  <h3 class="box-title">Delivery charges</h3>
+						  <h3 class="box-title pull-right">
+							<input type="text" name="amount" value="{%if order_details.delivery_time_type==2 %}{{delivery_charge|number_format(3, '.')}}{%else%}{{order_details.delivery_charge|number_format(3, '.')}}{%endif%} KD" placeholder="Total Price" id="amount" class="form-control" style="width: 150px;border: 0px;background-color: transparent;font-size:18px;" readonly></h3>
+						</div>
+					<div class="box-header with-border">
+					  <h3 class="box-title">Total Amount</h3>
+					  <h3 class="box-title pull-right">
+						{%if order_details.delivery_time_type==2 %}
+						   {% set total = order_details.order_bill_amount + delivery_charge %}
+
+						  {%else%}
+							 {% set total = order_details.order_bill_amount + order_details.delivery_charge %}
+
+							{%endif%}
+
+						<input type="text" name="amount" value="{{total|number_format(3, '.')}} KD" placeholder="Total Price" id="amount" class="form-control" style="width: 150px;border: 0px;background-color: transparent;font-size:18px;" readonly></h3>
+					</div>
+				  </div>
+				  </div>
+
+				  <div class="col-md-{%if prescription_image is not empty %}3{%else%}6{%endif%}">
+				  <div class="box box-primary">
+					<div class="box-header with-border">
+					 <i class="fa fa-bookmark-o"></i><small> <h3 class="box-title">Special Instruction  </h3></small><hr>
+					  <h4 class="pull-right">{{order_details.special_instruction}}</h4>
+					</div>
+
+				  </div>
+				  </div>
+				  {%if prescription_image is not empty %}
+				   <div class="col-md-3">
+				  <div class="box box-primary">
+					<div class="box-header with-border">
+					 <i class="fa fa-picture-o" aria-hidden="true"></i><small> <h3 class="box-title">Prescription Image  </h3></small><hr>
+					  <img src="{{prescription_image}}" class="img-responsive"/>
+					</div>
+
+				  </div>
+				  </div>
+				   {%endif%}
+				</div>
+
+                </div>
+                <div class="box-footer">
+                    <a href="{% if order_details is defined and order_details is not empty and order_details.order_status_id == 5 %}{{path('admin_order_cancelledorder',{'domain':app.session.get('domain')})}}{% else %}{{path('admin_order_index',{'domain':app.session.get('domain')})}}{% endif %}" class="btn btn-primary">Cancel</a>
+
+
+
+                </div><!-- /.box-footer -->
+                </form>
+              </div>
+            </div><!-- /.col -->
+        </div><!-- /.row -->
+	</section>
+
+<div class="modal fade" id="status_model" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="model_title"></h4>
+      </div>
+    </div>
+  </div>
+</div>
+<!----------- Main content : END ---------------------------------------------------------->
+{% endblock %}
+{% block js %}
+<script src="{{asset('bundles/design/')}}js/select2.full.min.js" type="text/javascript"></script>
+<script src="{{asset('bundles/design/')}}js/bootstrapValidator.min.js" type="text/javascript"></script>
+<script>
+function changeSTS(status_id)
+{
+	$.ajax({
+		type: 'POST',
+		url : "{{path('admin_order_changeorderstatus',{'domain':app.session.get('domain')})}}",
+		data: {"order_id":"{{order_details.order_master_id}}","status_id":status_id,"flag":'changests'},
+		async: false,
+		dataType: 'json',
+		success: function(response)
+		{
+			$("#model_title").html(response.msg);
+			$("#model_title").removeClass();
+			$("#model_title").addClass("modal-title "+response.cls);
+			$("#status_model").modal('show');
+			if (status_id == '5')
+			{
+				$("#orderstatus").attr("disabled","disabled");
+            }
+		}
+	});
+}
+
+
+
+$(document).ready(function() {
+    $('.form').bootstrapValidator({
+        fields: {
+            name: {
+                validators: {
+                    notEmpty: {
+                        message: 'The name is required and cannot be empty'
+                    }
+                }
+            }
+        }
+    });
+});
+$(".select").select2();
+
+
+</script>
+
+{% endblock %}

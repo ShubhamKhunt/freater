@@ -1,0 +1,167 @@
+{% extends "AdminBundle::Layout/adminlayout.html.twig" %}
+{% block title %} Push Notification List {% endblock %}
+{% block css %}
+	
+{% endblock %}
+{% block content %}
+	<section class="content-header">
+		<h1>
+            Push notification list
+		  <small></small>
+		</h1>
+		<ol class="breadcrumb">
+		  <li><a href="{{path('admin_dashboard_index',{'domain':app.session.get('domain')})}}"><i class="fa fa-dashboard"></i>Dashboard</a></li>
+		  <li class="active">Push notification list</li>
+		</ol>
+	  </section>
+	  <section class="content">
+		{% for flashMessage in app.session.flashbag.get('success_msg') %}
+			<div role="alert" class="alert alert-success alert-dismissible fade in">
+				<button aria-label="Close" data-dismiss="alert" class="close" type="button"><span aria-hidden="true">×</span></button>
+				<strong>Alert!</strong>&nbsp; {{ flashMessage }}
+			</div>
+		{% endfor %}
+		{% for flashMessage in app.session.flashbag.get('error_msg') %}
+			<div role="alert" class="alert alert-danger alert-dismissible fade in">
+				<button aria-label="Close" data-dismiss="alert" class="close" type="button"><span aria-hidden="true">×</span></button>
+				<strong>Alert!</strong>&nbsp; {{ flashMessage }}
+			</div>
+		{% endfor %}
+		<div class="row">
+			<div class="col-xs-12">
+                <div class="box box-solid">
+						<div class="nav-tab-custom">
+						
+					<ul class="nav nav-tabs">
+					 
+					   <li  class="active"><a href="#general" data-toggle="tab">General</a></li>
+					   {% if app.session.get('domain_id') != "farmpik001" %}<li  class=""><a href="#healthtip" data-toggle="tab">Health Tips</a></li>{% endif %}
+					  
+					</ul>
+						<div class="tab-content">
+							 <div class="tab-pane active"  id="general">
+								 <div class="box-header with-border">
+                      {#<h3 class="box-title">Progress Bars Different Sizes</h3>#}
+                      <div class="pull-right">
+                        <a href="{{path('admin_pushnotification_addpushnotification',{'domain':app.session.get('domain')})}}" class="btn btn-primary btn-flat"><i class="fa fa-plus"></i>&nbsp;&nbsp;ADD</a>
+                      </div>
+                    </div>
+									<div class="box-body">
+										<div class="container-fluid table-responsive">
+											<table id="example1" class="table table-bordered table-striped text-center">
+												<thead>
+													<th>No.</th>
+													<th>Notification Title</th>
+													<th>Notification Message</th>
+													<th>Send to</th>
+													<th>Send Date</th>
+												</thead>
+												<tbody>
+													{% if note_list is defined and note_list is not empty %}
+														{% for note in note_list %}
+														<tr>
+															<td>{{loop.index}}</td>
+															<td>{{note.title}}</td>
+															<td>{{note.message}}</td>
+															<td>{% if note.send_to == 'CUST' %}Customer{%endif%}{% if note.send_to == 'DEL' %} Delivery Boy {% endif %}</td>
+															<td>{{note.create_date}}</td>
+														</tr>
+														{% endfor %}
+													{% endif %}
+												</tbody>
+												<tfoot>
+													<th>No.</th>
+													<th>Notification Title</th>
+													<th>Notification Message</th>
+													<th>Send to</th>
+													<th>Send Date</th>
+												</tfoot>
+											</table>
+										</div>
+				
+									</div>
+							 </div>
+						      <div class="tab-pane "  id="healthtip">
+								 <div class="box-header with-border">
+                      {#<h3 class="box-title">Progress Bars Different Sizes</h3>#}
+                      <div class="pull-right">
+                        <a href="{{path('admin_pushnotification_addpushnotification',{'domain':app.session.get('domain')})}}" class="btn btn-primary btn-flat"><i class="fa fa-plus"></i>&nbsp;&nbsp;ADD</a>
+                      </div>
+                    </div>
+									<div class="box-body">
+										<div class="container-fluid table-responsive">
+											<table id="example1" class="table table-bordered table-striped text-center">
+												<thead>
+													<th>No.</th>
+													<th>Notification Title</th>
+													<th>Notification Message</th>
+													<th>Send to</th>
+													<th>Send Date</th>
+												</thead>
+												<tbody>
+													{% if health_list is defined and health_list is not empty %}
+														{% for note in health_list %}
+														<tr>
+															<td>{{loop.index}}</td>
+															<td>{{note.title}}</td>
+															<td>{{note.message}}</td>
+															<td>{% if note.send_to == 'CUST' %}Customer{%endif%}{% if note.send_to == 'DEL' %} Delivery Boy {% endif %}</td>
+															<td>{{note.create_date}}</td>
+														</tr>
+														{% endfor %}
+													{% endif %}
+												</tbody>
+												<tfoot>
+													<th>No.</th>
+													<th>Notification Title</th>
+													<th>Notification Message</th>
+													<th>Send to</th>
+													<th>Send Date</th>
+												</tfoot>
+											</table>
+										</div>
+				
+									</div>
+							 </div>
+						</div>
+											
+											
+                   
+                  </div>
+            </div>
+		</div>
+	  </section>
+<div class="modal fade" id="myModal" role="dialog">
+	  <div class="modal-dialog">	  
+		<!-- Modal content-->
+		  <div class="modal-content">
+			<div class="modal-header">
+			<button type="button" class="close" data-dismiss="modal">&times;</button>
+			  <h4 class="modal-title">Message</h4>
+			</div>
+			<form action="#" method="post" id="model_form"></form>
+				<div class="modal-body">
+					
+				</div>
+				<div class="modal-footer">
+					<button type="submit" class="btn btn-primary btn-flat">Yes</button>
+					<button type="button" class="btn btn-default btn-flat" data-dismiss="modal">No</button>
+				</div>
+			</form>
+		  </div>
+		
+	  </div>
+   </div>	
+{% endblock %}
+
+{% block js %}
+<script>
+/*function delete_msg(id) {
+	$("#model_form").attr("action").val();
+	$("#myModal").modal("show");
+}*/
+$(document).ready(function() {
+    $('#example1').DataTable();
+} );
+</script>
+{% endblock %}

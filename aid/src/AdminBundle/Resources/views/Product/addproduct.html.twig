@@ -1,0 +1,1322 @@
+{% extends "AdminBundle::Layout/adminlayout.html.twig" %}
+{% block title %} Add - Update product {% endblock %}
+{% block css %}
+<link href="{{asset('bundles/design/')}}css/bootstrape_verticle_tab.min.css" rel="stylesheet" type="text/css" />
+
+<link rel="stylesheet" href="{{asset('bundles/design/')}}plugins/select2/select2.min.css">
+<link href="{{asset('bundles/design/')}}css/select2.min.css" rel="stylesheet" type="text/css" />
+
+<link rel="stylesheet" href="{{asset('bundles/design/')}}plugins/bootstrap-wysihtml5/bootstrap3-wysihtml5.min.css">
+<link rel="stylesheet" href="{{asset('bundles/design/')}}plugins/iCheck/all.css">
+<link rel="stylesheet" href="{{asset('bundles/design/')}}fileupload/css/blueimp-gallery.min.css">
+<link rel="stylesheet" href="{{asset('bundles/design/')}}fileupload/css/jquery.fileupload.css">
+<link rel="stylesheet" href="{{asset('bundles/design/')}}fileupload/css/jquery.fileupload-ui.css">
+ <style>
+    .verticle_tab .active a
+    {
+        color: #FFF !important;
+    }
+    .verticle_tab a
+    {
+        color: #000 !important;
+    }
+
+	.select2-container
+	{
+		 width: 100% !important;
+	}
+	.desabletab
+	{
+		 pointer-events: none !important;
+		 background-color: #ccc !important;
+	}
+	@media(max-width : 400px){
+	  .col-xs-10.newadd {
+			 width: 73%;
+			 margin-left: 0px;
+		 }
+		 .col-xs-2.newadd1{
+				 width:27%;
+		 }
+	 }
+
+ </style>
+{% endblock %}
+{% block content %}
+<section class="content-header">
+		<h1>
+            {% if product_info is defined %}Edit{% else %}Add{% endif %} - Update Product
+		  <small></small>
+		</h1>
+		<ol class="breadcrumb">
+		  <li><a href="{{path('admin_dashboard_index',{'domain':app.session.get('domain')})}}"><i class="fa fa-dashboard"></i>Dashboard</a></li>
+		  <li><a href="{{path('admin_product_index',{'domain':app.session.get('domain')})}}">Product list</a></li>
+          <li class="active">Add product</li>
+		</ol>
+	  </section>
+	  <section class="content">
+		 {% for flashMessage in app.session.flashbag.get('success_msg') %}
+			<div role="alert" class="alert alert-success alert-dismissible fade in">
+				 <button aria-label="Close" data-dismiss="alert" class="close" type="button"><span aria-hidden="true">×</span></button>
+				 <strong>Alert!</strong>&nbsp; {{ flashMessage }}
+		    </div>
+	     {% endfor %}
+		 {% for flashMessage in app.session.flashbag.get('warning_msg') %}
+			<div role="alert" class="alert alert-warning alert-dismissible fade in">
+				 <button aria-label="Close" data-dismiss="alert" class="close" type="button"><span aria-hidden="true">×</span></button>
+				 <strong>Alert!</strong>&nbsp; {{ flashMessage }}
+			</div>
+	     {% endfor %}
+	     {% for flashMessage in app.session.flashbag.get('error_msg') %}
+			<div role="alert" class="alert alert-danger alert-dismissible fade in">
+				 <button aria-label="Close" data-dismiss="alert" class="close" type="button"><span aria-hidden="true">×</span></button>
+				 <strong>Alert!</strong>&nbsp; {{ flashMessage }}
+			</div>
+	     {% endfor %}
+
+		<div class="row">
+            <div class="col-xs-2 newadd1">
+                <div class="box box-solid">
+                    <div class="row">
+                        <div class="col-xs-12">
+                          <!-- Nav tabs -->
+                          <ul class="nav nav-pills tabs-left verticle_tab">
+                            <li class="active"><a href="#info" data-toggle="tab">Basic Details</a></li>
+							<li><a href="#category" {% if product_info is defined and product_info is not empty %}data-toggle="tab" {% else %}class="desabletab"{% endif %}>Category</a></li>
+                            <li><a href="#media" {% if product_info is defined and product_info is not empty %}data-toggle="tab" {% else %}class="desabletab"{% endif %}>Media</a></li>
+							<li><a href="#attribute" {% if product_info is defined and product_info is not empty %}data-toggle="tab" {% else %}class="desabletab"{% endif %}>Attributes</a></li>
+                            <li><a href="#feature" {% if product_info is defined and product_info is not empty %}data-toggle="tab" {% else %}class="desabletab"{% endif %}>Features</a></li>
+                            <li><a href="#supplier" {% if product_info is defined and product_info is not empty %}data-toggle="tab" {% else %}class="desabletab"{% endif %}>Suppliers</a></li>
+                          </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-xs-10 newadd">
+                <div class="box box-solid">
+                    <div class="row">
+                        <div class="col-xs-12">
+                          <!-- Tab panes -->
+                            <div class="tab-content">
+							  <div class="tab-pane active" id="info">
+									   		<a href="{{path('admin_product_index')}}" class="btn btn-primary btn-flat pull-right"><i class="glyphicon glyphicon-chevron-left"></i><b>&nbsp;&nbsp;Back</b></a>
+</br></br>
+									<div class="tab-content">
+
+										 <form method="post"  action="{% if product_info is defined and product_info is not empty %}{{path('admin_product_updateproductbasic',{'lang_id':1,'main_product_id':product_info[0].main_product_master_id})}}{% else %}{{path('admin_product_saveproductbasic',{'lang_id':1})}}{% endif %}">
+
+											 <div class="box-body form-horizontal">
+												<div class="form-group">
+												  <label class="col-sm-2 control-label">Name (En)</label>
+												  <div class="col-sm-4">
+													<input type="text" class="form-control" name="product_title_english" required value="{% if product_info is defined and product_info is not empty %}{% for product in product_info %}{% if product.language_id == 1 %}{{product.product_title}}{% endif %}{% endfor %}{% endif %}">
+												  </div>
+												   <label class="col-sm-2 control-label">Name (Ar)</label>
+												  <div class="col-sm-4">
+													<input type="text" class="form-control" name="product_title_arbic" required value="{% if product_info is defined and product_info is not empty %}{% for product in product_info %}{% if product.language_id == 2 %}{{product.product_title}}{% endif %}{% endfor %}{% endif %}">
+												  </div>
+												</div>
+                                                 <div class="form-group">
+
+												   <label class="col-sm-2 control-label">Refrence code</label>
+												  <div class="col-sm-4">
+													<input type="text" class="form-control" name="refrence_code" value="{% if product_info is defined and product_info is not empty %}{{product_info[0].refrence_code}}{% endif %}">
+												  </div>
+												</div>
+
+												<div class="form-group">
+												  <label class="col-sm-2 control-label">MRP</label>
+												  <div class="col-sm-4">
+													<input type="text" class="form-control" name="mprice" value="{% if product_info is defined and product_info is not empty %}{{product_info[0].market_price}}{% endif %}">
+												  </div>
+												  <label class="col-sm-2 control-label">Original Price</label>
+												  <div class="col-sm-4">
+													<input type="text" class="form-control" name="price" value="{% if product_info is defined and product_info is not empty %}{{product_info[0].original_price}}{% endif %}">
+												  </div>
+												</div>
+												<div class="form-group">
+												  {#<label class="col-sm-2 control-label">Total Quantity</label>
+												  <div class="col-sm-4">
+													<input type="text" class="form-control" name="quantity" value="{% if product_info is defined and product_info is not empty %}{{product_info[0].quantity}}{% endif %}">
+                        </div>#}
+                        <label class="col-sm-2 control-label">Unit</label>
+                       <div class="col-sm-4">
+                       <input type="text" class="form-control" name="unit_size" value="{% if product_info is defined and product_info is not empty %}{{product_info[0].unit_size}}{% endif %}">
+                       </div>
+
+												   <label class="col-sm-2 control-label">Max Qty Allowed per Order</label>
+												  <div class="col-sm-4">
+													<input type="text" class="form-control" name="max_order" value="{% if product_info is defined and product_info is not empty %}{{product_info[0].max_allowed_qty_per_order}}{% endif %}">
+												  </div>
+
+												  </div>
+
+												<div class="form-group">
+												  {#<label class="col-sm-2 control-label">Total Order of this product</label>
+												  <div class="col-sm-4">
+													<input type="text" class="form-control" readonly name="totalorder" value="{% if product_info is defined and product_info is not empty %}{{total_sale}}{% endif %}">
+                        </div>#}
+
+												   <label class="col-sm-2 control-label">In Stock</label>
+												  <div class="col-sm-4">
+													{#<input type="text" class="form-control" readonly name="instock" value="{% if product_info is defined and product_info is not empty %}{{instock}}{% endif %}">#}
+                          <input type="text" class="form-control" name="quantity" value="{% if product_info is defined and product_info is not empty %}{{product_info[0].quantity}}{% endif %}">
+												  </div>
+
+                          <label class="col-sm-2 control-label">Product Type </label>
+												  <div class="col-sm-4">
+													  <select class="form-control" name="product_type_id">
+														  <option value="">-- select --</option>
+														  {% if product_type_list is defined and product_type_list is not empty %}
+															 {% for product_type in product_type_list %}
+																{% if product_type.language_id == 1 %}
+																<option value="{{product_type.main_product_type_master_id}}" {% if product_info is defined and product_info is not empty and product_info[0].product_type_id == product_type.main_product_type_master_id %}selected{% endif %}>{{product_type.product_type_name}}</option>
+																{% endif %}
+															 {% endfor %}
+														  {% endif %}
+													  </select>
+												  </div>
+
+												  </div>
+
+
+												<div class="form-group">
+                          <label class="col-sm-2 control-label">Status</label>
+                        <div class="col-sm-4">
+
+                           <label>
+                            <input type="radio" class="minimal" name="status" value="active" {% if product_info is defined and product_info is not empty and product_info[0].status == 'active' %}checked{% endif %}>&nbsp;&nbsp; Active
+                            </label>
+                            &nbsp;&nbsp;&nbsp;&nbsp;
+                            <label>
+                            <input type="radio" class="minimal" name="status" value="inactive" {% if product_info is defined and product_info is not empty and product_info[0].status == 'inactive' %}checked{% endif %}>&nbsp;&nbsp; Inactive
+                            </label>
+
+                        </div>
+
+
+
+												{#<div class="form-group">
+												  <label class="col-sm-2 control-label">Brand</label>
+												  <div class="col-sm-4">
+													  <select class="form-control" name="brand_id">
+														  <option value="">-- select --</option>
+														  {% if brand_list is defined and brand_list is not empty %}
+															 {% for brand in brand_list %}
+																{% if brand.language_id == lang.language_master_id %}
+																<option value="{{brand.main_brand_master_id}}" {% if product_info is defined and product_info is not empty and product_info[0].brand_id == brand.main_brand_master_id %}selected{% endif %}>{{brand.brand_name}}</option>
+																{% endif %}
+															 {% endfor %}
+														  {% endif %}
+													  </select>
+												  </div>
+												  #}
+
+
+
+
+												  </div>
+												<div class="form-group">
+
+												</div>
+
+
+												{#<div class="form-group">
+												  <label class="col-sm-2 control-label">&nbsp;</label>
+												  <div class="col-sm-5">
+													  <input type="checkbox" class="minimal">&nbsp;&nbsp; Dispaly the "On sale" icon on product page
+												  </div>
+												</div>#}
+
+												{#<div class="form-group">
+												  <label class="col-sm-2 control-label">Short description (En)</label>
+												  <div class="col-sm-10">
+													  <textarea maxlength="200" class="form-control" required name="short_description_en">{% if product_info is defined and product_info is not empty %}{% for product in product_info %}{% if product.language_id == 1 %}{{product.short_description}}{% endif %}{% endfor %}{% endif %}</textarea>
+												  </div>
+												</div>
+												<div class="form-group">
+												  <label class="col-sm-2 control-label">Short description (Ar)</label>
+												  <div class="col-sm-10">
+													  <textarea maxlength="200" class="form-control" required name="short_description_ar">{% if product_info is defined and product_info is not empty %}{% for product in product_info %}{% if product.language_id == 2 %}{{product.short_description}}{% endif %}{% endfor %}{% endif %}</textarea>
+												  </div>
+												</div>#}
+
+												<div class="form-group">
+												  <label class="col-sm-2 control-label">Description (En)</label>
+												  <div class="col-sm-10">
+													  <textarea maxlength="1001" class="form-control" required name="description_en">{% if product_info is defined and product_info is not empty %}{% for product in product_info %}{% if product.language_id == 1 %}{{product.description}}{% endif %}{% endfor %}{% endif %}</textarea>
+												  </div>
+												</div>
+												<div class="form-group">
+												  <label class="col-sm-2 control-label">Description (Ar)</label>
+												  <div class="col-sm-10">
+													  <textarea maxlength="1001" class="form-control" required name="description_ar">{% if product_info is defined and product_info is not empty %}{% for product in product_info %}{% if product.language_id == 2 %}{{product.description}}{% endif %}{% endfor %}{% endif %}</textarea>
+												  </div>
+												</div>
+											 </div>
+
+
+											 	<hr />
+						<div class="form-group">
+						   <label class="col-sm-2 control-label">Drug Type(s)</label>
+							<div class="col-sm-10">
+								<select class="form-control select2" multiple="multiple" name="ddl_tag[]" id="ddl_tag[]"  data-placeholder="Type tag and select it from drop down list" style="width: 100%;" >
+									<option value="">-- select --</option>
+									{% if tag_list is defined and tag_list is not empty %}
+									   {% for tag in tag_list %}
+
+
+										  <option value="{{tag.tag_id}}"
+												  {% if selected_tag is defined and selected_tag is not empty %}
+													  {% for s_tag in selected_tag %}
+														{% if tag.tag_id == s_tag.tag_id %}
+															selected
+														{% endif %}
+												  {% endfor %}
+												  {% endif %}
+												   >{{tag.tag}}</option>
+
+									   {% endfor %}
+									{% endif %}
+							  </select>
+							</div>
+						   </div>
+						<br>
+						<br>
+						<hr />
+
+							<br>
+
+
+											 <div class="form-group">
+												&nbsp;&nbsp;&nbsp;<b>** </b>Here Price is Original Price of Product , and Stock is actual Quantites of Product which have no attributes or Combinations . Price and Stock is also manage at Supplier level
+											 </div>
+											 <div class="box-footer">
+												<a href="{{path('admin_product_index')}}" class="btn btn-default form-btn">Cancel</a>
+												{% if product_info is defined and product_info is not empty %}
+												   <button type="submit" class="btn btn-primary pull-right" name="update_basic_info" value="update_basic_info">Update</button>
+												{% else %}
+												   <button type="submit" class="btn btn-primary pull-right" name="save_basic_info" value="save_basic_info">Save</button>
+												{% endif %}
+											</div>
+										  </form>
+
+									</div>
+
+
+								 </div>
+                                 <div class="tab-pane" id="category">
+									{% macro menu_links(links,selected_category) %}
+									   {% import _self as macros %}
+									   {% for link in links %}
+										   <li class="collapsed cat{{link.main_category_id}}" >
+											 {% set sel_cat = '' %}
+                       {% set sel_disabled = '' %}
+
+                        {% if link.child_data %}
+                            {% set sel_disabled = 'disabled' %}
+                         {% endif %}
+											 {% if link.main_category_id in selected_category %}
+												{% set sel_cat = 'checked' %}
+											 {% endif %}
+											   <input type="radio"  value="{{ link.main_category_id }}" name="category_selected[]" onclick="set_category_selected('cat{{link.main_category_id}}');" {{sel_cat}} {{sel_disabled}}> &nbsp;&nbsp;&nbsp;{{ link.category_name }}
+											   {% if link.child_data %}
+												   <ul style="list-style-type: none;">
+													   {{ macros.menu_links(link.child_data,selected_category) }}
+												   </ul>
+											   {% endif %}
+										   </li>
+									   {% endfor %}
+									{% endmacro %}
+									{% import _self as macros %}
+									{% if language is defined and language is not empty %}
+									   <ul class="nav nav-pills">
+										   {% for lang in language %}
+										   <li {% if loop.index == 1 %}class="active"{% endif %}><a data-toggle="tab" href="#category_tab_{{lang.language_master_id}}">{{lang.language_name}}</a></li>
+										   {% endfor %}
+
+									   </ul>
+									  <div class="tab-content">
+									   {% for lang in language %}
+									   <div id="category_tab_{{lang.language_master_id}}" class="tab-pane{% if loop.index == 1 %} active{% endif %}">
+										   <form method="post" class="form-horizontal" action="{{path('admin_product_saveproductcategory',{'domain':app.session.get('domain')})}}" enctype="multipart/form-data">
+
+											 <div class="box-body">
+											   <input type="hidden" name="language_id"  value="{{lang.language_master_id}}" />
+												<input type="hidden" name="main_product_id"  value="{%if main_product_id is defined and main_product_id is not empty %}{{main_product_id}}{%endif%}" />
+											   <div class="form-group">
+                           <ul style="list-style-type: none;">
+													{% for all_final_category in all_final_category %}
+													 {%if all_final_category.langauge_id == lang.language_master_id %}
+
+													   {%if all_final_category.category_details is not empty %}
+														  {% for category_arr in all_final_category.category_details %}
+															 {% set sel_cat = '' %}
+                               {% set sel_disabled = '' %}
+															 {% if category_arr.main_category_id in all_final_category.selected_category %}
+																{% set sel_cat = 'checked' %}
+															 {% endif %}
+                               {% if category_arr.child_data %}
+                                   {% set sel_disabled = 'disabled' %}
+                                {% endif %}
+															  <li class="collapsed cat{{category_arr.main_category_id}}" ><input type="radio" value="{{category_arr.main_category_id}}" onclick="set_category_selected('cat{{category_arr.main_category_id}}');" {{sel_cat}} {{sel_disabled}} name="category_selected[]">&nbsp;&nbsp;&nbsp;<span> {{category_arr.category_name}}</span>
+																  {% if category_arr.child_data is defined and category_arr.child_data is not empty %}
+																	<ul style="list-style-type: none;">
+																	{{ macros.menu_links(category_arr.child_data, all_final_category.selected_category) }}
+																</ul>
+																  {% endif %}
+															  </li>
+
+														  {% endfor %}
+													   {%else%}
+														   No Category Defined
+													   {% endif %}
+													  {% endif %}
+													 {% endfor %}
+												  </ul>
+											   </div>
+											 </div>
+											<div class="box-footer">
+											   <a href="{{path('admin_product_index',{'domain':app.session.get('domain')})}}"  class="btn btn-default form-btn">Cancel</a>
+											   <button type="submit" class="btn btn-primary pull-right">Save</button>
+										   </div>
+										   </form>
+
+									   </div>
+									   {% endfor %}
+									 </div>
+									{% endif %}
+
+                                </div>
+                                <div class="tab-pane" id="media">
+                                    <div class="box-body form-horizontal">
+									   {# File upload plugin html code : START #}
+									   <form id="fileupload" method="POST" enctype="multipart/form-data">
+										   <div class="row fileupload-buttonbar">
+											   <div class="col-lg-7">
+
+												   <span class="btn btn-success fileinput-button">
+													   <i class="glyphicon glyphicon-plus"></i>
+													   <span>Add files...</span>
+													   <input type="file" name="files[]" multiple>
+												   </span>
+												   <!--<button type="submit" class="btn btn-primary start">
+													   <i class="glyphicon glyphicon-upload"></i>
+													   <span>Start upload</span>
+												   </button>
+												   <button type="reset" class="btn btn-warning cancel">
+													   <i class="glyphicon glyphicon-ban-circle"></i>
+													   <span>Cancel upload</span>
+												   </button>-->
+												   {#<button type="button" class="btn btn-danger delete">
+													   <i class="glyphicon glyphicon-trash"></i>
+													   <span>Delete</span>
+												   </button>
+												   <input type="checkbox" class="toggle">#}
+												   <!-- The global file processing state -->
+												   <span class="fileupload-process"></span>
+											   </div>
+
+											   <div class="col-lg-5 fileupload-progress fade">
+												   <!-- The global progress bar -->
+												   <div class="progress progress-striped active" role="progressbar" aria-valuemin="0" aria-valuemax="100">
+													   <div class="progress-bar progress-bar-success" style="width:0%;"></div>
+												   </div>
+												   <!-- The extended global progress state -->
+												   <div class="progress-extended">&nbsp;</div>
+											   </div>
+										   </div>
+									   <table role="presentation" class="table table-striped">
+										<tbody class="files">
+											 {% if media_library_master is defined and media_library_master is not empty %}
+												{% for media in media_library_master %}
+												   <tr class="">
+													  <td>
+														  <span class="preview">
+															 <a data-gallery="" download="{{media.media_name}}" title="{{media.media_name}}" href="{{live_path}}{{media.media_location}}/{{media.media_name}}">
+																<img src="{{live_path}}{{media.media_location}}/thumbnail/{{media.media_name}}">
+															  </a>
+														  </span>
+													  </td>
+													  <td>
+														  <p class="name">
+															  <a data-gallery="" download="{{media.media_name}}" title="{{media.media_name}}" href="{{live_path}}{{media.media_location}}/{{media.media_name}}">{{media.media_name}}</a>
+														  </p>
+													  </td>
+													  <!--<td style="width:20px;">
+														<input type="radio" name="default_image" class="" value="1" onclick="set_default_image({{product_info[0].main_product_master_id}},{{media.media_library_master_id}});" title="Set default product image">
+													  </td>-->
+													  <td>
+														  <button class="btn btn-danger delete" onclick="delete_image({{media.media_library_master_id}},{{media.gallery_master_id}});">
+																  <i class="glyphicon glyphicon-trash"></i>
+																  <span>Delete</span>
+															  </button>
+													  </td>
+												   </tr>
+												{% endfor %}
+											 {% endif %}
+										</tbody>
+									   </table>
+								   </form>
+								   {# File upload plugin html code : END #}
+								 </div>
+								 <div id="blueimp-gallery" class="blueimp-gallery blueimp-gallery-controls" data-filter=":even">
+									  <div class="slides"></div>
+									  <h3 class="title"></h3>
+									  <a class="prev">‹</a>
+									  <a class="next">›</a>
+									  <a class="close">×</a>
+									  <a class="play-pause"></a>
+									  <ol class="indicator"></ol>
+								  </div>
+                                </div>
+                                <div class="tab-pane" id="attribute">
+						<!--------------------------- Attribute Tab : START ----------------------------->
+									<div class="tab-content">
+
+										  <div class="tab-pane active">
+											 <div class="box-body form-horizontal">
+
+												<form method="post" id="generate_comb_form" action="{{path('admin_product_saveproductattribute')}}">
+													
+													<input type="hidden" name="main_product_id" value="{%if main_product_id is defined and main_product_id is not empty %}{{main_product_id}}{%endif%}" />
+													
+													<div class="form-group">
+													  <label class="col-sm-2 control-label">Sku</label>
+													  <div class="col-sm-4">
+														<input type="text" name="sku" class="form-control">
+													  </div>
+													   <label class="col-sm-1 control-label" >Brand</label>
+													   <div class="col-sm-4">
+														  <input type="text" name="brand" class="form-control">
+													   </div>
+													</div>
+													
+													<div class="form-group">
+													  <label class="col-sm-2 control-label">Size</label>
+													  <div class="col-sm-4">
+														<input type="text" name="size" class="form-control">
+													  </div>
+													   <label class="col-sm-1 control-label">Color</label>
+													   <div class="col-sm-4">
+														  <input type="text" name="color" class="form-control">
+													   </div>
+													</div>
+													
+													<div class="form-group">
+													  <label class="col-sm-2 control-label" >Weight</label>
+													   <div class="col-sm-4">
+														  <input type="text" name="weight" class="form-control">
+													   </div>
+													  <label class="col-sm-1 control-label" >Height</label>
+													   <div class="col-sm-4">
+														  <input type="text" name="height" class="form-control">
+													   </div>
+													 </div>
+													
+													<div class="form-group">
+													  <label class="col-sm-2 control-label">Length</label>
+													  <div class="col-sm-4">
+														<input type="text" name="length" class="form-control">
+													  </div>
+													</div>
+													
+													<div class="form-group">
+													  <div class="col-sm-12 text-center">
+														<input type="submit" name="submit" class="btn btn-primary" value="Submit">
+													  </div>
+													</div>
+													
+												</form>
+										     </div>
+										  </div>
+									</div>
+					    <!--------------------------- Attribute Tab : END ----------------------------->
+                                </div>
+								<div class="tab-pane" id="feature">
+                                    <div class="box-body form-horizontal">
+                                       feature
+                                    </div>
+                                </div>
+								<div class="tab-pane" id="supplier">
+								 <div class="nav-tabs-custom">
+									   {% if language is defined and language is not empty%}
+									   <ul class="nav nav-pills">
+										  {% for lang in language %}
+										  <li {% if loop.index == 1 %} class="active"{% endif %}><a href="#supl_{{lang.language_master_id}}" data-toggle="tab">{{lang.language_name}}</a></li>
+										  {% endfor %}
+									   </ul>
+									   {% endif %}
+
+									<div class="tab-content">
+									{% if language is defined and language is not empty%}
+										  {% for lang in language %}
+										  <div class="tab-pane{% if loop.index == 1 %} active{% endif %}" id="supl_{{lang.language_master_id}}">
+											 <div class="box-body form-horizontal">
+												 <form id="supplier_{{lang.language_master_id}}" class="supplier-form" method="post" class="form-horizontal" action="{{path('admin_product_savesupplierproduct',{'domain':app.session.get('domain')})}}"  enctype="multipart/form-data">
+											 <input type="hidden" name="spam" id="spam"/>
+												<input type="hidden" name="language_id"  value="{{lang.language_master_id}}" />
+												<input type="hidden" name="main_product_id"  value="{%if main_product_id is defined and main_product_id is not empty %}{{main_product_id}}{% endif %}" />
+												<h5><b>SUPPLIERS OF THE CURRENT PRODUCT</b></h5>
+
+									<div class="form-group">
+									   {% if product_city_rel is not empty %}
+										  {% for product_city_rel in product_city_rel %}
+									   {% for all_final_category in all_final_category %}
+										  {%if all_final_category.langauge_id == lang.language_master_id %}
+											 {%if all_final_category.supplier_list is not empty %}
+												{%for supplier in all_final_category.supplier_list %}
+									   <div class="box box-default box-solid {% if supplier.supp_attr_arr is defined and  supplier.supp_attr_arr  is not empty  %}
+															   {%for supp in supplier.supp_attr_arr  %}
+																  {% if supplier.main_supplier_id != supp.supplier_id %}
+																	 collapsed-box
+															   {% endif %}
+															   {% endfor %}
+															{% else %}collapsed-box{% endif %}" id="supplier_{{all_final_category.langauge_id}}_{{supplier.main_supplier_id}}_{{product_city_rel.product_city_relation_id}}">
+										  <div class="box-header with-border">
+											 <span>{{supplier.supplier_name}} - {{product_city_rel.city_name}}</span>
+												<div class="box-tools pull-right"><label><input type="checkbox" class="mycheckbox" value="supplier_{{all_final_category.langauge_id}}_{{supplier.main_supplier_id}}_{{product_city_rel.product_city_relation_id}}" name="supplier_{{all_final_category.langauge_id}}_{{supplier.main_supplier_id}}_{{product_city_rel.product_city_relation_id}}" id="supplier_{{all_final_category.langauge_id}}_{{supplier.main_supplier_id}}_{{product_city_rel.product_city_relation_id}}" onclick="onsupplierchange(this);" {% if supplier.supp_attr_arr is defined and  supplier.supp_attr_arr  is not empty  %}
+															   {%for supp in supplier.supp_attr_arr  %}
+																  {% if supplier.main_supplier_id == supp.supplier_id %}
+																	 checked
+																  {% endif %}
+															   {% endfor %}
+															{% endif %}></label></div>
+												<input type="hidden" name="supplier[]"  value="{{supplier.main_supplier_id}}_{{product_city_rel.product_city_relation_id}}_{{product_city_rel.city_id}}"/>
+
+										  </div><!-- /.box-header -->
+										  <div class="box-body">
+											 <div class="row">
+												{% if advanced_pricing is defined and advanced_pricing is not empty and advanced_pricing=='true' %}
+														 <table class="table">
+														 <thead>
+															<tr>
+																<th><span class="title_box">Product Attribute</span></th>
+																<th><span class="title_box">Produtct Quantity</span></th>
+																<th><span class="title_box">Apply From(Date)</span></th>
+																<th><span class="title_box">Price to Distributors (PTD) </span></th>
+																<th><span class="title_box">Distributors Margin (%) </span></th>
+																<th><span class="title_box">Final Price from Distributors </span></th>
+																<th><span class="title_box">AWL Margin (%) </span></th>
+																<th><span class="title_box">App Price </span></th>
+																<th><span class="title_box">Unit price currency</span></th>
+																<th><span class="title_box"></span>Action</th>
+															</tr>
+														 </thead>
+														 <tbody>
+															   <tr>
+																   {% if all_final_category.combination_arr_details is defined and  all_final_category.combination_arr_details  is not empty  %}
+																	 {%for comb_arr in all_final_category.combination_arr_details  %}
+																		<tr class="attr_{{comb_arr.combination_id}}">
+																		  <td><span class="title_box">{{comb_arr.attribute_value}}</span></td>
+																		  <td><input type="hidden" name="product_combinataion_id_{{supplier.main_supplier_id}}_{{product_city_rel.product_city_relation_id}}[]" value="{{comb_arr.combination_id}}" />
+																		  <input type="number" required name="produtct_quantity_{{all_final_category.langauge_id}}_{{supplier.main_supplier_id}}_{{comb_arr.combination_id}}_{{product_city_rel.product_city_relation_id}}" {% if supplier.supp_attr_arr is defined and  supplier.supp_attr_arr  is not empty  %}
+																	 {%for supp in supplier.supp_attr_arr  %}
+																		{% if supplier.main_supplier_id == supp.supplier_id and comb_arr.combination_id == supp.combination_id and product_city_rel.city_id == supp.city_id %}
+																		   value="{{supp.quantity}}"
+																		{% endif %}
+																  {% endfor %}
+																  {% endif %}
+																	 ></td>
+																		<td>
+																		</td>
+																		<td>
+																		</td>
+																		<td>
+																		</td>
+																		<td>
+																		</td>
+																		<td>
+																		</td>
+
+																		  <td> <input type="number" required {% if supplier.supp_attr_arr is defined and  supplier.supp_attr_arr  is not empty  %}
+
+																	 {%for supp in supplier.supp_attr_arr  %}
+																		{% if supplier.main_supplier_id == supp.supplier_id and comb_arr.combination_id == supp.combination_id and product_city_rel.city_id == supp.city_id %}
+																		   value="{{supp.price}}"
+																		{% endif %}
+																  {% endfor %}
+																  {% else %} value="0" {% endif %} name="product_price_{{all_final_category.langauge_id}}_{{supplier.main_supplier_id}}_{{comb_arr.combination_id}}_{{product_city_rel.product_city_relation_id}}"></td>
+																		  <td> <!--<select name="product_price_currency_2_46_1">-->
+																		<!--<option value="1" selected="selected">Indian Rupee</option>-->
+																		<!--</select>--> Coming soon</td>
+																		  <td><button type="submit" class="btn btn-primary pull-right">Add</button></td>
+																		</tr>
+
+																  {% endfor %}
+																  {% else %}
+																	 <tr>
+																	   {# <td class="text-center" colspan=4>No Records Found . Please Add Combination in this Language</td>#}
+																	   <td><span class="title_box"> No Attribute </span></td>
+																		  <td><input type="hidden" name="product_combinataion_id_{{supplier.main_supplier_id}}_{{product_city_rel.product_city_relation_id}}[]" value="0" />
+																		  <input type="number" required name="produtct_quantity_{{all_final_category.langauge_id}}_{{supplier.main_supplier_id}}_0_{{product_city_rel.product_city_relation_id}}" {% if supplier.supp_attr_arr is defined and  supplier.supp_attr_arr  is not empty  %}
+																	 {%for supp in supplier.supp_attr_arr  %}
+																		{% if supplier.main_supplier_id == supp.supplier_id and  supp.combination_id == 0 and product_city_rel.city_id == supp.city_id %}
+																		   value="{{supp.quantity}}"
+																		{% endif %}
+																  {% endfor %}
+																  {% endif %}
+																	 ></td>
+																		  <td>
+																		</td>
+																		<td>
+																		</td>
+																		<td>
+																		</td>
+																		<td>
+																		</td>
+																		<td>
+																		</td>
+																		  <td> <input type="number" required {% if supplier.supp_attr_arr is defined and  supplier.supp_attr_arr  is not empty  %}
+																	 {%for supp in supplier.supp_attr_arr  %}
+																		{% if supplier.main_supplier_id == supp.supplier_id and  supp.combination_id == 0 %}
+																		   value="{{supp.price}}"
+																		{% endif %}
+																  {% endfor %}
+																  {% else %} value="0" {% endif %} name="product_price_{{all_final_category.langauge_id}}_{{supplier.main_supplier_id}}_0_{{product_city_rel.product_city_relation_id}}"></td>
+																		  <td> <!--<select name="product_price_currency_2_46_1">-->
+																		<!--<option value="1" selected="selected">Indian Rupee</option>-->
+																		<!--</select>--> Coming soon</td>
+																		  <td><button type="submit" class="btn btn-primary pull-right">Add</button></td>
+																	 </tr>
+																  {% endif %}
+																</tr>
+															</tbody>
+														 </table>
+													  {#&nbsp;&nbsp;&nbsp;<b>**</b> if Supplier dont want to manage any Combination then , Please Insert 0 as Product Price and Quantity#}
+												{% else %}
+													  <table class="table">
+														 <thead>
+															<tr>
+																<th><span class="title_box">Product Attribute</span></th>
+																<th><span class="title_box">Produtct Quantity</span></th>
+																<th><span class="title_box">Unit price </span></th>
+																<th><span class="title_box">Unit price currency</span></th>
+															</tr>
+														 </thead>
+														 <tbody>
+															   <tr>
+																   {% if all_final_category.combination_arr_details is defined and  all_final_category.combination_arr_details  is not empty  %}
+																	 {%for comb_arr in all_final_category.combination_arr_details  %}
+																		<tr class="attr_{{comb_arr.combination_id}}">
+																		  <td><span class="title_box">{{comb_arr.attribute_value}}</span></td>
+																		  <td><input type="hidden" name="product_combinataion_id_{{supplier.main_supplier_id}}_{{product_city_rel.product_city_relation_id}}[]" value="{{comb_arr.combination_id}}" />
+																		  <input type="number" required name="produtct_quantity_{{all_final_category.langauge_id}}_{{supplier.main_supplier_id}}_{{comb_arr.combination_id}}_{{product_city_rel.product_city_relation_id}}" {% if supplier.supp_attr_arr is defined and  supplier.supp_attr_arr  is not empty  %}
+																	 {%for supp in supplier.supp_attr_arr  %}
+																		{% if supplier.main_supplier_id == supp.supplier_id and comb_arr.combination_id == supp.combination_id and product_city_rel.city_id == supp.city_id %}
+																		   value="{{supp.quantity}}"
+																		{% endif %}
+																  {% endfor %}
+																  {% endif %}
+																	 ></td>
+																		  <td> <input type="number" required {% if supplier.supp_attr_arr is defined and  supplier.supp_attr_arr  is not empty  %}
+
+																	 {%for supp in supplier.supp_attr_arr  %}
+																		{% if supplier.main_supplier_id == supp.supplier_id and comb_arr.combination_id == supp.combination_id and product_city_rel.city_id == supp.city_id %}
+																		   value="{{supp.price}}"
+																		{% endif %}
+																  {% endfor %}
+																  {% else %} value="0" {% endif %} name="product_price_{{all_final_category.langauge_id}}_{{supplier.main_supplier_id}}_{{comb_arr.combination_id}}_{{product_city_rel.product_city_relation_id}}"></td>
+																		  <td> <!--<select name="product_price_currency_2_46_1">-->
+																		<!--<option value="1" selected="selected">Indian Rupee</option>-->
+																		<!--</select>--> Coming soon</td>
+																		</tr>
+
+																  {% endfor %}
+																  {% else %}
+																	 <tr>
+																	   {# <td class="text-center" colspan=4>No Records Found . Please Add Combination in this Language</td>#}
+																	   <td><span class="title_box"> No Attribute </span></td>
+																		  <td><input type="hidden" name="product_combinataion_id_{{supplier.main_supplier_id}}_{{product_city_rel.product_city_relation_id}}[]" value="0" />
+																		  <input type="number" required name="produtct_quantity_{{all_final_category.langauge_id}}_{{supplier.main_supplier_id}}_0_{{product_city_rel.product_city_relation_id}}" {% if supplier.supp_attr_arr is defined and  supplier.supp_attr_arr  is not empty  %}
+																	 {%for supp in supplier.supp_attr_arr  %}
+																		{% if supplier.main_supplier_id == supp.supplier_id and  supp.combination_id == 0 and product_city_rel.city_id == supp.city_id %}
+																		   value="{{supp.quantity}}"
+																		{% endif %}
+																  {% endfor %}
+																  {% endif %}
+																	 ></td>
+																		  <td> <input type="number" required {% if supplier.supp_attr_arr is defined and  supplier.supp_attr_arr  is not empty  %}
+																	 {%for supp in supplier.supp_attr_arr  %}
+																		{% if supplier.main_supplier_id == supp.supplier_id and  supp.combination_id == 0 %}
+																		   value="{{supp.price}}"
+																		{% endif %}
+																  {% endfor %}
+																  {% else %} value="0" {% endif %} name="product_price_{{all_final_category.langauge_id}}_{{supplier.main_supplier_id}}_0_{{product_city_rel.product_city_relation_id}}"></td>
+																		  <td> <!--<select name="product_price_currency_2_46_1">-->
+																		<!--<option value="1" selected="selected">Indian Rupee</option>-->
+																		<!--</select>--> Coming soon</td>
+																	 </tr>
+																  {% endif %}
+																</tr>
+															</tbody>
+														 </table>
+													  {#&nbsp;&nbsp;&nbsp;<b>**</b> if Supplier dont want to manage any Combination then , Please Insert 0 as Product Price and Quantity#}
+												{% endif %}
+
+											 </div>
+ 										  {% if advanced_pricing is defined and advanced_pricing is not empty and advanced_pricing=='true' %}
+										  <div class="row">
+												<table class="table">
+												   <thead>
+													  <tr>
+														  <th><span class="title_box">SN</span></th>
+														  <th><span class="title_box">Apply From(Date)</span></th>
+														  <th><span class="title_box">Price to Distributors (PTD)</span></th>
+														  <th><span class="title_box">Distributors Margin (%)</span></th>
+														  <th><span class="title_box">Final Price from Distributors</span></th>
+														  <th><span class="title_box">AWL Margin (%)</span></th>
+														  <th><span class="title_box">App Price</span></th>
+														  <th><span class="title_box">Action</span></th>
+													  </tr>
+												   </thead>
+													  <tbody>
+														 {% if supplier.advanced_pricing_arr is defined and supplier.advanced_pricing_arr is not empty %}
+															{% for array in supplier.advanced_pricing_arr %}
+														<tr>
+															<td>
+															   {{loop.index}}
+															</td>
+															<td>
+															   {{array.apply_from_date}}
+															</td>
+															<td>
+															   {{array.ptd}}
+															</td>
+															<td>
+															   {{array.distributor_margin}}
+															</td>
+															<td>
+															   {{array.distributor_margin}}
+															</td>
+															<td>
+															   {{array.awl_margin}}
+															</td>
+															<td>
+															   {{array.final_app_price}}
+															</td>
+															<td>
+
+															</td>
+														</tr>
+															{% endfor %}
+														{% endif %}
+													  </tbody>
+												   </table>
+												{#&nbsp;&nbsp;&nbsp;<b>**</b> if Supplier dont want to manage any Combination then , Please Insert 0 as Product Price and Quantity#}
+												</div>
+										  {% endif %}
+										  <!-- /.row -->
+											 </div><!-- /.box-body -->
+										  </div><!-- /.box -->
+									   {% endfor %}
+									{% endif %}
+								 {% endif %}
+							  {% endfor %}
+							  {% endfor %}
+							  {% endif %}
+						   </div>
+									{% if product_city_rel is not empty %}
+											 <div class="box-footer">
+												<a href="{{path('admin_product_index',{'domain':app.session.get('domain')})}}"  class="btn btn-default form-btn">Cancel</a>
+												<button type="submit" class="btn btn-primary pull-right">Save</button>
+											 </div>
+											 {% endif %}
+											 </form>
+											 </div>
+										  </div>
+										  {% endfor %}
+									{% endif %}
+									</div>
+								 </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+</section>
+<div class="modal fade" id="status_model" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="model_title"></h4>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+{% block js %}
+
+<script>
+   function onsupplierchange(val) {
+	var id= val.value;
+	var cls = "";
+	  if ($(val).is(':checked')) {
+		// alert(id);
+		$( "#"+id ).removeClass('collapsed-box');
+
+	  }else{
+		 //alert();
+		 $( "#"+id ).addClass('collapsed-box');
+	  }
+
+   }
+
+</script>
+
+<script id="template-upload" type="text/x-tmpl">
+{% verbatim %}
+{% for (var i=0, file; file=o.files[i]; i++) { %}
+    <tr class="template-upload fade">
+        <td>
+            <span class="preview"></span>
+        </td>
+        <td>
+            <p class="name">{%=file.name%}</p>
+            <strong class="error text-danger"></strong>
+        </td>
+        <td>
+            <p class="size">Processing...</p>
+            <div class="progress progress-striped active" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><div class="progress-bar progress-bar-success" style="width:0%;"></div></div>
+        </td>
+        <td>
+            {% if (!i && !o.options.autoUpload) { %}
+                <button class="btn btn-primary start" disabled>
+                    <i class="glyphicon glyphicon-upload"></i>
+                    <span>Start</span>
+                </button>
+            {% } %}
+            {% if (!i) { %}
+                <button class="btn btn-warning cancel">
+                    <i class="glyphicon glyphicon-ban-circle"></i>
+                    <span>Cancel</span>
+                </button>
+            {% } %}
+        </td>
+    </tr>
+{% } %}
+{% endverbatim %}
+</script>
+<!-- The template to display files available for download -->
+<script id="template-download" type="text/x-tmpl">
+{% verbatim %}
+{% endverbatim %}
+</script>
+<script src="{{asset('bundles/design/')}}plugins/select2/select2.full.min.js"></script>
+<script src="{{asset('bundles/design/')}}plugins/bootstrap-wysihtml5/bootstrap3-wysihtml5.all.min.js"></script>
+<script src="{{asset('bundles/design/')}}plugins/select2/select2.full.min.js"></script>
+<script src="{{asset('bundles/design/')}}plugins/bootstrap-wysihtml5/bootstrap3-wysihtml5.all.min.js"></script>
+<script language="Javascript" src="{{asset('bundles/design/')}}tinymce/tinymce.min.js" type="text/javascript"></script>
+<script src="{{asset('bundles/design/')}}plugins/iCheck/icheck.min.js"></script>
+
+<script src="{{asset('bundles/design/')}}fileupload/js/jquery.ui.widget.js"></script>
+<!-- The Templates plugin is included to render the upload/download listings -->
+<script src="{{asset('bundles/design/')}}fileupload/js/tmpl.min.js"></script>
+<!-- The Load Image plugin is included for the preview images and image resizing functionality -->
+<script src="{{asset('bundles/design/')}}fileupload/js/load-image.all.min.js"></script>
+<!-- The Canvas to Blob plugin is included for image resizing functionality -->
+<script src="{{asset('bundles/design/')}}fileupload/js/canvas-to-blob.min.js"></script>
+<!-- blueimp Gallery script -->
+<script src="{{asset('bundles/design/')}}fileupload/js/jquery.blueimp-gallery.min.js"></script>
+<!-- The Iframe Transport is required for browsers without support for XHR file uploads -->
+<script src="{{asset('bundles/design/')}}fileupload/js/jquery.iframe-transport.js"></script>
+<!-- The basic File Upload plugin -->
+<script src="{{asset('bundles/design/')}}fileupload/js/jquery.fileupload.js"></script>
+<!-- The File Upload processing plugin -->
+<script src="{{asset('bundles/design/')}}fileupload/js/jquery.fileupload-process.js"></script>
+<!-- The File Upload image preview & resize plugin -->
+<script src="{{asset('bundles/design/')}}fileupload/js/jquery.fileupload-image.js"></script>
+<!-- The File Upload audio preview plugin -->
+<script src="{{asset('bundles/design/')}}fileupload/js/jquery.fileupload-audio.js"></script>
+<!-- The File Upload video preview plugin -->
+<script src="{{asset('bundles/design/')}}fileupload/js/jquery.fileupload-video.js"></script>
+<!-- The File Upload validation plugin -->
+<script src="{{asset('bundles/design/')}}fileupload/js/jquery.fileupload-validate.js"></script>
+<!-- The File Upload user interface plugin -->
+<script src="{{asset('bundles/design/')}}fileupload/js/jquery.fileupload-ui.js"></script>
+<!-- The main application script -->
+{#<script src="{{asset('bundles/design/')}}fileupload/js/main.js"></script>#}
+<script src="{{asset('bundles/design/')}}plugins/select2/select2.full.min.js"></script>
+
+<script>
+
+	$(function () {
+		$(".select2").select2({
+			tags: true,
+			tokenSeparators: [',']
+		});
+	});
+
+{% if language is defined and language is not empty%}
+ {% for lang in language %}
+$("#basic_form_{{lang.language_master_id}}").validate({
+	  rules: {
+		  product_title: "required",
+		  refrence_code: "required",
+		  brand_id: "required",
+		  status: "required",
+		  price: {
+			  required: true,
+			  number: true
+		  },
+		  mprice: {
+			  required: true,
+			  number: true
+		  },
+		  quantity: {
+			  required: true,
+			  number: true
+		  }
+	  },
+	  messages: {
+		  product_title: "Please enter product title",
+		  refrence_code: "Please enter refrence code",
+		  brand_id: "Please select brand",
+		  status: "Please select status",
+		  price: {
+			  required: "Please enter original price",
+			  number: "Only numbers allowed"
+		  },
+		  mprice: {
+			  required: "Please enter market price",
+			  number: "Only numbers allowed"
+		  },
+		  quantity: {
+			  required: "Please enter a product Stock",
+			  number: "Only numbers allowed"
+		  }
+	  }
+  });
+  {% endfor %}
+  {% endif %}
+$(".supplier-form").validate({
+	  rules: {
+		  produtct_quantity: {
+			  required: true,
+			  number: true
+		  },
+		  spam: {
+			  required: function (element) {
+                var boxes = $('.mycheckbox');
+                if (boxes.filter(':checked').length == 0) {
+                    return true;
+                }
+                return false;
+            },
+            minlength: 1
+		  },
+		  product_price: {
+			  required: true,
+			  number: true
+		  }
+	  },
+	  messages: {
+		  produtct_quantity: {
+			  required: "Enter product Quantity",
+			  number: "Only numbers allowed"
+		  },
+		  supplier_1_6: {
+			  required: "Please select atlest one"
+		  },
+		  product_price: {
+			  required: "Enter product Price",
+			  number: "Only numbers allowed"
+		  }
+	  }
+  });
+{% if product_info is defined and product_info is not empty %}
+$(function () {
+var html = "";
+    'use strict';
+    // Initialize the jQuery File Upload widget:
+    $('#fileupload').fileupload({
+        // Uncomment the following to send cross-domain cookies:
+
+        url: '{{ip_path}}/bundles/design/index.php?temp_dir=product_image',
+
+		success: function(response)
+		{
+
+		    console.log(response.files[0]);
+			//database insert ajax
+			$.ajax({
+			type: 'POST',
+			url : "{{ path('admin_product_saveproductgallery',{'domain':app.session.get('domain')}) }}",
+			data: {"img_name":response.files[0].name,'main_product_id':{{product_info[0].main_product_master_id}},'media_type_id':1,'flag':'save_gallery_image'},
+			async: false,
+			dataType: 'json',
+			xhrFields: {withCredentials: true},
+			success: function(response)
+			{
+
+					 if (response != false)
+					 {
+						   html += '<tr class="">';
+							  html += '<td>';
+								  html += '<span class="preview">';
+									  html += '<a data-gallery="" download="'+response.name+'" title="'+response.name+'" href="'+response.path+'">';
+										html += '<img src="'+response.thumbnail_path+'">';
+									  html += '</a>';
+								  html += '</span>';
+							  html += '</td>';
+							  html += '<td>';
+								  html += '<p class="name">';
+									  html += '<a data-gallery="" download="'+response.name+'" title="'+response.name+'" href="'+response.path+'">'+response.name+'</a>';
+								  html += '</p>';
+							  html += '</td>';
+							  html += '<td style="width:20px;">';
+								html += '<input type="radio" name="default_image" class="" value="1" onclick="set_default_image({{product_info[0].main_product_master_id}},'+response.media_library_master_id+');" title="Set default product image">';
+							  html += '</td>';
+							  html += '<td>';
+								  html += '<button class="btn btn-danger delete" onclick="delete_image('+response.media_library_master_id+','+response.gallery_master_id+');">';
+										  html += '<i class="glyphicon glyphicon-trash"></i>';
+										  html += '<span>Delete</span>';
+									  html += '</button>';
+									  //html += '<input type="checkbox" class="toggle" value="1" name="delete">';
+							  html += '</td>';
+						  html += '</tr>';
+						  $(".files").append(html);
+						  html = "";
+                     }
+
+			   }
+			});
+			$('input[type="checkbox"].minimal, input[type="radio"].minimal').iCheck({
+			checkboxClass: 'icheckbox_minimal-blue',
+			radioClass: 'iradio_minimal-blue'
+			});
+	    }
+    });
+});
+function delete_image(media_library_master_id,gallery_master_id)
+{
+   var answer = confirm ("Are you sure you want to delete?");
+
+   if (answer) {
+	  $.ajax({
+		   type: 'POST',
+		   url : "{{ path('admin_product_removeproductimage',{'domain':app.session.get('domain')}) }}",
+		   data: {"media_library_master_id":media_library_master_id,'gallery_master_id':gallery_master_id,'flag':'delete_image'},
+		   async: false,
+		   dataType: 'json',
+		   success: function(response)
+		   {
+
+		   }
+	   });
+   }
+}
+function set_default_image(main_product_master_id,media_library_master_id)
+{
+   $.ajax({
+		type: 'POST',
+		url : "{{ path('admin_product_setdefaultimage',{'domain':app.session.get('domain')}) }}",
+		data: {"main_product_master_id":main_product_master_id,'media_library_master_id':media_library_master_id,'flag':'set_default_product_image'},
+		async: false,
+		dataType: 'json',
+		success: function(response)
+		{
+
+		}
+	});
+}
+{% endif %}
+</script>
+<script language="Javascript" type="text/javascript">
+/*tinymce.init({
+    selector: "textarea",
+	max_chars : 1000,
+	width:      '100%',
+	height:     '50%',
+    plugins: [
+        "advlist autolink lists link charmap print preview anchor",
+        "searchreplace visualblocks code",
+        "insertdatetime table contextmenu paste moxiemanager",
+		"textcolor"
+    ],
+    statusbar:  true,
+	menubar:    true,
+    toolbar: "sizeselect | fontselect |  fontsizeselect | forecolor backcolor | undo redo | bold underline italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link",
+
+	rel_list:   [ { title: 'Lightbox', value: 'lightbox' } ]
+});*/
+// A $( document ).ready() block.
+$( document ).ready(function() {
+  $('input[type=checkbox]').click(function(){
+    // if is checked
+    if($(this).is(':checked')){
+        // check all children
+        $(this).parent().find('li input[type=checkbox]').prop('checked', true);
+        // check all parents
+        $(this).parent().prev().prop('checked', true);
+    } else {
+        // uncheck all children
+        $(this).parent().find('li input[type=checkbox]').prop('checked', false);
+    }
+
+});
+});
+function validate(){
+
+	var textarea = tinymce.get('description').getContent();
+	if ( (textarea=="") || (textarea==null) ) {
+        tinymce.get('description').focus();
+		return false;
+	}
+	return true;
+}
+function set_category_selected(clsname) {}
+
+function check_attr_validation(langid) {
+
+   var slected_attr = '' ;
+   var slctvalue = $('.attr_selected_vals_'+langid);
+   var slected_product = $('#main_product_id_'+langid).val();
+   $.each($('.attr_selected_ids_'+langid), function(i, item){
+	  if (slected_attr == '') {
+		slected_attr += $(this).val() + ":"+ $(slctvalue[i]).val() ;
+	  }
+	  else{
+		slected_attr += ","+ $(this).val() + ":"+ $(slctvalue[i]).val() ;
+	  }
+   });
+
+   var url =  "{{path('admin_product_checkattributevalue',{'domain':app.session.get('domain'),'attribute_arr':'slected_attr_text','language_id':'lang1','product_id':'prod1'})}}";
+   url = url.replace("slected_attr_text", slected_attr);
+   url = url.replace("prod1", slected_product);
+   url = url.replace("lang1", langid);
+   var returnvalue = '' ;
+   $.ajax({
+	   url:url,
+	   async:false,
+	   success: function(result){
+		 console.log(result);
+		if (result == 'true') {
+			console.log('if'+result);
+			returnvalue = true ;
+
+        }
+		else{
+		   console.log('else'+result);
+		   returnvalue = false ;
+		   alert("You can't insert this Combination , This combination already Inserted for this Product");
+
+		}
+	   }
+   });
+   return returnvalue ;
+}
+function addattribute(langid) {
+   attr_id = $('#attribute_id_'+langid).val();
+   attr_text =  $('#attribute_id_'+langid+' option:selected').text();
+   var attr_val =  ""+$('#attrvalue_'+langid).val();
+
+   var arr_attr_val = attr_val.split(',');
+    console.log(arr_attr_val);
+   attrval_text =  $('#attrvalue_'+langid+' option:selected').text();
+   if (attr_id == '' || attr_val == '' || attr_id == '0' || attr_val == 0) {
+	  alert("Please Select Attribute and Values");
+   }
+   else{
+	   var flag = 'true';
+	   $.each($('.attr_selected_ids_'+langid), function(i, item) {
+			if($(this).val() == attr_id){
+			    flag = 'false';
+			}
+		});
+	   if (flag =='true') {
+
+		 document.getElementById('comb_market').style.display = "";
+		 //document.getElementById('comb_market_price').required = true;
+		 $("#comb_market_price").attr('required', 'ture');
+         var html = '';
+		 html += "<div class='well well-sm'>";
+		 html += "<a onclick='$(this).parent().remove();' class='pull-right btn btn-xs btn-warning'><span class='fa fa-remove'></span></a>";
+		 html += "<label>"+attr_text+"</label><input type='hidden' class='attr_selected_ids_"+langid+"' name='attr_selected_ids_"+langid+"[]' value='"+attr_id+"'/>:";
+		 html += "&nbsp;&nbsp;"+attrval_text;
+		 for(var i = 0 ; i < arr_attr_val.length ; i++){
+			 html +=  "<input type='hidden' class='attr_selected_vals_"+langid+"' name='attr_selected_vals_"+langid+"_"+attr_id+"[]' value='"+arr_attr_val[i]+"'/>";
+		 }
+
+		 html += "</div>";
+
+		 $('#selected_attr_value_'+langid).append(html);
+       }
+	   else{
+		 alert("You can add only one combination per attribute type.")
+	   }
+
+    //code
+   }
+}
+function getAttributevalue(aid,lang) {
+   attridjs = $(aid).val() ;
+   langidjs = lang ;
+   if (attridjs != 0) {
+      var url =  "{{path('admin_product_getattributevalue',{'domain':app.session.get('domain'),'attribute_id':'attrid','language_id':'lang1'})}}";
+	  url = url.replace("attrid", attridjs);
+	  url = url.replace("lang1", langidjs);
+	   $.ajax({
+		 url:url,
+		 success: function(result){
+			var obj = jQuery.parseJSON( result );
+			$('#attrvalue_'+langidjs).html('');
+			$('#attrvalue_'+langidjs).append($('<option>', {
+				  value: 0,
+				  text: 'Select'
+			}));
+			for (var i = 0 ; i < obj.length ; i++ ) {
+			   console.log(obj[i]);  //code
+			   $('#attrvalue_'+langidjs).append($('<option>', {
+				 value: obj[i].main_attribute_value_id,
+				 text: obj[i].attribute_value
+			   }));
+			}
+		 }
+	  });
+   }
+   else{
+	  $('#attrvalue_'+langidjs).html('');
+	  $('#attrvalue_'+langidjs).append($('<option>', {
+			value: 0,
+			text: 'Select'
+	  }));
+   }
+}
+{% if product_info is defined and product_info is not empty %}
+function removeattr(comb_id)
+{
+   var product_id = '{{main_product_id}}';
+   $.ajax({
+		type: 'POST',
+		url : "{{path('admin_product_removecombination',{'domain':app.session.get('domain')})}}",
+		data: {'product_id':product_id,'comb_id':comb_id,'flag':'remove_attributr'},
+		async: false,
+		dataType: 'json',
+		success: function(response)
+		{
+			$("#model_title").html(response.msg);
+			$("#model_title").removeClass();
+			$("#model_title").addClass("modal-title "+response.cls);
+			$("#status_model").modal('show');
+			$(".attr_"+comb_id).remove();
+		}
+	});
+}
+{% endif %}
+</script>
+<script>
+$(function () {
+  // $(".select2").select2();
+   $(".editor").wysihtml5();
+});
+$('input[type="checkbox"].minimal, input[type="radio"].minimal').iCheck({
+checkboxClass: 'icheckbox_minimal-blue',
+radioClass: 'iradio_minimal-blue'
+});
+</script>
+{% endblock %}

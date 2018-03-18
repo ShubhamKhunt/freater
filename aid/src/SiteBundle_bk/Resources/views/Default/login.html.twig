@@ -1,0 +1,204 @@
+{% extends "SiteBundle::Layout/index.html.twig" %}
+{% block style %}
+<link rel="stylesheet" type="text/css" href="{{ asset('bundles/design/') }}fonts/iconic/css/material-design-iconic-font.min.css">
+<link rel="stylesheet" type="text/css" href="{{ asset('bundles/design/') }}plugins/animate/animate.css">
+<link rel="stylesheet" type="text/css" href="{{ asset('bundles/design/') }}plugins/css-hamburgers/hamburgers.min.css">
+<link rel="stylesheet" type="text/css" href="{{ asset('bundles/design/') }}plugins/animsition/css/animsition.min.css">
+<link rel="stylesheet" type="text/css" href="{{ asset('bundles/design/') }}plugins/select2/select2.min.css">
+<link rel="stylesheet" type="text/css" href="{{ asset('bundles/design/') }}plugins/daterangepicker/daterangepicker.css">
+<link rel="stylesheet" type="text/css" href="{{ asset('bundles/design/') }}css/util.css">
+<link rel="stylesheet" type="text/css" href="{{ asset('bundles/design/') }}css/main.css">
+<style>
+.logo{ max-height: 35px !important;}
+a.call-to-action-1.bg-dark.white-text { height: 165px; }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<!-- only logout when logout pressed -->
+{% if app.session.get('login_status') is defined and app.session.get('login_status') is not empty %}
+	{% if app.session.get('login_status') == 'logout' %}
+		<script>
+			if (typeof(Storage) !== "undefined") {
+				localStorage.removeItem("access_token");
+			}
+		</script>
+	{% endif %}
+{% endif %}
+	
+	<div class="limiter">
+		<div class="container-login100">
+			<div class="wrap-login100 p-t-45 p-b-20">
+				
+				<!-- flash message -->
+				{% for flashMessage in app.session.flashbag.get('success') %}
+				<div class="col-md-12">
+					<div role="alert" class="alert alert-success alert-dismissible fade in">
+						  <button aria-label="Close" data-dismiss="alert" class="close" type="button"><span aria-hidden="true">×</span></button>
+						  <strong>Alert!</strong> {{ flashMessage }}
+					</div>
+				</div>
+				{% endfor %}
+				{% for flashMessage in app.session.flashbag.get('error') %}
+				<div class="col-md-12">
+					<div role="alert" class="alert alert-danger alert-dismissible fade in">
+						  <button aria-label="Close" data-dismiss="alert" class="close" type="button"><span aria-hidden="true">×</span></button>
+						  <strong>Alert!</strong> {{ flashMessage }}
+					</div>
+				</div>
+				{% endfor %}
+				<!-- end: flash message -->
+			
+				<form class="login100-form validate-form" action="{{ path('site_default_logincheck') }}" method="post">
+					<span class="login100-form-avatar">
+						<img id="user-avatar" src="{{ asset('bundles/design/') }}user/default-user.png" alt="AVATAR">
+					</span>
+
+					<div class="wrap-input100 validate-input m-t-45 m-b-35" data-validate = "Enter username">
+						<input id="username" class="input100" type="text" name="username">
+						<span id="username-text" class="focus-input100" data-placeholder="Username"></span>
+					</div>
+
+					<div class="wrap-input100 validate-input m-b-50" data-validate="Enter password">
+						<input id="password" class="input100" type="password" name="password">
+						<span id="password-text" class="focus-input100" data-placeholder="Password"></span>
+					</div>
+
+					<div class="container-login100-form-btn">
+						<button type="submit" name="submit" class="login100-form-btn">
+							Login
+						</button>
+					</div>
+					
+					<!-- fb login -->
+					<div class="m-t-30 text-center">
+						<input type="hidden" id="accesstoken" name="social_accesstoken">
+						<input type="hidden" id="social_user_id" name="social_user_id">
+						<input type="hidden" id="social_user_name" name="social_user_name">
+						
+						<div class="fb-lgn-btn">
+							<div class="fb-login-button" data-max-rows="1" data-size="large" data-button-type="login_with" data-show-faces="false" data-auto-logout-link="false" data-use-continue-as="false" onlogin="checkLoginState();"></div>
+						</div>
+					</div>
+					<!-- end: fb login -->
+
+					<ul class="login-more p-t-20">
+						<li class="m-b-8">
+							<span class="txt1">
+								Forgot
+							</span>
+							<a href="#" class="txt2">
+								Username / Password?
+							</a>
+						</li>
+
+						<li>
+							<span class="txt1">
+								Don’t have an account?
+							</span>
+							<a href="{{ path('site_default_register') }}" class="txt2">
+								Sign up
+							</a>
+						</li>
+					</ul>
+				</form>
+			</div>
+		</div>
+	</div>
+	
+{% endblock %}
+
+{% block javascript %}
+<script src="{{ asset('bundles/design/') }}plugins/animsition/js/animsition.min.js"></script>
+<script src="{{ asset('bundles/design/') }}plugins/select2/select2.min.js"></script>
+<script src="{{ asset('bundles/design/') }}plugins/daterangepicker/moment.min.js"></script>
+<script src="{{ asset('bundles/design/') }}plugins/daterangepicker/daterangepicker.js"></script>
+<script src="{{ asset('bundles/design/') }}plugins/countdowntime/countdowntime.js"></script>
+<script src="{{ asset('bundles/design/') }}js/main.js"></script>
+
+<script>
+	$(document).ready(function(){
+		$('#fb-login').click(function(){
+			alert('bmgfbm');
+		});
+		$('#username').blur(function(){
+			var username = $('#username').val();
+			if(username != ''){
+				var url = "{{ path('site_ajax_getuserurl') }}";
+				$.ajax({
+					url: url,
+					data: {'username': username},
+					method: 'post',
+					success: function(response){
+						if(response != 'false'){
+							$('#user-avatar').attr('src',response);
+						} else {
+							var response = "{{ asset('bundles/design/') }}user/default-user.png";
+							$('#user-avatar').attr('src',response);
+						}
+					},
+					error: function(error){
+						console.log(error);
+					}
+				});
+				$('#username-text').removeData('placeholder');
+			}
+		});
+		$('#password').blur(function(){
+			if($('#password').val() != ''){
+				$('#password-text').removeData('placeholder');
+			}
+		});
+	});
+	
+	// check user login status
+	function statusChangeCallback(response) {
+		console.log(response);
+		if(response.status === 'connected'){
+			// if connected get accessToken from response
+			// and store in hidden variables
+			var accessToken = response.authResponse.accessToken;
+			jQuery('#accessToken').val(accessToken);
+			console.log(accessToken);
+			// generate appropriate message to user
+			validateAPI();
+		}
+	}
+	// check login status when hit on facebook button
+	function checkLoginState() {
+		FB.getLoginStatus(function(response) {
+		statusChangeCallback(response);
+		});
+	}
+	//initialize and integrate with Facebook
+	window.fbAsyncInit = function() {
+		FB.init({
+			appId      : '203203223544899',
+			cookie     : true,
+			xfbml      : true,
+			version    : 'v2.10'
+		});
+		FB.getLoginStatus(function(response) {
+			statusChangeCallback(response);
+		});
+	};
+	// load the facebook js sdk
+	(function(d, s, id) {
+		var js, fjs = d.getElementsByTagName(s)[0];
+		if (d.getElementById(id)) return;
+		js = d.createElement(s); js.id = id;
+		js.src = "//connect.facebook.net/en_US/sdk.js";
+		fjs.parentNode.insertBefore(js, fjs);
+	}(document, 'script', 'facebook-jssdk'));
+
+	function validateAPI() {
+		FB.api('/me', function(response) {
+			// store user id and user name to hidden variables
+			console.log(response);
+			jQuery('#social_user_id').val(response.id);
+			jQuery('#social_user_name').val(response.name);
+		});
+	}
+</script>
+{% endblock %}

@@ -1,0 +1,128 @@
+{% extends "AdminBundle::Layout/adminlayout.html.twig" %}
+{% block title %} Delivery charges {% endblock %}
+{% block css %}
+	
+{% endblock %}
+{% block content %}
+	<section class="content-header">
+		<h1>
+            Delivery charges
+		  <small></small>
+		</h1>
+		<ol class="breadcrumb">
+		  <li><a href="{{path('admin_dashboard_index',{'domain':app.session.get('domain')})}}"><i class="fa fa-dashboard"></i>Dashboard</a></li>
+		  <li class="active">City wise delivery charges</li>
+		</ol>
+	  </section>
+	  <section class="content">
+        {% for flashMessage in app.session.flashbag.get('success_msg') %}
+			<div role="alert" class="alert alert-success alert-dismissible fade in">
+				<button aria-label="Close" data-dismiss="alert" class="close" type="button"><span aria-hidden="true">×</span></button>
+				<strong>Alert!</strong>&nbsp; {{ flashMessage }}
+			</div>
+		{% endfor %}
+		{% for flashMessage in app.session.flashbag.get('error_msg') %}
+			<div role="alert" class="alert alert-danger alert-dismissible fade in">
+				<button aria-label="Close" data-dismiss="alert" class="close" type="button"><span aria-hidden="true">×</span></button>
+				<strong>Alert!</strong>&nbsp; {{ flashMessage }}
+			</div>
+		{% endfor %}
+		<div class="row">
+			<div class="col-xs-12">
+                <div class="box box-solid">
+                    <div class="box-header with-border">
+                      {#<h3 class="box-title">Progress Bars Different Sizes</h3>#}
+                      <div class="pull-right">
+                        <a href="{{path('admin_deliverycharge_adddeliverycharge',{'domain':app.session.get('domain')})}}" class="btn btn-primary btn-flat"><i class="fa fa-plus"></i>&nbsp;&nbsp;ADD</a>
+                      </div>
+                    </div>
+                    <div class="box-body">
+                        <div class="container-fluid table-responsive">
+							<table id="example1" class="table table-bordered table-striped text-center">
+								<thead>
+									<th>No.</th>
+									<th>City</th>
+									<th>Delivery charge</th>
+                                    <th>Country</th>
+                                    <th>State</th>
+                                    <th>Action</th>
+								</thead>
+								<tbody>
+                                    {% if delivery_city_list is defined and delivery_city_list is not empty %}
+                                        {% for del_city in delivery_city_list %}
+                                        <tr>
+                                            <td>{{loop.index}}</td>
+                                            <td>{{del_city.city_name}}</td>
+                                            <td>{{del_city.delivery_charge}}</td>
+                                            <td>{{del_city.country_title}}</td>
+                                            <td>{{del_city.state_name}}</td>
+                                            <td>
+                                                <a class="btn btn-danger btn-xs btn-flat" data-toggle="tooltip" title="" onclick="return confirm('Are you sure you want to Delete?');" href="{{path('admin_deliverycharge_removedeliverycharge',{'domain':app.session.get('domain'),'delivery_charge_id':del_city.delivery_charge_id})}}" data-original-title="Delete"><span class="fa fa-remove"></span></a>
+                                            </td>
+                                        </tr>
+                                        {% endfor %}
+                                    {% endif %}
+								</tbody>
+								<tfoot>
+									<th>No.</th>
+									<th>City</th>
+									<th>Delivery charge</th>
+                                    <th>Country</th>
+                                    <th>State</th>
+                                    <th>Action</th>
+								</tfoot>
+							</table>
+						</div>
+
+                    </div>
+                  </div>
+            </div>
+		</div>
+	  </section>
+{% endblock %}
+
+{% block js %}
+<script>
+$('.change_status').on('click', function(){
+	var $this = $(this);
+	var tbl = 'state';
+	var pkey = $this.val();
+	
+	$this.button('loading');
+	$.ajax({
+		type: 'POST',
+		url : "{{path('admin_servicearea_changestatus',{'domain':app.session.get('domain')})}}",
+		data: {'pkey':pkey,'tbl':tbl,'flag':'change_status'},
+		dataType: 'json',
+		success: function(res)
+		{
+			if (res.status == 'active')
+			{
+				var sts = 'Active';
+				var acls = 'btn-success';
+				var rcls = 'btn-danger';
+			}
+			else
+			{
+				var sts = 'Inactive';
+				var acls = 'btn-danger';
+				var rcls = 'btn-success';
+			}
+			$this.button('reset');
+			$($this).removeClass(rcls).addClass(acls);
+			setTimeout(function () {
+				$($this).text(sts);
+			}, 10);
+		}
+	});
+});
+$(document).ready(function() {
+    $('#example1').DataTable( {
+        dom: 'Bfrtip',
+        buttons: [
+            'copy', 'csv', 'excel', 'pdf', 'print'
+        ]
+    } );
+} );
+</script>
+{% endblock %}

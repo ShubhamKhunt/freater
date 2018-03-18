@@ -1,0 +1,93 @@
+{% extends "SiteBundle::Layout/index.html.twig" %}
+{% block style %}
+<link rel="stylesheet" type="text/css" href="{{ asset('bundles/design/') }}fonts/iconic/css/material-design-iconic-font.min.css">
+<link rel="stylesheet" type="text/css" href="{{ asset('bundles/design/') }}plugins/animate/animate.css">
+<link rel="stylesheet" type="text/css" href="{{ asset('bundles/design/') }}plugins/css-hamburgers/hamburgers.min.css">
+<link rel="stylesheet" type="text/css" href="{{ asset('bundles/design/') }}plugins/animsition/css/animsition.min.css">
+<link rel="stylesheet" type="text/css" href="{{ asset('bundles/design/') }}plugins/select2/select2.min.css">
+<link rel="stylesheet" type="text/css" href="{{ asset('bundles/design/') }}plugins/daterangepicker/daterangepicker.css">
+<link rel="stylesheet" type="text/css" href="{{ asset('bundles/design/') }}css/util.css">
+<link rel="stylesheet" type="text/css" href="{{ asset('bundles/design/') }}css/main.css">
+<style>
+.logo{ max-height: 35px !important;}
+a.call-to-action-1.bg-dark.white-text { height: 165px; }
+</style>
+{% endblock %}
+{% block content %}
+	
+	<div class="limiter">
+		<div class="container-login100">
+			<div class="wrap-login100 p-t-45 p-b-20">
+				<form class="login100-form validate-form" action="{{ path('site_default_register') }}" method="post" enctype="multipart/form-data">
+					<div class="register-text">
+						<span class="">Create Account</span>
+					</div>
+					
+					<div class="wrap-input100 validate-input m-t-45 m-b-35" data-validate = "Enter firstname">
+						<input id="firstname" class="input100" type="text" name="firstname" required>
+						<span id="firstname-text" class="focus-input100" data-placeholder="Firstname"></span>
+					</div>
+					<div class="wrap-input100 validate-input m-t-45 m-b-35" data-validate = "Enter lastname">
+						<input id="lastname" class="input100" type="text" name="lastname" required>
+						<span id="lastname-text" class="focus-input100" data-placeholder="Lastname"></span>
+					</div>
+					<div class="wrap-input100 validate-input m-t-45 m-b-35" data-validate = "Enter username">
+						<input id="username" class="input100" type="text" name="username" required>
+						<span id="username-text" class="focus-input100" data-placeholder="Username"></span>
+					</div>
+					<div class="wrap-input100 validate-input m-t-45 m-b-35" data-validate = "Enter email">
+						<input id="email" class="input100" type="email" name="email" required>
+						<span id="email-text" class="focus-input100" data-placeholder="Email"></span>
+					</div>
+					<div class="wrap-input100 m-t-45 m-b-35">
+						<input id="image" class="input100" type="file" name="image">
+					</div>
+					<div class="wrap-input100 validate-input m-b-50" data-validate="Enter mobile">
+						<input id="mobile" class="input100" type="text" name="mobile" required>
+						<span id="mobile-text" class="focus-input100" data-placeholder="Mobile"></span>
+					</div>
+					<div class="wrap-input100 validate-input m-b-50" data-validate="Enter password">
+						<input id="password" class="input100" type="password" name="password" required>
+						<span id="password-text" class="focus-input100" data-placeholder="Password"></span>
+					</div>
+
+					<div class="container-login100-form-btn">
+						<button type="submit" name="submit" class="login100-form-btn">
+							Create Account
+						</button>
+					</div>
+
+					<ul class="login-more p-t-20">
+						<li class="m-b-8">
+							<span class="txt1">
+								Forgot
+							</span>
+							<a href="#" class="txt2">
+								Username / Password?
+							</a>
+						</li>
+
+						<li>
+							<a href="{{ path('site_default_login') }}" class="txt2">
+								Login
+							</a>
+						</li>
+					</ul>
+				</form>
+			</div>
+		</div>
+	</div>
+	
+{% endblock %}
+
+{% block javascript %}
+<script src="{{ asset('bundles/design/') }}plugins/animsition/js/animsition.min.js"></script>
+<script src="{{ asset('bundles/design/') }}plugins/select2/select2.min.js"></script>
+<script src="{{ asset('bundles/design/') }}plugins/daterangepicker/moment.min.js"></script>
+<script src="{{ asset('bundles/design/') }}plugins/daterangepicker/daterangepicker.js"></script>
+<script src="{{ asset('bundles/design/') }}plugins/countdowntime/countdowntime.js"></script>
+<script src="{{ asset('bundles/design/') }}js/main.js"></script>
+<script>
+	
+</script>
+{% endblock %}

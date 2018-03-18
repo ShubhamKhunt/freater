@@ -1,0 +1,81 @@
+{% extends "AdminBundle::Layout/adminlayout.html.twig" %}
+{% block title %} Survey Questions {% endblock %}
+{% block css %}
+	
+{% endblock %}
+{% block content %}
+	
+	  <section class="content">
+		{% for flashMessage in app.session.flashbag.get('success_msg') %}
+			<div role="alert" class="alert alert-success alert-dismissible fade in">
+				<button aria-label="Close" data-dismiss="alert" class="close" type="button"><span aria-hidden="true">×</span></button>
+				<strong>Alert!</strong>&nbsp; {{ flashMessage }}
+			</div>
+		{% endfor %}
+		{% for flashMessage in app.session.flashbag.get('error_msg') %}
+			<div role="alert" class="alert alert-danger alert-dismissible fade in">
+				<button aria-label="Close" data-dismiss="alert" class="close" type="button"><span aria-hidden="true">×</span></button>
+				<strong>Alert!</strong>&nbsp; {{ flashMessage }}
+			</div>
+		{% endfor %}
+	<div class="row">
+		<div class="col-xs-12">
+			<div class="box box-solid">
+				<div class="box-header with-border">
+				  <h3 class="box-title">Survey Questions</h3>
+				  <div class="pull-right">
+					<a href="{{path('admin_survey_addquestion',{'domain':app.session.get('domain')})}}" class="btn btn-primary btn-flat"><i class="fa fa-plus"></i>&nbsp;&nbsp;ADD</a>
+				  </div>
+				</div>
+				<div class="box-body">	
+				{%if survey_flag is defined and survey_flag is not empty %}
+					{%if survey_form_question_list is defined and survey_form_question_list is not empty %}
+					 <div class="container-fluid table-responsive">
+					<table id="example1" class="table table-bordered text-center">
+						<thead>
+							<th>No</th>
+							<th>Question</th>
+							<th>Operation</th>
+						</thead>
+						<tbody>
+							{%for que in survey_form_question_list%}
+							<tr>
+								<td>{{loop.index}}</td>
+								<td>{{que.question_name}}</td>
+								<td>
+									<a href="{{path('admin_survey_addquestion',{'domain':app.session.get('domain'),"question_id":que.survey_form_question_id})}}" onclick="return confirm('Want to Edit ?')" class="btn btn-warning btn-xs" data-toggle="tooltip" data-original-title="Edit"><span class="fa fa-edit"></span></a>
+									<a href="{{path('admin_survey_deletequestion',{'domain':app.session.get('domain'),"question_id":que.survey_form_question_id})}}" onclick="return confirm('Are you sure , you want to delete ?')" class="btn btn-danger btn-xs"  data-toggle="tooltip" data-original-title="Delete"><span class="fa fa-remove"></span></a>	</td>
+							</tr>
+							{%endfor%}
+						</tbody>
+						<tfoot>
+							<th>No</th>
+							<th>Question</th>
+							<th>Operation</th>
+						</tfoot>
+					</table>
+					 </div>		
+					{%endif%}
+				{%endif%}
+				</div>
+			</div>
+		</div>
+	</div>
+		
+		
+		
+	  </section>
+{% endblock %}
+
+{% block js %}
+<script>
+$(document).ready(function() {
+    $('#example1').DataTable( {
+        dom: 'Bfrtip',
+        buttons: [
+            'copy', 'csv', 'excel', 'pdf', 'print'
+        ]
+    });
+});
+</script>
+{% endblock %}

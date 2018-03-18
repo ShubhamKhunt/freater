@@ -1,0 +1,331 @@
+{% extends "AdminBundle::Layout/adminlayout.html.twig" %}
+{% block title %} Add - Update Category {% endblock %}
+{% block css %}
+	 <link href="{{asset('bundles/design/')}}css/select2.min.css" rel="stylesheet" type="text/css" />
+	 <link href="{{asset('bundles/design/')}}css/dataTables.bootstrap.css" rel="stylesheet" type="text/css" />
+	  <link href="{{asset('bundles/design/')}}css/bootstrap-toggle.min.css" rel="stylesheet" type="text/css" />
+	  <link href="{{asset('bundles/design/')}}css/datepicker3.css" rel="stylesheet" type="text/css" />
+	  <link href="{{asset('bundles/design/')}}validation/datepicker3.css" rel="stylesheet" type="text/css" />
+{% endblock %}
+{% block content %}
+
+<script>
+	function display_email(category)
+	{
+		if(category.value==6)
+		{
+			$("#email_id").show();
+			$("#email_id_br").show();
+		}else
+		{
+			$("#email_id").hide();
+			$("#email_id_br").hide();
+		}
+		if(category.value==4)
+		{
+			$("#sub_cat_type_div").show();
+		}else
+		{
+			$("#sub_cat_type_div").hide();
+		}
+	}
+
+$(document).ready(function() {
+
+	function display_email1()
+	{
+		{% if selected_category is defined and selected_category is not empty %}
+		{% if selected_category[0].parent_category_id == 6 %}
+			$("#email_id").show();
+			$("#email_id_br").show();
+		{% endif %}
+		{% endif %}
+	}
+	display_email1();
+});
+</script>
+	<section class="content-header">
+      	<h1>
+            Add - Update Category
+				</h1>
+		  <small></small>
+
+		<ol class="breadcrumb">
+		  <li><a href="{{path('admin_dashboard_index',{'domain':app.session.get('domain')})}}"><i class="fa fa-dashboard"></i>Dashboard</a></li>
+		  <li class="active">Category List</li>
+		</ol>
+	  </section>
+		<section class="content">
+		{% for flashMessage in app.session.flashbag.get('success_msg') %}
+		<div class="alert alert-success alert-dismissable">
+			<button aria-hidden="true" data-dismiss="alert" class="close" type="button">×</button>
+			<h4><i class="icon fa fa-check"></i> Alert!</h4>{{ flashMessage }}
+		</div>
+		{% endfor %}
+		{% for flashMessage in app.session.flashbag.get('error_msg') %}
+		<div class="alert alert-danger alert-dismissable">
+			<button aria-hidden="true" data-dismiss="alert" class="close" type="button">×</button>
+			<h4><i class="icon fa fa-check"></i> Alert!</h4>{{ flashMessage }}
+		</div>
+		{% endfor %}
+		<div class="row">
+			<div class="col-xs-12">
+				<div class="box box-primary">
+					<div class="box-body">
+						<div class="nav-tab-custom">
+								<a href="{{path('admin_category_index',{'domain':app.session.get('domain')})}}" class="btn btn-primary btn-flat pull-right"><i class="glyphicon glyphicon-chevron-left"></i><b>&nbsp;&nbsp;Back</b></a>
+							<ul class="nav nav-tabs">
+								{% if  language is defined %}
+									{% for lang in language %}
+										<li {% if loop.index == 1 %}class="active"{% endif %}>
+											<a href="#tab_{{lang.language_master_id}}" data-toggle="tab">{{lang.language_name}}</a>
+										</li>
+									{% endfor %}
+								{% endif %}
+							</ul>
+						</div>
+						<div class="tab-content">
+							    {% set main_category_id = 0 %}
+								{% if selected_category is defined and selected_category is not empty %}
+									{% for selected_category in selected_category %}
+										{% set main_category_id = selected_category.main_category_id %}
+									{%endfor%}
+								{%endif%}
+								{% set flag1 = 'false' %}
+								{% set flag = 'false' %}
+								{% if language is defined %}
+									{% for lang in language %}
+										 <div class="tab-pane fade{% if loop.index == 1 %}in active{% endif %}" id="tab_{{lang.language_master_id}}">
+
+										  <form id="manage_category_{{lang.language_master_id}}" class="form" method="POST" enctype="multipart/form-data"  {% if selected_category is defined and selected_category is not empty %}{% set flag1 = 'false' %}{% for selected_category in selected_category %}{% if (selected_category.language_id) == (lang.language_master_id) %}{% set flag1 = 'true' %}action="{{path('admin_category_updatecategory',{'category_id':selected_category.category_master_id})}}" {%endif%}{%endfor%}{%else%}action="{{path('admin_category_savecategory')}}"{%endif%} {%if flag1 == 'false' %}  action="{{path('admin_category_savecategory')}}" {%endif%}
+										  {% if selected_category is defined and selected_category is not empty %} {%else%} {%endif%} >
+												<input type="hidden" name="language_id" value="{{lang.language_master_id}}" />
+												<input type="hidden" name="main_category_id" value="{{main_category_id}}" />
+												<br>
+												<div class="row">
+													  <div class="col-md-12">
+															<div class="col-md-2">Category Name</div>
+															<div class="col-md-10"><input type="text" class="form-control" name="category_name" placeholder="Enter Category Name " value="{% if selected_category is defined and selected_category is not empty %}{% for selected_category in selected_category %}{% if (selected_category.language_id) == (lang.language_master_id) %}{{selected_category.category_name}}{%endif%}{%endfor%}{%endif%}" required/></div>
+													  </div>
+												 </div>
+												<br>
+												<div class="row">
+													  <div class="col-md-12">
+															<div class="col-md-2">Category Description</div>
+															<div class="col-md-10"><!--<input type="text" class="form-control" name="category_description" placeholder="Enter Category Description "  value="{% if selected_category is defined and selected_category is not empty %}{% for selected_category in selected_category %}{% if (selected_category.language_id) == (lang.language_master_id) %}{{selected_category.category_description}}{%endif%}{%endfor%}{%endif%}"  required/>--><textarea name="category_description" class="textarea" placeholder="Place some text here" style="width: 100%; height: 200px; font-size: 14px; line-height: 18px; border: 1px solid #dddddd; padding: 10px;">{% if selected_category is defined and selected_category is not empty %}{% for selected_category in selected_category %}{% if (selected_category.language_id) == (lang.language_master_id) %}{{selected_category.category_description}}{%endif%}{%endfor%}{%endif%}</textarea></div>
+													  </div>
+												 </div>
+												 <br>
+												 <div class="row">
+													  <div class="col-md-12">
+															<div class="col-md-2">Category Logo</div>
+															<div class="col-md-4">
+															   <input type="file" name="category_logo" id="category_logo" {% if selected_category is defined and selected_category is not empty %}{%else%}{%endif%} />
+															</div>
+													  </div>
+												 </div>
+												 <br>
+												 {% if selected_category is defined and selected_category is not empty %}
+												  <div class="row">
+													<div class="col-sm-2"><input type="hidden" value="{{selected_category[0].popular_count}}" name="popular_count"></div>
+													<div class="col-sm-2">
+													  {% set logo = render(controller('AdminBundle:Base:getmedia', {'media_library_master_id': selected_category[0].category_image_id,'live_path':live_path})) %}
+														  <img src="{{logo}}" style="height:100px;">
+														<input type="hidden" value="{{selected_category[0].category_image_id}}" name="image_hidden">
+
+													</div>
+												  </div>
+												  <br/>
+												{% endif %}
+												 {% set selected_parent = 0 %}
+												<div class="row">
+													  <div class="col-md-12">
+															<div class="col-md-2">Category Type</div>
+															<div class="col-md-10">
+																  <select class="form-control select" name="parent_category" onchange="display_email(this);" required>
+
+ 																		{% set selected_parent = 0 %}
+																		{% if parent_category is defined and parent_category  is not empty %}
+																			  {% for parent_cat in parent_category %}
+																					{% set selected_parent = 0 %}
+																					{% if parent_cat.language_id == lang.language_master_id  and parent_cat.main_category_id != main_category_id  %}
+																						{% if selected_category is defined and selected_category is not empty %}{% for selected_category in selected_category %}{% if (selected_category.language_id) == (lang.language_master_id) %}
+																						{% if selected_parent_id is defined and selected_parent_id is not empty %}
+																							{% set selected_parent = selected_parent_id %}
+																						{% else %}
+																							{% set selected_parent = selected_category.parent_category_id %}
+																					{% endif %}
+																					 {%endif%}{%endfor%}{%endif%}
+																					<option {% if selected_parent == parent_cat.main_category_id %} selected {% endif %} value="{{parent_cat.main_category_id}}">{{parent_cat.category_name}}</option>
+																					{% endif %}
+																			  {% endfor %}
+																        {% endif %}
+																  </select>
+															</div>
+													  </div>
+												 </div><br>
+												 <div class="row" id="sub_cat_type_div" style="display:none">
+ 													  <div class="col-md-12">
+ 															<div class="col-md-2">Sub Category Type{#{dump(selected_parent_category_child)}#}</div>
+ 															<div class="col-md-10">
+ 																  <select class="form-control select" name="parent_category_1">
+																		<option value="0"> -- Select Sub Category -- </option>
+  																		{% set selected_parent = 0 %}
+ 																		{% if parent_category_child is defined and parent_category_child  is not empty %}
+ 																			  {% for parent_cat in parent_category_child %}
+ 																					{% set selected_parent = 0 %}
+ 																					{% if parent_cat.language_id == lang.language_master_id %}
+																					{% if selected_category is defined and selected_category is not empty %}
+																							{% if parent_cat.main_category_id != selected_category[0].main_category_id %}
+																							<option {% if selected_parent_category_child is defined and selected_parent_category_child == parent_cat.main_category_id %} selected {% endif %} value="{{parent_cat.main_category_id}}">{{parent_cat.category_name}}</option>
+																							{% endif %}
+																					{% else %}
+																					<option {% if selected_parent == parent_cat.main_category_id %} selected {% endif %} value="{{parent_cat.main_category_id}}">{{parent_cat.category_name}}</option>
+																					{% endif %}
+
+ 																					{% endif %}
+ 																			  {% endfor %}
+ 																        {% endif %}
+ 																  </select>
+ 															</div>
+ 													  </div>
+ 												 </div><br>
+												 <div class="row" style="display:none;" id="email_id">
+													  <div class="col-md-12">
+															<div class="col-md-2">Email Id</div>
+
+															<div class="col-md-10"><input type="text" class="form-control" name="email_id" placeholder="Enter Email Id " {% if selected_category is defined and selected_category is not empty %}  value="{{selected_category[0].email_id}}" {%endif%} pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$" /></div>
+													  </div>
+												 </div><br style="display:none;" id="email_id_br" />
+												<div class="row">
+													  <div class="col-md-12">
+															<div class="col-md-2">Domain/Organization</div>
+															<div class="col-md-10">
+																  <select class="form-control select" name="domain_id" required>
+
+																	{% set  selected_dom = '' %}
+																	{% if domain_list is defined and domain_list  is not empty %}
+																			  {% for domain_list in domain_list %}
+
+																				{% if selected_category is defined and selected_category is not empty %}
+																				    {% for selected_category in selected_category %}
+																					  {% if domain_list.domain_code == selected_category.domain_id %}
+																						{% set selected_dom = 'selected'%}
+																					   {% else %}
+																						 {% set selected_dom = '' %}
+																						{%endif%}
+																				    {%endfor%}
+																				{%endif%}
+																				<option {{selected_dom}} value="{{domain_list.domain_code}}">{{domain_list.domain_name}}</option>
+
+																			  {% endfor %}
+																	{% endif %}
+
+																  </select>
+															</div>
+													  </div>
+												</div>
+												 <div class="form-group">
+													  <div class="col-sm-10 pull-left">
+															  {% if selected_category is defined and selected_category is not empty %}
+																{% set flag = 'false' %}
+																{% for selected_category in selected_category %}
+																  {% if (selected_category.language_id) == (lang.language_master_id) %}
+																	{% set flag = 'true' %}
+																	<button name="save" type="submit"  class="btn btn-primary" value="">Update</button>
+																  {%endif%}
+																{%endfor%}
+
+															  {% endif %}
+															  {%if flag == 'false' %}
+																   <button name="save" type="submit" class="btn btn-primary" value="save_category">Save</button>
+															  {% endif %}
+																  <a href="{{path('admin_category_index',{'domain':app.session.get('domain')})}}"  class="btn btn-default form-btn">Cancel</a>
+													  </div>
+												</div>
+											</form>
+										 </div>
+									{% endfor %}
+								{% endif %}
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</section>
+	{% if (selected_category is defined and selected_category is not empty)  or (selected_parent_id is defined and selected_parent_id == 4) %}
+	{% if selected_category[0].parent_category_id == 4 or selected_parent_id == 4 %}
+	<script>
+		$(document).ready(function() {
+			$("#sub_cat_type_div").show();
+		});
+		</script>
+		{% endif %}
+		{% endif %}
+{% endblock %}
+
+{% block js %}
+<script src="{{asset('bundles/design/')}}js/bootstrapValidator.min.js" type="text/javascript"></script>
+
+<script language="Javascript" src="{{asset('bundles/design/')}}tinymce/tinymce.min.js" type="text/javascript"></script>
+
+<script language="Javascript" type="text/javascript">
+tinymce.init({
+    selector: "textarea",
+	max_chars : 1000,
+	width:      '100%',
+	height:     '50%',
+    plugins: [
+        "advlist autolink lists link charmap print preview anchor",
+        "searchreplace visualblocks code",
+        "insertdatetime table contextmenu paste moxiemanager",
+		"textcolor"
+    ],
+    statusbar:  true,
+	menubar:    true,
+    toolbar: "sizeselect | fontselect |  fontsizeselect | forecolor backcolor | undo redo | bold underline italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link",
+
+	rel_list:   [ { title: 'Lightbox', value: 'lightbox' } ]
+});
+function validate(){
+
+	var textarea = tinymce.get('description').getContent();
+	if ( (textarea=="") || (textarea==null) ) {
+        tinymce.get('description').focus();
+		return false;
+	}
+	return true;
+}
+
+</script>
+
+<script>
+$(document).ready(function() {
+
+    $('#example1').DataTable();
+	{% for lang in language %}
+	$('#manage_category_{{lang.language_master_id}}').bootstrapValidator({
+			fields: {
+				category_name: {
+					validators: {
+						notEmpty: {
+							message: '* Category Name is required and cannot be empty'
+						 }
+					 }
+				 },
+				 {% if parent_category is not defined %}
+				  category_logo: {
+					  validators: {
+						  notEmpty: {
+							  message: 'The Category logo is required and cannot be empty'
+						  }
+					  }
+				  },
+				  {% endif %}
+			 }
+		 });
+	  {% endfor %}
+} );
+</script>
+
+{% endblock %}
